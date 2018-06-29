@@ -18,9 +18,13 @@ build/
 
 # LaTeX generated files
 *.aux
+*.bcf
+*.lof
 *.log
+*.lot
 *.out
 *.toc
 *.bbl
 *.blg
+*.run.xml
 *.spl
