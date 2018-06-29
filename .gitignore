@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Packages
+*.egg
+*.egg-info
+dist/
+build/
+
+# Unit test / coverage reports
+.coverage
+.nox/
+.cache
+
+# Mac
+.DS_Store
+
+# LaTeX generated files
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.spl
