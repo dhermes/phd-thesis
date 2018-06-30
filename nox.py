@@ -48,9 +48,9 @@ def build_tex_file(session, base, new_id, extensions=(), with_bibtex=False):
 
     if with_bibtex:
         session.run("pdflatex", base)
-        session.run("biber", base)
+        session.run("bibtex", base)
         session.run("pdflatex", base)
-        session.run("biber", base)
+        session.run("bibtex", base)
         session.run("pdflatex", base)
         session.run("pdflatex", base)
     else:
@@ -86,16 +86,15 @@ def build_tex(session):
         extensions=(
             "aux",
             "bbl",
-            "bcf",
             "blg",
             "lof",
             "log",
             "lot",
-            "run.xml",
+            "out",
             "toc",
         ),
         with_bibtex=True,
     )
-    session.run(Remove("abstract", ("aux",)))
-    session.run(Remove("chapter1", ("aux",)))
-    session.run(Remove("chapter2", ("aux",)))
+    extras = ("abstract", "chapter1", "chapter2")
+    for extra in extras:
+        session.run(Remove(extra, ("aux",)))

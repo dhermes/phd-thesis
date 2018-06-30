@@ -1,12 +1,13 @@
-% (This is included by thesis.tex; you do not latex it by itself.)
-
 \begin{abstract}
-
-% The text of the abstract goes here.  If you need to use a \section
-% command you will need to use \section*, \subsection*, etc. so that
-% you don't get any numbering.  You probably won't be using any of
-% these commands in the abstract anyway.
-
-Invasive brag; forbearance.
-
+In computer aided geometric design a polynomial is usually represented in
+Bernstein form. This paper presents a family of compensated algorithms to
+accurately evaluate a polynomial in Bernstein form with floating point
+coefficients. The principle is to apply error-free transformations to
+improve the traditional de Casteljau algorithm. At each stage of computation,
+round-off error is passed on to first order errors, then to second order
+errors, and so on. After the computation has been ``filtered'' \((K - 1)\)
+times via this process, the resulting output is as accurate as the de Casteljau
+algorithm performed in \(K\) times the working precision. Forward error
+analysis and numerical experiments illustrate the accuracy of this family
+of algorithms.
 \end{abstract}
