@@ -13,17 +13,77 @@
   },
 }
 
-\usepackage{textcomp}
-
-% Double spacing, if you want it.
-\def\dsp{\def\baselinestretch{2.0}\large\normalsize}
-\dsp
+%% % Double spacing, if you want it.
+%% \def\dsp{\def\baselinestretch{2.0}\large\normalsize}
+%% \dsp
 
 % If the Grad. Division insists that the first paragraph of a section
 % be indented (like the others), then include this line:
 \usepackage{indentfirst}
 
-\newtheorem{theorem}{Theorem}
+\usepackage{amsthm,amssymb,amsmath}
+\allowdisplaybreaks
+\usepackage{textcomp}
+%% H/T: https://tex.stackexchange.com/a/56877/32270
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+%% H/T: https://tex.stackexchange.com/a/244805
+\usepackage{booktabs,siunitx}
+%% H/T: https://tex.stackexchange.com/a/4217/32270
+\usepackage{mathtools}
+%% H/T: https://tex.stackexchange.com/a/33869/32270
+\makeatletter
+\newenvironment{breakablealgorithm}
+  {% \begin{breakablealgorithm}
+   \begin{center}
+     \refstepcounter{algorithm}% New algorithm
+     \hrule height.8pt depth0pt \kern2pt% \@fs@pre for \@fs@ruled
+     \renewcommand{\caption}[2][\relax]{% Make a new \caption
+       {\raggedright\textbf{\ALG@name~\thealgorithm} ##2\par}%
+       \ifx\relax##1\relax % #1 is \relax
+         \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##2}%
+       \else % #1 is not \relax
+         \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##1}%
+       \fi
+       \kern2pt\hrule\kern2pt
+     }
+  }{% \end{breakablealgorithm}
+     \kern2pt\hrule\relax% \@fs@post for \@fs@ruled
+   \end{center}
+  }
+\makeatother
+%% H/T: https://tex.stackexchange.com/a/28334/32270
+\usepackage{chngcntr}
+\counterwithin{figure}{chapter}
+\counterwithin{table}{chapter}
+\counterwithin{equation}{chapter}
+\counterwithin{algorithm}{chapter}
+%% H/T: https://tex.stackexchange.com/a/202047/32270
+%%      https://tex.stackexchange.com/a/32463/32270
+\usepackage[labelfont=bf]{caption}
+%% H/T: https://tex.stackexchange.com/a/163250/32270
+\usepackage{adjustbox}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\renewcommand{\qed}{\(\blacksquare\)}
+\newcommand{\cond}[1]{\operatorname{cond}\left(#1\right)}
+\newcommand{\fl}[1]{\operatorname{fl}\left(#1\right)}
+\newcommand{\bigO}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\mach}{\mathbf{u}}
+%% db == ``delta'' b
+\newcommand{\db}[1]{
+  \ifthenelse{\equal{#1}{1}}
+             {\partial b}
+             {\partial^{#1} b}
+}
+%% cdb == computed ``delta'' b
+\newcommand{\cdb}[1]{
+  \ifthenelse{\equal{#1}{1}}
+             {\widehat{\partial b}}
+             {\widehat{\partial^{#1} b}}
+}
 
 \hyphenation{mar-gin-al-ia}
 
@@ -76,7 +136,6 @@ I want to thank my advisor for his patience and guidance.
 \include{chapter1}
 \include{chapter2}
 
-\nocite{*}
 \bibliography{thesis}
 \bibliographystyle{alpha}
 

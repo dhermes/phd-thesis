@@ -22,6 +22,8 @@ Once installed, the various build jobs can be listed. For example:
 $ nox --list-sessions
 Available sessions:
 * build_tex
+* make_images
+* update_requirements
 ```
 
 To run ``nox -s build_tex`` (i.e. to build the PDF), ``pdflatex`` and

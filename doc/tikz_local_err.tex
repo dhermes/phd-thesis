@@ -1,0 +1,39 @@
+\documentclass[tikz]{standalone}
+
+\usepackage{hyperref}
+\hypersetup{
+  pdfinfo={
+    CreationDate={D:20180516090844},
+    ModDate={D:20180516090844},
+  },
+}
+
+\begin{document}
+\begin{tikzpicture}[node distance = 0.2\textwidth]
+  \node (b0) {\(\widehat{b}^{(n)}\)}
+    child {node (b1) {\(\widehat{b}^{(n - 1)}\)}
+      child {node (b2) {\(\widehat{b}^{(n - 2)}\)}
+        child {node (bdots) {\(\vdots\)}
+          child {node (bn) {\(\widehat{b}^{(0)}\)}}
+          child {node (ln) {\(\ell^{(0)}\)}}
+        }
+        child {node (ldots) {\(\vdots\)}}
+      }
+      child {node (l2) {\(\ell^{(n - 2)}\)}}
+    }
+    child {node (l1) {\(\ell^{(n - 1)}\)}};
+  %%
+  \path (b1) -- (l1) node [midway] {\(+\)};
+  \path (b2) -- (l2) node [midway] {\(+\)};
+  \path (bn) -- (ln) node [midway] {\(+\)};
+  %% eb == exact b
+  \node [right of=b0] (eb0) {\(b^{(n)}\)}
+    child {node (eb1) {\(b^{(n - 1)}\)}
+      child {node (eb2) {\(b^{(n - 2)}\)}
+        child {node (ebdots) {\(\vdots\)}
+          child {node (ebn) {\(b^{(0)}\)}}
+        }
+      }
+    };
+\end{tikzpicture}
+\end{document}

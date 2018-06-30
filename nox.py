@@ -83,18 +83,70 @@ def build_tex(session):
         session,
         "thesis",
         "55008F4EDC13ADFCEFED89CA0A359ACD",
-        extensions=(
-            "aux",
-            "bbl",
-            "blg",
-            "lof",
-            "log",
-            "lot",
-            "out",
-            "toc",
-        ),
+        extensions=("aux", "bbl", "blg", "lof", "log", "lot", "out", "toc"),
         with_bibtex=True,
     )
     extras = ("abstract", "chapter1", "chapter2")
     for extra in extras:
         session.run(Remove(extra, ("aux",)))
+
+    build_tex_file(
+        session,
+        "tikz_local_err",
+        "61C99C3315FAE74F6F2E4EEAB3E4D3AA",
+        extensions=("aux", "log", "out"),
+    )
+
+    build_tex_file(
+        session,
+        "tikz_filtration",
+        "5AD16E27EBA16C57CF11C93F5CE4D079",
+        extensions=("aux", "log", "out"),
+    )
+
+
+@nox.session
+def make_images(session):
+    session.interpreter = SINGLE_INTERP
+    # Install all dependencies.
+    session.install("--requirement", "make-images-requirements.txt")
+    # Run the script(s).
+    # Make sure
+    # - Custom ``matplotlibrc`` is used
+    # - Code in ``src/`` is importable
+    # - PDFs have deterministic ``CreationDate``
+    env = {
+        "MATPLOTLIBRC": get_path("images"),
+        "PYTHONPATH": get_path("src"),
+        "SOURCE_DATE_EPOCH": "0",
+    }
+    script_paths = (
+        ("chapter1", "error_against_cond.py"),
+        ("chapter1", "smooth_drawing.py"),
+        ("chapter1", "horner_inferior.py"),
+        ("chapter1", "compensated_insufficient.py"),
+    )
+    for segments in script_paths:
+        script = get_path("scripts", *segments)
+        session.run("python", script, env=env)
+
+
+@nox.session
+def update_requirements(session):
+    session.interpreter = SINGLE_INTERP
+
+    if py.path.local.sysfind("git") is None:
+        session.skip("`git` must be installed")
+
+    # Install all dependencies.
+    session.install("pip-tools")
+
+    # Update all of the requirements file(s).
+    names = ("make-images",)
+    for name in names:
+        in_name = "{}-requirements.in".format(name)
+        txt_name = "{}-requirements.txt".format(name)
+        session.run(
+            "pip-compile", "--upgrade", "--output-file", txt_name, in_name
+        )
+        session.run("git", "add", txt_name)
