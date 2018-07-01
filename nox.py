@@ -89,9 +89,9 @@ def build_tex(session):
     extras = (
         "abstract",
         "algorithms",
-        "introduction",
-        "chapter1",
         "chapter2",
+        "introduction",
+        "k-compensated",
         "notation",
         "proofs",
     )
@@ -129,10 +129,10 @@ def make_images(session):
         "SOURCE_DATE_EPOCH": "0",
     }
     script_paths = (
-        ("chapter1", "error_against_cond.py"),
-        ("chapter1", "smooth_drawing.py"),
-        ("chapter1", "horner_inferior.py"),
-        ("chapter1", "compensated_insufficient.py"),
+        ("k-compensated", "error_against_cond.py"),
+        ("k-compensated", "smooth_drawing.py"),
+        ("k-compensated", "horner_inferior.py"),
+        ("k-compensated", "compensated_insufficient.py"),
     )
     for segments in script_paths:
         script = get_path("scripts", *segments)

@@ -87,7 +87,7 @@ def main(filename=None):
             wspace=0.15,
             hspace=0.19,
         )
-        path = plot_utils.get_path("chapter1", filename)
+        path = plot_utils.get_path("k-compensated", filename)
         figure.savefig(path, bbox_inches="tight")
         print("Saved {}".format(filename))
         plt.close(figure)

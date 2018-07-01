@@ -240,7 +240,7 @@ def main(filename=None):
     if filename is None:
         plt.show()
     else:
-        path = plot_utils.get_path("chapter1", filename)
+        path = plot_utils.get_path("k-compensated", filename)
         figure.savefig(path, bbox_inches="tight")
         print("Saved {}".format(filename))
         plt.close(figure)
@@ -402,7 +402,7 @@ def main_jlcs10(filename=None):
     if filename is None:
         plt.show()
     else:
-        path = plot_utils.get_path("chapter1", filename)
+        path = plot_utils.get_path("k-compensated", filename)
         figure.savefig(path, bbox_inches="tight")
         print("Saved {}".format(filename))
         plt.close(figure)
