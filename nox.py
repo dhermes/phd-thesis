@@ -86,7 +86,15 @@ def build_tex(session):
         extensions=("aux", "bbl", "blg", "lof", "log", "lot", "out", "toc"),
         with_bibtex=True,
     )
-    extras = ("abstract", "chapter1", "chapter2")
+    extras = (
+        "abstract",
+        "algorithms",
+        "introduction",
+        "chapter1",
+        "chapter2",
+        "notation",
+        "proofs",
+    )
     for extra in extras:
         session.run(Remove(extra, ("aux",)))
 

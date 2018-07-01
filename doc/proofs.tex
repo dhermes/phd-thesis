@@ -1,0 +1,218 @@
+\chapter{Proof Details}\label{sec:appendix-proof-details}
+
+\begin{proof}[Proof of Lemma~\ref{lemma:ell-tilde}]
+We'll start with the \(F = 1\) case. Recall where the terms originate:
+\begin{align}
+\left[P_1, e_1\right] &= \mathtt{TwoProd}\left(\widehat{r},
+  \widehat{b}_j^{(k + 1)}\right) \\
+\left[P_2, e_2\right] &= \mathtt{TwoProd}\left(s,
+  \widehat{b}_{j + 1}^{(k + 1)}\right) \\
+\left[\widehat{b}_j^{(k)}, e_3\right] &= \mathtt{TwoSum}\left(P_1, P_2\right).
+\end{align}
+Hence Theorem~\ref{thm:eft} tells us that
+\begin{align}
+\left|P_1\right| &\leq (1 + \mach)\left|\widehat{r} \cdot
+  \widehat{b}_j^{(k + 1)}\right| \leq (1 + \mach)^2 (1 - s)
+  \left|\widehat{b}_j^{(k + 1)}\right| \\
+\left|e_1\right| &\leq \mach \left|\widehat{r} \cdot
+  \widehat{b}_j^{(k + 1)}\right| \leq \mach(1 + \mach)(1 - s) \left|
+  \widehat{b}_j^{(k + 1)}\right| \\
+\left|P_2\right| &\leq (1 + \mach) s \left|\widehat{b}_{j + 1}^{(k + 1)}\right| \\
+\left|e_2\right| &\leq \mach s \left|\widehat{b}_{j + 1}^{(k + 1)}\right| \\
+\left|e_3\right| &\leq \mach \left|P_1\right| + \mach\left|P_2\right| \\
+\left|\rho \cdot \widehat{b}_j^{(k + 1)}\right| &\leq
+(1 + \mach)(1 - s) \left|\widehat{b}_j^{(k + 1)}\right|.
+\end{align}
+In general, we can swap \(\mach\left|P_j\right|\) for
+\((1 + \mach)\left|e_j\right|\) based on how closely related the bound
+on the result and the bound on the error are. Thus
+\begin{align}
+\widetilde{\ell}_{1, j}^{(k)} &= \left|e_1\right| + \left|e_2\right| +
+  \left|e_3\right| + \left|\rho \cdot \widehat{b}_j^{(k + 1)}\right| \\
+&\leq (2 + \mach)\left(\left|e_1\right| + \left|e_2\right|\right) +
+  (1 + \mach)(1 - s) \left|\widehat{b}_j^{(k + 1)}\right| \\
+&\leq \left[(1 + \mach)^3 - 1\right] (1 - s) \left|
+  \widehat{b}_j^{(k + 1)}\right| + \left[(1 + \mach)^2 - 1\right] s \left|
+  \widehat{b}_{j + 1}^{(k + 1)}\right| \\
+&\leq \gamma_3 \left((1 - s) \left|\widehat{b}_j^{(k + 1)}\right| +
+  s \left|\widehat{b}_{j + 1}^{(k + 1)}\right|\right).
+\end{align}
+For \(\widetilde{\ell}_{F + 1}\), we want to relate the ``current'' errors
+\(e_1, \ldots, e_{5F + 3}\) to the ``previous'' errors \(e_1',
+\ldots, e_{5F - 2}'\) that show up in \(\widetilde{\ell}_F\). In the same
+fashion as above, we track where the current errors come from:
+\begin{align}
+\left[S_1, e_1\right] &= \mathtt{TwoSum}\left(e_1', e_2'\right) \\
+\left[S_2, e_2\right] &= \mathtt{TwoSum}\left(S_1, e_3'\right) \\
+&\mathrel{\makebox[\widthof{=}]{\vdots}} \nonumber \\
+\left[S_{5F - 3}, e_{5F - 3}\right] &=
+  \mathtt{TwoSum}\left(S_{5F - 4}, e_{5F - 2}'\right) \\
+\left[P_{5F - 2}, e_{5F - 2}\right] &= \mathtt{TwoProd}\left(\rho,
+  \cdb{F - 1}_j^{(k + 1)}\right) \\
+\left[\widehat{\ell}_{F, j}^{(k)}, e_{5F - 1}\right] &=
+  \mathtt{TwoSum}\left(S_{5F - 3}, P_{5F - 2}\right) \\
+\left[P_{5F}, e_{5F}\right] &= \mathtt{TwoProd}\left(s,
+  \cdb{F}_{j + 1}^{(k + 1)}\right) \\
+\left[S_{5F + 1}, e_{5F + 1}\right] &=
+  \mathtt{TwoSum}\left(\widehat{\ell}_{F, j}^{(k)}, P_{5F}\right) \\
+\left[P_{5F + 2}, e_{5F + 2}\right] &= \mathtt{TwoProd}\left(\rho,
+  \cdb{F}_j^{(k + 1)}\right) \\
+\left[\cdb{F}_j^{(k)}, e_{5F + 3}\right] &= \mathtt{TwoSum}\left(
+  S_{5F + 1}, P_{5F + 2}\right).
+\end{align}
+Arguing as we did above, we start with
+\(\left|e_1\right| \leq \mach \left|e_1'\right| + \mach \left|e_2'\right|\)
+and build each bound recursively based on the previous, e.g.
+\(\left|e_2\right| \leq \mach \left|S_1\right| + \mach \left|e_3'\right| \leq
+(1 + \mach) \mach \left|e_1'\right| + (1 + \mach) \mach \left|e_2'\right| +
+\mach \left|e_3'\right|\). Proceeding in this fashion, we find
+\begin{align}
+\widetilde{\ell}_{F + 1, j}^{(k)} &= \left|e_1\right| + \cdots +
+  \left|e_{5F + 3}\right| + \left|\rho \cdot \cdb{F}_j^{(k + 1)}\right| \\
+&\leq \gamma_{5F} \left|e_1'\right| + \gamma_{5F} \left|e_2'\right| +
+  \gamma_{5F - 1} \left|e_3'\right| + \cdots +
+  \gamma_4 \left|e_{5F - 2}'\right| +
+  \gamma_4 \left|\rho \cdot \cdb{F - 1}_j^{(k + 1)}\right| \\
+&\qquad + \gamma_3 (1 - s) \left|
+  \cdb{F}_j^{(k + 1)}\right| + \gamma_3 s \left|
+  \cdb{F}_{j + 1}^{(k + 1)}\right| \\
+&\leq \gamma_3 \left(
+  (1 - s) \left|\cdb{F}_j^{(k + 1)}\right| +
+  s \left|\cdb{F}_{j + 1}^{(k + 1)}\right|\right) +
+  \gamma_{5F} \cdot \widetilde{\ell}_{F, j}^{(k)}
+\end{align}
+as desired.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lemma:L-and-D-bounds}]\label{proof:L-and-D-bounds}
+First, note that for \textbf{any} sequence \(v_0, \ldots, v_{k + 1}\) we
+must have
+\begin{equation}
+\sum_{j = 0}^k \left[(1 - s) v_j + s v_{j + 1}\right] B_{j, k}(s) =
+\sum_{j = 0}^{k + 1} v_j B_{j, k + 1}(s).
+\end{equation}
+For example of this in use, via \eqref{ell-tilde-1}, we have
+\begin{equation}
+  L_{1, k} \leq \gamma_3 \sum_{j = 0}^{k + 1} \left|
+  \widehat{b}_j^{(k + 1)}\right| B_{j, k + 1}(s).
+\end{equation}
+In order to work with sums of this form, we define Bernstein-type
+sums related to \(L_{F, k}\):
+\begin{align}
+D_{0, k} &\coloneqq \sum_{j = 0}^k \left|\widehat{b}_j^{(k)}\right|
+B_{j, k}(s) \\
+D_{F, k} &\coloneqq \sum_{j = 0}^k \left|\cdb{F}_j^{(k)}\right| B_{j, k}(s).
+\end{align}
+Hence Lemma~\ref{lemma:ell-tilde} gives
+\begin{align}
+L_{1, k} &\leq \gamma_3 D_{0, k + 1} \label{ell-1-k} \\
+L_{F + 1, k} &\leq \gamma_3 D_{F, k + 1} + \gamma_{5F} L_{F, k}
+\label{ell-F-k}
+\end{align}
+In addition, for \(F \geq 1\) since
+\begin{align}
+\cdb{F}_j^{(k)} &= \widehat{\ell}_{F, j}^{(k)} \oplus \left(
+  s \otimes \cdb{F}_{j + 1}^{(k + 1)}\right) \oplus \left((1 \ominus s) \otimes
+  \cdb{F}_{j}^{(k + 1)}\right) \\
+&= (1 - s) \cdot \cdb{F}_j^{(k + 1)}(1 + \theta_3) +
+  s \cdot \cdb{F}_{j + 1}^{(k + 1)}(1 + \theta_3) +
+  \widehat{\ell}_{F, j}^{(k)} (1 + \theta_2)
+\end{align}
+we have
+\begin{equation}\label{df-first}
+D_{F, k} \leq (1 + \gamma_3) D_{F, k + 1} + (1 + \gamma_2) \sum_{j = 0}^k
+\left|\widehat{\ell}_{F, j}^{(k)}\right| B_{j, k}(s).
+\end{equation}
+Since \(\ell_{F, j}^{(k)}\) has \(5F - 1\) terms (only the last of which
+involves a product), the terms in the computed value will be involved in
+at most \(5F - 2\) flops, hence
+\(\left|\widehat{\ell}_{F, j}^{(k)}\right| \leq
+\left(1 + \gamma_{5F - 2}\right) \widetilde{\ell}_{F, j}^{(k)}.\)
+Combined with \eqref{df-first} and the fact that there is no local error
+when \(F = 0\), this means
+\begin{align}
+D_{0, k} &\leq (1 + \gamma_3) D_{0, k + 1} \label{d-0-k} \\
+D_{F, k} &\leq (1 + \gamma_3) D_{F, k + 1} + (1 + \gamma_{5F}) L_{F, k}.
+\label{d-F-k}
+\end{align}
+The four inequalities \eqref{ell-1-k}, \eqref{ell-F-k}, \eqref{d-0-k}
+and \eqref{d-F-k} allow us to write all bounds in terms of
+\(D_{0, n} = \widetilde{p}(s)\) and \(D_{F, n} = 0\). From \eqref{d-0-k}
+we can conclude that \(D_{0, n - k} \leq \left(1 + \gamma_{3k}\right) \cdot
+\widetilde{p}(s)\) and from \eqref{ell-1-k} that \(L_{1, n - k} \leq
+\gamma_3 \left(1 + \gamma_{3(k - 1)}\right) \cdot \widetilde{p}(s)\).
+
+To show the bounds for higher values of \(F\), we'll assume we have
+bounds of the form
+\(D_{F, n - k} \leq \left(q_F(k) \mach^F + \bigO{\mach^{F + 1}}\right) \cdot
+\widetilde{p}(s)\) and
+\(L_{F, n - k} \leq \left(r_F(k) \mach^F + \bigO{\mach^{F + 1}}\right) \cdot
+\widetilde{p}(s)\) for two families of polynomials \(q_F(k), r_F(k)\). We
+have \(q_0(k) = 1\) and \(r_1(k) = 3\) as our base cases and can build from
+there. To satisfy \eqref{d-F-k}, we'd like
+\(q_F(k) = q_F(k - 1) + r_F(k)\)
+and for \eqref{ell-F-k}
+\(r_{F + 1}(k) = 3 q_F(k - 1) + 5 F r_F(k)\).
+Since the forward difference \(\Delta q_F(k) = r_F(k + 1)\) is known,
+we can inductively solve for \(q_F\) in terms of \(q_F(0)\). But
+\(D_{F, n} = 0\) gives \(q_F(0) = 0\).
+
+For example, since we have \(r_1(k) = 3 \binom{k}{0}\) we'll have
+\(q_1(k) = 3 \binom{k}{1}\). Once this is known
+\begin{equation}
+r_2(k) = 3 q_1(k - 1) + 5 r_1(k) = 3 \cdot 3 \binom{k - 1}{1} +
+5 \cdot 3 \binom{k}{0} = 9 \binom{k}{1} + 6 \binom{k}{0}.
+\end{equation}
+If we write these polynomials in the ``falling factorial'' basis of
+forward differences, then we can show that
+\begin{equation}
+r_F(k) = 3^F \binom{k}{F} + \cdots
+\end{equation}
+which will complete the proof of the first inequality. To see this, first
+note that for a polynomial in this basis
+\(f(k) = A \binom{k}{d} + B \binom{k}{d - 1} + C \binom{k}{d - 2} +
+D \binom{k}{d - 3} + \cdots\) we have
+\begin{align}
+f(k + 1) &= A \binom{k}{d} + (A + B) \binom{k}{d - 1} +
+  (B + C) \binom{k}{d - 2} + (C + D) \binom{k}{d - 3} + \cdots \\
+f(k - 1) &= A \binom{k}{d} + (B - A) \binom{k}{d - 1} +
+  (C - B + A) \binom{k}{d - 2} + (D - C + B - A) \binom{k}{d - 3} + \cdots
+\end{align}
+Using these, we can show that if
+\(r_F(k) = \sum_{j = 0}^{F - 1} c_j \binom{k}{j}\) then
+\begin{align}
+q_F(k) &= c_{F - 1} \binom{k}{F} + \sum_{j = 1}^{F - 1}
+  (c_j + c_{j - 1}) \binom{k}{j} \\
+r_{F + 1}(k) &= 3 \left[-c_0 \binom{k}{0} +
+  \sum_{j = 1}^F c_{j - 1} \binom{k}{j}\right] +
+5F \left[\sum_{j = 0}^{F - 1} c_j \binom{k}{j}\right] =
+3 c_{F - 1} \binom{k}{F} + \cdots
+\end{align}
+Under the inductive hypothesis \(c_{F - 1} = 3^F\) so that
+the lead term in \(r_{F + 1}(k)\) is \(3 c_{F - 1} \binom{k}{F}
+= 3^{F + 1} \binom{k}{F}\).
+
+For the second inequality, we'll show that
+\begin{equation}
+\sum_{k = 0}^{n - 1} \gamma_{3k + 5F} L_{F, k} \leq
+  \left[q_{F + 1}(n) \mach^{F + 1} +
+  \bigO{\mach^{F + 2}}\right] \cdot \widetilde{p}(s)
+\end{equation}
+and then we'll have our result since we showed above that
+\(q_{F + 1}(n) = 3^{F + 1} \binom{n}{F + 1} + \bigO{n^F}\). Since
+\(\gamma_{3k + 5F} L_{F, k} \leq (3k + 5F) L_{F, k} \mach +
+\bigO{\mach^{F + 2}} \widetilde{p}(s)\) it's enough to consider
+\begin{equation}
+\sum_{k = 0}^{n - 1} (3k + 5F) r_F(n - k) =
+\sum_{k = 1}^n (3(n - k) + 5F) r_F(k).
+\end{equation}
+Since \(q_F(k) = q_F(k - 1) + r_F(k)\) and \(q_F(0) = 0\) we have
+\(q_{F}(n) = \sum_{k = 1}^n r_{F}(k)\) thus
+\begin{equation}
+q_{F + 1}(n) = \sum_{k = 1}^n r_{F + 1}(k)
+= \sum_{k = 1}^n 3 q_F(k - 1) + 5 F r_F(k)
+= \sum_{k = 1}^n 3 \left[\sum_{j = 1}^{k - 1} r_F(j)\right] + 5 F r_F(k).
+\end{equation}
+Swapping the order of summation and grouping like terms, we have our
+result.
+\end{proof}

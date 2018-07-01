@@ -67,6 +67,9 @@
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}{Lemma}[section]
+\counterwithin{theorem}{chapter}
+\counterwithin{lemma}{chapter}
+
 \renewcommand{\qed}{\(\blacksquare\)}
 \newcommand{\cond}[1]{\operatorname{cond}\left(#1\right)}
 \newcommand{\fl}[1]{\operatorname{fl}\left(#1\right)}
@@ -86,6 +89,11 @@
 }
 
 \hyphenation{mar-gin-al-ia}
+%% H/T: https://latex.org/forum/viewtopic.php?t=2351
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+%% H/T: https://tex.stackexchange.com/a/26348/32270
+\renewcommand*{\appendixname}{}
 
 \begin{document}
 
@@ -133,6 +141,8 @@ I want to thank my advisor for his patience and guidance.
 
 \pagestyle{headings}
 
+\include{introduction}
+\include{notation}
 \include{chapter1}
 \include{chapter2}
 
@@ -141,8 +151,7 @@ I want to thank my advisor for his patience and guidance.
 
 \appendix
 
-\chapter{Proofs}
-
-Some content eventually.
+\include{algorithms}
+\include{proofs}
 
 \end{document}

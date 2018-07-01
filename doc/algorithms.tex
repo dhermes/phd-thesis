@@ -1,0 +1,129 @@
+\chapter{Algorithms}\label{sec:appendix-algo}
+
+Find here concrete implementation details on the EFTs described
+in Theorem~\ref{thm:eft}. They do not use branches, nor access to the
+mantissa that can be time-consuming.
+
+\begin{breakablealgorithm}
+  \caption{\textit{EFT of the sum of two floating point numbers.}}
+
+  \begin{algorithmic}
+    \Function{\(\left[S, \sigma\right] = \mathtt{TwoSum}\)}{$a, b$}
+      \State \(S = a \oplus b\)
+      \State \(z = S \ominus a\)
+      \State \(\sigma = (a \ominus (S \ominus z)) \oplus (b \ominus z)\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+\noindent In order to avoid branching to check which among
+\(\left|a\right|, \left|b\right|\) is largest, \texttt{TwoSum} uses 6 flops
+rather than 3.
+
+\begin{breakablealgorithm}
+  \caption{\textit{Splitting of a floating point number into two parts.}}
+
+  \begin{algorithmic}
+    \Function{\(\left[h, \ell\right] = \mathtt{Split}\)}{$a$}
+      \State \(z = a \otimes (2^r + 1)\)
+      \State \(h = z \ominus (z \ominus a)\)
+      \State \(\ell = a \ominus h\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+\noindent For IEEE-754 double precision floating point number, \(r = 27\)
+so \(2^r + 1\) will be known before \texttt{Split} is called. In all,
+\texttt{Split} uses 4 flops.
+
+\begin{breakablealgorithm}
+  \caption{\textit{EFT of the product of two floating point numbers.}}
+
+  \begin{algorithmic}
+    \Function{\(\left[P, \pi\right] = \mathtt{TwoProd}\)}{$a, b$}
+      \State \(P = a \otimes b\)
+      \State \(\left[a_h, a_{\ell}\right] = \mathtt{Split}(a)\)
+      \State \(\left[b_h, b_{\ell}\right] = \mathtt{Split}(b)\)
+      \State \(\pi = a_{\ell} \otimes b_{\ell} \ominus (((P \ominus
+          a_h \otimes b_h)
+          \ominus a_{\ell} \otimes b_h) \ominus a_h \otimes b_{\ell})\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+\noindent This implementation of \texttt{TwoProd} requires 17 flops.
+For processors that provide a fused-multipy-add operator (\texttt{FMA}),
+\texttt{TwoProd} can be rewritten to use only 2 flops:
+
+\begin{breakablealgorithm}
+  \caption{\textit{EFT of the sum of two floating point numbers with a FMA.}}
+  \label{alg:two-prod-fma}
+
+  \begin{algorithmic}
+    \Function{\(\left[P, \pi\right] = \mathtt{TwoProdFMA}\)}{$a, b$}
+      \State \(P = a \otimes b\)
+      \State \(\pi = \mathtt{FMA}(a, b, -P)\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+\noindent The following algorithms from \cite{Ogita2005} can be used as a
+compensated method for computing a sum of numbers. The first is a vector
+transformation that is used as a helper:
+
+\begin{breakablealgorithm}
+  \caption{\textit{Error-free vector transformation for summation.}}
+  \label{alg:vec-sum}
+
+  \begin{algorithmic}
+    \Function{\(\mathtt{VecSum}\)}{$p$}
+      \State \(n = \texttt{length}(p)\)
+      \For{\(j = 2, \ldots, n\)}
+        \State \(\left[p_j, p_{j - 1}\right] = \mathtt{TwoSum}\left(
+            p_j, p_{j - 1}\right)\)
+      \EndFor
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+\noindent The second (\texttt{SumK}) computes a sum with results that are as
+accurate as if computed in \(K\) times the working precision. It requires
+\((6K - 5)(n - 1)\) floating point operations.
+
+\begin{breakablealgorithm}
+  \caption{\textit{Summation as in K-fold precision by \((K - 1)\)-fold error-free vector transformation.}}
+  \label{alg:sum-k}
+
+  \begin{algorithmic}
+    \Function{\(\mathtt{result} = \mathtt{SumK}\)}{$p, K$}
+      \For{\(j = 1, \ldots, K - 1\)}
+        \State \(p = \mathtt{VecSum}(p)\)
+      \EndFor
+      \State \(\mathtt{result} = p_1 \oplus p_2 \oplus \cdots \oplus p_n\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+\noindent Since the final error \(\cdb{K - 1}\) will not track the errors
+during computation, we have a non-EFT version of
+Algorithm~\ref{alg:local-error-eft}:
+
+\begin{breakablealgorithm}
+  \caption{\textit{Compute the local error (non-EFT).}}
+  \label{alg:local-error}
+
+  \begin{algorithmic}
+    \Function{\(\widehat{\ell} =
+        \mathtt{LocalError}\)}{$e, \rho, \delta b$}
+      \State \(L = \texttt{length}(e)\)
+      \\
+      \State \(\widehat{\ell} = e_1 \oplus e_2\)
+      \For{\(j = 3, \ldots, L\)}
+        \State \(\widehat{\ell} = \widehat{\ell} \oplus e_j\)
+      \EndFor
+      \\
+      \State \(\widehat{\ell} = \widehat{\ell} \oplus \left(
+          \rho \otimes \delta b\right)\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
