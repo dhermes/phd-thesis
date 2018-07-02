@@ -41,10 +41,17 @@ class Remove(object):
             os.remove(path)
 
 
-def build_tex_file(session, base, new_id, extensions=(), with_bibtex=False):
+def build_tex_file(
+    session, base, new_id, extensions=(), with_bibtex=False, use_xelatex=False
+):
     # NOTE: This assumes that ``session.chdir(get_path('doc'))``
     #       has been called.
     modify_id = get_path("scripts", "modify_pdf_id.py")
+
+    if use_xelatex:
+        session.run("xelatex", base)
+        session.run("xelatex", base)
+        return
 
     if with_bibtex:
         session.run("pdflatex", base)
@@ -70,6 +77,9 @@ def build_tex(session):
 
     if py.path.local.sysfind("pdflatex") is None:
         session.skip("`pdflatex` must be installed")
+
+    if py.path.local.sysfind("xelatex") is None:
+        session.skip("`xelatex` must be installed")
 
     if py.path.local.sysfind("bibtex") is None:
         session.skip("`bibtex` must be installed")
@@ -110,6 +120,14 @@ def build_tex(session):
         "tikz_filtration",
         "5AD16E27EBA16C57CF11C93F5CE4D079",
         extensions=("aux", "log", "out"),
+    )
+
+    build_tex_file(
+        session,
+        "thesis_talk",
+        "6A945FD7D33437399D0EB8EC77533E6C",
+        extensions=("aux", "log", "nav", "out", "snm", "toc"),
+        use_xelatex=True,
     )
 
 

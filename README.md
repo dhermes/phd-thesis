@@ -26,8 +26,9 @@ Available sessions:
 * update_requirements
 ```
 
-To run ``nox -s build_tex`` (i.e. to build the PDF), ``pdflatex`` and
-``bibtex`` are required.
+To run ``nox -s build_tex`` (i.e. to build the PDFs), ``pdflatex``,
+``xelatex`` and ``bibtex`` are required. In addition the ``metropolis``
+Beamer theme should be installed, as well as the Fira font family.
 
 [1]: doc/thesis.pdf
 [2]: https://arxiv.org/pdf/1609.00037.pdf
