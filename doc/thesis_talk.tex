@@ -8,14 +8,6 @@
   },
 }
 
-\title[Lagrange and B\'{e}zier]
-  {High-order Lagrangian Methods and Computations on Curved Elements}
-%% \subtitle{Evidence from India}
-\author{Danny Hermes}
-\institute{UC Berkeley}
-\date[August 10, 2018]{Applied Mathematics Seminar}
-\subject{Applied Mathematics}
-
 \AtBeginSection[]
 {
   \begin{frame}
@@ -25,14 +17,48 @@
 }
 
 \usetheme{metropolis}
+% Some configurations of metropolis theme
+\metroset{block=fill}
+\metroset{numbering=none}
+% Set some custom colors for the beamer theme
+\definecolor{DarkBlue}{HTML}{163a7a}
+\definecolor{jr@medblue}{RGB}{103,169,207}
+\definecolor{jr@green}{RGB}{77,175,74}
+\definecolor{jr@darkred}{RGB}{153,0,0}
+\setbeamercolor{frametitle}{bg=DarkBlue}
+\setbeamercolor{progress bar}{fg=black}
+\setbeamercolor{progress bar}{bg=black}
+% Use serif font for math
+\usefonttheme[onlymath]{serif}
+% Margins
+\setbeamersize{text margin left=0.5cm,text margin right=0.5cm}
+% Slide footer (optional)
+\setbeamertemplate{footline}[text line]{%
+\parbox{\linewidth}{\vspace*{-0.5cm}\small\hspace{11.15cm}%
+\parbox{1cm}{\raggedleft\scriptsize\insertframenumber}}}
+\setbeamertemplate{navigation symbols}{}
+
+% lmss uses the computer modern tt font, better for URLs, etc.
+\newcommand{\lmss}{\fontfamily{lmtt}\selectfont}
+
+\title[Lagrange and B\'{e}zier]
+  {High-order Lagrangian Methods and Computations on Curved Elements}
+%% \subtitle{Foo}
+\date{August 10, 2018}
+\author{Danny Hermes}
+\institute{{\lmss dhermes@berkeley.edu} \\
+           UC Berkeley}
+\titlegraphic{
+  \vspace{5cm}\hfill
+  \includegraphics[height=1.5cm]{uc_berkeley_seal.pdf}
+  \hspace{1.5cm}
+}
 
 \begin{document}
 
-\begin{frame}
-  \titlepage
-\end{frame}
+\maketitle
 
-\section[Z Section]{My section}
+\section{My section}
 
 \begin{frame}
   \frametitle{This is the first slide}
