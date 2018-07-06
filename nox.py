@@ -102,7 +102,7 @@ def build_tex(session):
         "chapter2",
         "introduction",
         "k-compensated",
-        "notation",
+        "preliminaries",
         "proofs",
     )
     for extra in extras:
