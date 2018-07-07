@@ -59,7 +59,7 @@ b(s, t) = \sum_{i + j + k = n} \binom{n}{i, j, k}
 \begin{figure}
   \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/main_figure01.pdf}
   \centering
-  \caption{Cubic B\'{e}zier surface}
+  \caption{Cubic B\'{e}zier triangle}
   \label{fig:cubic-bezier-example}
 \end{figure}
 
@@ -125,7 +125,7 @@ themselves:
     on the standard nodes \(\left\{\mathbf{n}_{\mathbf{i}}\right\}\).
 \end{itemize}
 
-\noindent For example, consider a quadratic B\'{e}zier surface:
+\noindent For example, consider a quadratic B\'{e}zier triangle:
 \begin{gather}
 b(s, t) = \left[ \begin{array}{c c}
     4 (s t + s + t) & 4 (s t + t + 1)
@@ -165,9 +165,36 @@ it is algebraic (i.e. it can be defined as the zero set of polynomials).
 
 \subsection{Curved Polygons}
 
+\begin{figure}
+  \includegraphics[width=0.625\textwidth]{../images/curved-mesh/main_figure26.pdf}
+  \centering
+  \caption{Intersection of B\'{e}zier triangles}
+  \label{fig:bezier-triangle-intersect}
+\end{figure}
+
 When intersecting two curved elements, the resulting surface will
 be defined by the boundary and the structure of the control net will
-be lost.
+be lost. For example, in Figure~\ref{fig:bezier-triangle-intersect}, a
+``curved quadrilateral'' is formed when two B\'{e}zier triangles
+\(\mathcal{T}_0\) and \(\mathcal{T}_1\) are intersected.
+
+A \textbf{curved polygon} in \(\mathbf{R}^2\) is defined by the collection
+of B\'{e}zier curves that determine the boundary. In order to be
+a valid polygon, none of the boundary curves may cross and the
+ends of consecutive edge curves must meet. For our example in
+Figure~\ref{fig:bezier-triangle-intersect}, the triangles
+have boundaries formed by three B\'{e}zier curves:
+\(\partial \mathcal{T}_0 = b_{0, 0} \cup b_{0, 1} \cup b_{0, 2}\) and
+\(\partial \mathcal{T}_1 = b_{1, 0} \cup b_{1, 1} \cup b_{1, 2}\).
+The intersection \(\mathcal{I}\) is defined by its boundary\footnote{Each
+specialization \(b\left(\left[a_1, a_2\right]\right)\) is itself
+a B\'{e}zier curve.}:
+\begin{equation}
+\partial \mathcal{I} = b_{0, 0}\left(\left[0, 1/8\right]\right) \cup
+  b_{1, 2}\left(\left[7/8, 1\right]\right) \cup
+  b_{1, 0}\left(\left[0, 1/7\right]\right) \cup
+  b_{0, 2}\left(\left[6/7, 1\right]\right).
+\end{equation}
 
 \section{Floating Point and Forward Error Analysis}
 
