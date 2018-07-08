@@ -38,10 +38,12 @@ If they are disjoint, the pair can be rejected. If not, each curve
 \(\mathcal{C} = b\left(\left[0, 1\right]\right)\) is split into two halves
 by splitting the unit interval \(b\left(\left[0, \frac{1}{2}\right]\right)\)
 and \(b\left(\left[\frac{1}{2}, 1\right]\right)\)
-(Figure~\ref{fig:bezier-curve-subdivision}). The subdivision continues
-(Figure~\ref{fig:bezier-subdivision-process}) until
-the curve segments are close to linear within a given tolerance
-(Figure~\ref{fig:bezier-subdivision-linearized}).
+(Figure~\ref{fig:bezier-curve-subdivision}). As the subdivision continues,
+some pairs of curve segments may be kept around that won't lead to an
+intersection (Figure~\ref{fig:bezier-subdivision-process}).
+Once the curve segments are close to linear within a given tolerance
+(Figure~\ref{fig:bezier-subdivision-linearized}), the process
+terminates.
 
 \begin{figure}
   \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/subdivide_curve.pdf}
@@ -58,9 +60,9 @@ the curve segments are close to linear within a given tolerance
 \end{figure}
 
 \begin{figure}
-  \includegraphics[width=0.625\textwidth]{../images/curved-mesh/subdivision_linearized.pdf}
+  \includegraphics[width=0.96875\textwidth]{../images/curved-mesh/subdivision_linearized.pdf}
   \centering
-  \caption{B\'{e}zier subdivision algorithm.}
+  \caption{Subdividing until linear within tolerance.}
   \label{fig:bezier-subdivision-linearized}
 \end{figure}
 

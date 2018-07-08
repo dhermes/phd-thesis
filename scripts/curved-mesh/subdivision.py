@@ -69,12 +69,7 @@ def image1():
     plt.close(figure)
 
 
-def plot_with_bbox(curve, ax, color=None):
-    curve.plot(256, color=color, ax=ax)
-    if color is None:
-        line = ax.lines[-1]
-        color = line.get_color()
-
+def add_patch(curve, ax, color):
     left, right, bottom, top = bezier._helpers.bbox(curve.nodes)
     polygon = np.array(
         [
@@ -90,6 +85,14 @@ def plot_with_bbox(curve, ax, color=None):
     )
     ax.add_patch(patch)
 
+
+def plot_with_bbox(curve, ax, color=None):
+    curve.plot(256, color=color, ax=ax)
+    if color is None:
+        line = ax.lines[-1]
+        color = line.get_color()
+
+    add_patch(curve, ax, color)
     return color
 
 
@@ -212,54 +215,46 @@ def image3():
     plt.close(figure)
 
 
-def plot_with_label(curve, ax, label):
-    curve.plot(256, ax=ax)
-    line = ax.lines[-1]
-    line.set_label(label)
-
-
 def image4():
     filename = "subdivision_linearized.pdf"
-    figure, (ax1, ax2) = plt.subplots(1, 2)
+    figure, all_axes = plt.subplots(2, 7)
+    all_axes = all_axes.flatten()
 
     nodes15 = np.asfortranarray([[0.25, 0.625, 1.0], [0.625, 0.25, 1.0]])
     curve15 = bezier.Curve(nodes15, degree=2)
-    plot_with_label(curve15, ax1, r"$b_0\left(\left[0, 1\right]\right)$")
     nodes25 = np.asfortranarray([[0.0, 0.25, 0.75, 1.0], [0.5, 1.0, 1.5, 0.5]])
     curve25 = bezier.Curve(nodes25, degree=3)
-    plot_with_label(curve25, ax1, r"$b_1\left(\left[0, 1\right]\right)$")
 
-    start1 = 7035.0 / 8192
-    end1 = 7036.0 / 8192
-    first = curve15.specialize(start1, end1)
-    plot_with_label(
-        first,
-        ax2,
-        r"$b_0\left(\left[\frac{7035}{8192}, \frac{7036}{8192}\right]\right)$",
-    )
-    start2 = 7155.0 / 8192
-    end2 = 7156.0 / 8192
-    second = curve25.specialize(start2, end2)
-    plot_with_label(
-        second,
-        ax2,
-        r"$b_1\left(\left[\frac{7155}{8192}, \frac{7156}{8192}\right]\right)$",
-    )
+    curve15.plot(256, ax=all_axes[0])
+    color1 = all_axes[0].lines[-1].get_color()
+    curve25.plot(256, ax=all_axes[0])
+    color2 = all_axes[0].lines[-1].get_color()
 
-    for ax in (ax1, ax2):
-        ax.axis("scaled")
-        ax.legend(loc="lower left", fontsize=13)
+    choices1 = [1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1]
+    choices2 = [1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1]
+    first = curve15
+    second = curve25
+    for i in range(13):
+        ax = all_axes[i + 1]
+        index1 = choices1[i]
+        index2 = choices2[i]
+        first = first.subdivide()[index1]
+        second = second.subdivide()[index2]
+        first.plot(256, ax=ax)
+        second.plot(256, ax=ax)
+        # After splitting, put the bounding box on the previous axis.
+        prev_ax = all_axes[i]
+        add_patch(first, prev_ax, color1)
+        add_patch(second, prev_ax, color2)
+
+    for ax in all_axes:
+        ax.axis("equal")
         ax.set_xticklabels([])
         ax.set_yticklabels([])
 
-    ax1.set_xlim(-5 * 0.035, 34 * 0.035)
-    ax1.set_ylim(-17 * 0.035, 63 * 0.035)
-    ax2.set_xlim(234364 * 0.5 ** 18, 234403 * 0.5 ** 18)
-    ax2.set_ylim(212453 * 0.5 ** 18, 212533 * 0.5 ** 18)
-
-    figure.set_size_inches(5.3, 4.96)
+    figure.set_size_inches(15.29, 4.8)
     figure.subplots_adjust(
-        left=0.0, bottom=0.02, right=1.0, top=0.98, wspace=-0.15, hspace=0.2
+        left=0.01, bottom=0.02, right=0.99, top=0.98, wspace=0.06, hspace=0.06
     )
     path = plot_utils.get_path("curved-mesh", filename)
     figure.savefig(path, bbox_inches="tight")
