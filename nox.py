@@ -99,6 +99,7 @@ def build_tex(session):
     extras = (
         "abstract",
         "algorithms",
+        "bezier-intersection",
         "chapter2",
         "introduction",
         "k-compensated",
@@ -151,6 +152,7 @@ def make_images(session):
         ("k-compensated", "smooth_drawing.py"),
         ("k-compensated", "horner_inferior.py"),
         ("k-compensated", "compensated_insufficient.py"),
+        ("curved-mesh", "subdivision.py"),
     )
     for segments in script_paths:
         script = get_path("scripts", *segments)

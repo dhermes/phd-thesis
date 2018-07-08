@@ -31,9 +31,11 @@ each Bernstein basis function
 Due to the binomial expansion
 \(1 = (s + (1 - s))^n = \sum_{j = 0}^n B_{j, n}(s)\),
 a Bernstein basis function is in
-\(\left[0, 1\right]\) when \(s\) is as well.
+\(\left[0, 1\right]\) when \(s\) is as well. Due to this fact, the
+curve must be contained in the convex hull of it's control points.
 
-A \textbf{B\'{e}zier triangle} is a mapping from the unit triangle
+A \textbf{B\'{e}zier triangle} (\cite{Farin1986}) is a mapping from the
+unit triangle
 \(\utri\) and is determined by a control net
 \(\left\{\mathbf{p}_{i, j, k}\right\}_{i + j + k = n} \subset \mathbf{R}^d\).
 For \((s, t) \in \utri\) we can define barycentric weights
@@ -173,13 +175,14 @@ it is algebraic (i.e. it can be defined as the zero set of polynomials).
 \end{figure}
 
 When intersecting two curved elements, the resulting surface will
-be defined by the boundary and the structure of the control net will
-be lost. For example, in Figure~\ref{fig:bezier-triangle-intersect}, a
+be defined by the boundary, alternating between edges of each
+element.
+For example, in Figure~\ref{fig:bezier-triangle-intersect}, a
 ``curved quadrilateral'' is formed when two B\'{e}zier triangles
 \(\mathcal{T}_0\) and \(\mathcal{T}_1\) are intersected.
 
-A \textbf{curved polygon} in \(\mathbf{R}^2\) is defined by the collection
-of B\'{e}zier curves that determine the boundary. In order to be
+A \textbf{curved polygon} is defined by a collection of B\'{e}zier curves
+in \(\mathbf{R}^2\) that determine the boundary. In order to be
 a valid polygon, none of the boundary curves may cross and the
 ends of consecutive edge curves must meet. For our example in
 Figure~\ref{fig:bezier-triangle-intersect}, the triangles
@@ -187,14 +190,19 @@ have boundaries formed by three B\'{e}zier curves:
 \(\partial \mathcal{T}_0 = b_{0, 0} \cup b_{0, 1} \cup b_{0, 2}\) and
 \(\partial \mathcal{T}_1 = b_{1, 0} \cup b_{1, 1} \cup b_{1, 2}\).
 The intersection \(\mathcal{I}\) is defined by its boundary\footnote{Each
-specialization \(b\left(\left[a_1, a_2\right]\right)\) is itself
-a B\'{e}zier curve.}:
+specialization of a B\'{e}zier curve \(b\left(\left[a_1, a_2\right]\right)\)
+is itself a B\'{e}zier curve.}:
 \begin{equation}
 \partial \mathcal{I} = b_{0, 0}\left(\left[0, 1/8\right]\right) \cup
   b_{1, 2}\left(\left[7/8, 1\right]\right) \cup
   b_{1, 0}\left(\left[0, 1/7\right]\right) \cup
   b_{0, 2}\left(\left[6/7, 1\right]\right).
 \end{equation}
+
+Though an intersection can be described in terms of the B\'{e}zier triangles,
+the structure of the control net will be lost. The region will not in general
+be able to be described by a mapping from a simple space like
+\(\utri\).
 
 \section{Floating Point and Forward Error Analysis}
 
