@@ -22,53 +22,251 @@ actual intersection. Non-transversal intersections
 have infinite condition number, but transversal intersections with
 very high condition number can also cause convergence problems.
 
-\begin{figure}
+In the the B\'{e}zier subdivision algorithm, we first check if the
+bounding boxes for the curves are disjoint
+(Figure~\ref{fig:bounding-box-check}).
+
+\begin{figure}[H]
   \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/bbox_check.pdf}
   \centering
   \caption{Bounding box check.}
   \label{fig:bounding-box-check}
 \end{figure}
 
-In the the B\'{e}zier subdivision algorithm, we first check if the
-bounding boxes for the curves are disjoint
-(Figure~\ref{fig:bounding-box-check}). We use the bounding boxes
+We use the bounding boxes
 rather than the convex hulls since they are easier to compute and
 the intersections of boxes are easier to check.
 If they are disjoint, the pair can be rejected. If not, each curve
 \(\mathcal{C} = b\left(\left[0, 1\right]\right)\) is split into two halves
-by splitting the unit interval \(b\left(\left[0, \frac{1}{2}\right]\right)\)
+by splitting the unit interval: \(b\left(\left[0, \frac{1}{2}\right]\right)\)
 and \(b\left(\left[\frac{1}{2}, 1\right]\right)\)
-(Figure~\ref{fig:bezier-curve-subdivision}). As the subdivision continues,
-some pairs of curve segments may be kept around that won't lead to an
-intersection (Figure~\ref{fig:bezier-subdivision-process}).
-Once the curve segments are close to linear within a given tolerance
-(Figure~\ref{fig:bezier-subdivision-linearized}), the process
-terminates.
+(Figure~\ref{fig:bezier-curve-subdivision}).
 
-\begin{figure}
+\begin{figure}[H]
   \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/subdivide_curve.pdf}
   \centering
   \caption{B\'{e}zier curve subdivision.}
   \label{fig:bezier-curve-subdivision}
 \end{figure}
 
-\begin{figure}
+As the subdivision continues,
+some pairs of curve segments may be kept around that won't lead to an
+intersection (Figure~\ref{fig:bezier-subdivision-process}).
+
+\begin{figure}[H]
   \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/subdivision_process.pdf}
   \centering
   \caption{B\'{e}zier subdivision algorithm.}
   \label{fig:bezier-subdivision-process}
 \end{figure}
 
-\begin{figure}
+Once the curve segments are close to linear within a given tolerance
+(Figure~\ref{fig:bezier-subdivision-linearized}), the process
+terminates.
+
+\begin{figure}[H]
   \includegraphics[width=0.96875\textwidth]{../images/curved-mesh/subdivision_linearized.pdf}
   \centering
   \caption{Subdividing until linear within tolerance.}
   \label{fig:bezier-subdivision-linearized}
 \end{figure}
 
+Once both curve segments are linear (to tolerance), the intersection is
+approximated by intersecting the lines connecting the endpoints of each
+curve segment. This approximation is used as a starting point for Newton's
+method, to find a root of \(F(s, t) = b_0(s) - b_1(t)\). Since
+\(b_0(s), b_1(t) \in \mathbf{R}^2\) we have Jacobian \(J =
+\left[ \begin{array}{c c} b_0'(s) & -b_1'(t) \end{array}\right]\).
+With these, Newton's method is
+\begin{equation}
+\left[ \begin{array}{c c} s_{n + 1} & t_{n + 1} \end{array}\right]^T =
+\left[ \begin{array}{c c} s_n & t_n \end{array}\right]^T -
+J_n^{-1} F_n.
+\end{equation}
+This also gives an indication why convergence issues occur at non-transveral
+intersections: they are exactly the intersections where the Jacobian is
+singular.
+
 \section{Intersecting B\'{e}zier Triangles}
 
-Content.
+The chief difficulty in intersecting two surfaces is intersecting their edges.
+Though this is just a part of the overall algorithm, it proved to be the
+most difficult to implement.
+
+To intersect two B\'{e}zier surfaces, we first find all points
+where the edges intersect (Figure~\ref{fig:edge-intersections}).
+
+\begin{figure}[H]
+  \includegraphics[width=0.625\textwidth]{../images/curved-mesh/main_figure21.pdf}
+  \centering
+  \caption{Edge intersections during B\'{e}zier triangle intersection.}
+  \label{fig:edge-intersections}
+\end{figure}
+
+To determine the curve segments that bound the curved polygon region(s)
+(see~\ref{sec:curved-polygons}) of intersection, we not only need to keep track
+of the coordinates of intersection, we also need to keep note of
+\textbf{which} edges the intersection occurred on and the parameters along
+each curve.
+With this information, we can classify each point of intersection
+according to which of the two curves forms the boundary of the
+curved polygon (Figure~\ref{fig:intersection-classification}).
+Using the right-hand rule we can compare the tangent
+vectors on each curve to determine which one is on the interior.
+
+\begin{figure}[H]
+  \includegraphics[width=0.625\textwidth]{../images/curved-mesh/main_figure22.pdf}
+  \centering
+  \caption{Classified intersections during B\'{e}zier triangle intersection.}
+  \label{fig:intersection-classification}
+\end{figure}
+
+This classification becomes more difficult when the curves
+are tangent at an intersection, when the intersection occurs at a corner
+of one of the surfaces or when two intersecting edges are coincident
+on the same algebraic curve (Figure~\ref{fig:intersection-difficulties}).
+
+\begin{figure}[H]
+  \includegraphics[width=0.875\textwidth]{../images/curved-mesh/main_figure23.pdf}
+  \centering
+  \caption{B\'{e}zier triangle intersection difficulties.}
+  \label{fig:intersection-difficulties}
+\end{figure}
+
+In the case of tangency, the intersection is non-transversal, hence has
+infinite condition number. In the case of coincident curves, there are
+infinitely many intersections (along the segment when the curves
+coincide) so the subdivision process breaks down.
+
+\subsubsection{Example}
+
+Consider two B\'{e}zier surfaces
+(Figure~\ref{fig:surface-surface-example})
+
+\begin{equation}
+b_0(s, t) =
+\left[ \begin{array}{c}
+    8 s \\ 8 t \end{array}\right] \qquad
+b_1(s, t) =
+\left[ \begin{array}{c}
+    2 (6 s + t - 1) \\
+    2 (8 s^2 + 8 s t - 8 s + 3 t + 2) \end{array}\right]
+\end{equation}
+\begin{figure}[H]
+  \includegraphics[width=0.96875\textwidth]{../images/curved-mesh/main_figure24.pdf}
+  \centering
+  \caption{Surface Intersection Example}
+  \label{fig:surface-surface-example}
+\end{figure}
+
+In the \textbf{first step} we find all intersections of the
+edge curves
+\begin{multline}
+E_0(r) = \left[ \begin{array}{c} 8 r \\ 0 \end{array}\right],
+E_1(r) = \left[ \begin{array}{c} 8 (1 - r) \\ 8 r \end{array}\right],
+E_2(r) = \left[ \begin{array}{c} 0 \\ 8 (1 - r) \end{array}\right], \\
+E_3(r) = \left[ \begin{array}{c} 2 (6 r - 1) \\ 4 (2 r - 1)^2 \end{array}\right],
+E_4(r) = \left[ \begin{array}{c} 10 (1 - r) \\ 2 (3 r + 2) \end{array}\right],
+E_5(r) = \left[ \begin{array}{c} - 2 r \\ 2 (5 - 3 r) \end{array}\right].
+\end{multline}
+We find three intersections
+and we classify each of them by comparing the tangent vectors
+\begin{gather}
+  I_1:
+  E_2\left(\frac{7}{9}\right) =
+E_3\left(\frac{1}{6}\right) = \frac{16}{9}
+\left[ \begin{array}{c} 0 \\ 1 \end{array}\right] \Longrightarrow
+E_2'\left(\frac{7}{9}\right) \times
+E_3'\left(\frac{1}{6}\right) = 96 \\
+I_2:
+E_0\left(\frac{1}{2}\right) =
+E_3\left(\frac{1}{2}\right) =
+\left[ \begin{array}{c} 4 \\ 0 \end{array}\right] \Longrightarrow
+E_0'\left(\frac{1}{2}\right) \times
+E_3'\left(\frac{1}{2}\right) = 0 \\
+  I_3:
+E_1\left(\frac{1}{8}\right) =
+E_3\left(\frac{3}{4}\right) =
+\left[ \begin{array}{c} 7 \\ 1 \end{array}\right] \Longrightarrow
+E_1'\left(\frac{1}{8}\right) \times
+E_3'\left(\frac{3}{4}\right) = -160.
+\end{gather}
+From here, we construct our curved polygon intersection by drawing
+from our list of intersections until none remain.
+
+\begin{itemize}
+\item First consider \(I_1\). Since
+  \(E_2' \times
+  E_3' > 0\)
+  at this point, then we consider the curve
+  \(E_3\) to be
+  \textit{interior}.
+\item After classification, we move along
+  \(E_3\) until we
+  encounter another intersection: \(I_2\)
+\item \(I_2\) is a point of tangency since
+  \(E_0'\left(\frac{1}{2}\right) \times
+  E_3'\left(\frac{1}{2}\right) = 0\).
+  Since a tangency has no impact on
+  the underlying intersection geometry, we ignore it and
+  keep moving.
+\item Continuing to move along
+  \(E_3\), we
+  encounter another intersection: \(I_3\).
+  Since
+  \(E_1' \times
+  E_3' < 0\)
+  at this point, we consider the curve
+  \(E_1\) to be
+  \textit{interior} at the intersection. Thus we stop moving
+  along \(E_3\)
+  and we have our first curved segment:
+  \(E_3\left(\left[
+    \frac{1}{6}, \frac{3}{4}\right]\right)\)
+\item Finding no other intersections on \(E_1\)
+  we continue until the end of the edge.
+  Now our (ordered) curved segments are:
+  \begin{equation}
+  E_3\left(\left[
+    \frac{1}{6}, \frac{3}{4}\right]\right) \longrightarrow
+  E_1\left(\left[
+    \frac{1}{8}, 1\right]\right).
+  \end{equation}
+\item Next we stay at the corner and switch to the next curve
+  \(E_2\), moving along that curve
+  until we hit the next intersecton \(I_1\).
+  Now our (ordered) curved segments are:
+  \begin{equation}
+  E_3\left(\left[
+    \frac{1}{6}, \frac{3}{4}\right]\right) \longrightarrow
+  E_1\left(\left[
+    \frac{1}{8}, 1\right]\right) \longrightarrow
+  E_2\left(\left[
+    0, \frac{7}{9}\right]\right).
+  \end{equation}
+  Since we are now back where we started (at \(I_1\))
+  the process stops
+\end{itemize}
+We represent the boundary of the curved polygon as B\'{e}zier curves, so
+to complete the process we reparameterize (\cite[Ch.~5.4]{Farin2001}) each
+curve onto the relevant interval. For example,
+\(E_3\) has control points
+\(p_0 = \left[ \begin{array}{c} -2 \\ 4 \end{array}\right]\),
+\(p_1 = \left[ \begin{array}{c} 4 \\ -4 \end{array}\right]\),
+\(p_2 = \left[ \begin{array}{c} 10 \\ 4 \end{array}\right]\)
+and we reparameterize on \(\left[\frac{1}{6}, \frac{3}{4}\right]\) to control
+points
+\begin{align}
+  q_0 &= E_3\left(\frac{1}{6}\right) =
+  \frac{16}{9} \left[ \begin{array}{c} 0 \\ 1 \end{array}\right] \\
+  q_1 &= \left(1 - \frac{1}{6}\right) \left[\left(1 - \frac{3}{4}\right) p_0 +
+    \frac{3}{4} p_1\right] +
+    \frac{1}{6} \left[\left(1 - \frac{3}{4}\right) p_1 +
+    \frac{3}{4} p_2\right] = \frac{1}{6} \left[
+    \begin{array}{c} 21 \\ -8 \end{array}\right] \\
+  q_2 &= E_3\left(\frac{3}{4}\right) = \left[
+    \begin{array}{c} 7 \\ 1 \end{array}\right].
+\end{align}
 
 \section{B\'{e}zier Triangle Inverse}
 
