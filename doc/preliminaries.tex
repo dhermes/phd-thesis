@@ -14,7 +14,38 @@ when \(i + j + k = n\). The notation \(\delta_{ij}\) represents the
 Kronecker delta, a value which is \(1\) when \(i = j\) and \(0\)
 otherwise.
 
-\section{B\'{e}zier Curves and Triangles}
+\section{Floating Point and Forward Error Analysis}
+
+We assume all floating point operations obey
+\begin{equation}
+  a \star b = \fl{a \circ b} = (a \circ b)(1 + \delta_1) =
+  (a \circ b) / (1 + \delta_2)
+\end{equation}
+where \(\star \in \left\{\oplus, \ominus, \otimes, \oslash\right\}\), \(\circ
+\in \left\{+, -, \times, \div\right\}\) and \(\left|\delta_1\right|,
+\left|\delta_2\right| \leq \mach\). The symbol \(\mach\) is the unit round-off
+and \(\star\) is a floating point operation, e.g.
+\(a \oplus b = \fl{a + b}\). (For IEEE-754 floating point double precision,
+\(\mach = 2^{-53}\).) We denote the computed result of
+\(\alpha \in \mathbf{R}\) in floating point arithmetic by
+\(\widehat{\alpha}\) or \(\fl{\alpha}\) and use \(\mathbf{F}\) as the set of
+all floating point numbers (see \cite{Higham2002} for more details).
+Following \cite{Higham2002}, we will use the following classic properties in
+error analysis.
+
+\begin{enumerate}
+  \item If \(\delta_i \leq \mach\), \(\rho_i = \pm 1\), then
+      \(\prod_{i = 1}^n (1 + \delta_i)^{\rho_i} = 1 + \theta_n\),
+  \item \(\left|\theta_n\right| \leq \gamma_n \coloneqq
+      n \mach / (1 - n \mach)\),
+  \item \((1 + \theta_k)(1 + \theta_j) = 1 + \theta_{k + j}\),
+  \item \(\gamma_k + \gamma_j + \gamma_k \gamma_j \leq \gamma_{k + j}
+    \Longleftrightarrow (1 + \gamma_k)(1 + \gamma_j) \leq 1 + \gamma_{k + j}\),
+  \item \((1 + \mach)^j \leq 1 / (1 - j \mach) \Longleftrightarrow
+  (1 + \mach)^j - 1 \leq \gamma_j\).
+\end{enumerate}
+
+\section{B\'{e}zier Curves}
 
 A \textbf{B\'{e}zier curve} is a mapping from the unit interval
 that is determined by a set of control points
@@ -33,6 +64,92 @@ Due to the binomial expansion
 a Bernstein basis function is in
 \(\left[0, 1\right]\) when \(s\) is as well. Due to this fact, the
 curve must be contained in the convex hull of it's control points.
+
+\subsection{de Casteljau Algorithm}
+
+Next, we recall\footnote{We have used slightly non-standard notation for the
+terms produced by the de Casteljau algorithm: we start the superscript at
+\(n\) and count down to \(0\) as is typically done when describing Horner's
+algorithm. For example, we use \(b_j^{(n - 2)}\) instead of
+\(b_j^{(2)}\).} the de Casteljau algorithm:
+
+\begin{breakablealgorithm}
+  \caption{\textit{de Casteljau algorithm for polynomial evaluation.}}
+  \label{alg:de-casteljau}
+
+  \begin{algorithmic}
+    \Function{\(\mathtt{result} = \mathtt{DeCasteljau}\)}{$b, s$}
+      \State \(n = \texttt{length}(b) - 1\)
+      \State \(\widehat{r} = 1 \ominus s\)
+      \\
+      \For{\(j = 0, \ldots, n\)}
+        \State \(\widehat{b}_j^{(n)} = b_j\)
+      \EndFor
+      \\
+      \For{\(k = n - 1, \ldots, 0\)}
+        \For{\(j = 0, \ldots, k\)}
+          \State \(\widehat{b}_j^{(k)} = \left(
+              \widehat{r} \otimes \widehat{b}_j^{(k + 1)}\right) \oplus
+              \left(s \otimes \widehat{b}_{j + 1}^{(k + 1)}\right)\)
+        \EndFor
+      \EndFor
+      \\
+      \State \(\mathtt{result} = \widehat{b}_0^{(0)}\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+\begin{theorem}[\cite{Mainar1999}, Corollary 3.2]
+If \(p(s) = \sum_{j = 0}^n b_j B_{j, n}(s)\) and \(\mathtt{DeCasteljau}(p, s)\)
+is the value computed by the de Casteljau algorithm then\footnote{In the
+original paper the factor on \(\widetilde{p}(s)\) is \(\gamma_{2n}\),
+but the authors did not consider round-off when computing
+\(1 \ominus s\).}
+\begin{equation}
+\left|p(s) - \mathtt{DeCasteljau}(p, s)\right| \leq \gamma_{3n}
+\sum_{j = 0}^n \left|b_j\right| B_{j, n}(s).
+\end{equation}
+\end{theorem}
+
+The relative condition number of the evaluation of \(p(s) = \sum_{j = 0}^n
+b_j B_{j, n}(s)\) in Bernstein form used in this paper is (see
+\cite{Mainar1999}, \cite{Farouki1987}):
+\begin{equation}
+\cond{p, s} = \frac{\widetilde{p}(s)}{\left|p(s)\right|},
+\end{equation}
+where
+\(\widetilde{p}(s) \coloneqq \sum_{j = 0}^n \left|b_j\right| B_{j, n}(s)\).
+
+To be able to express the algorithm in matrix form, we define
+the vectors
+\begin{equation}
+b^{(k)} = \left[\begin{array}{c c c} b_0^{(k)} & \cdots &
+b_k^{(k)}\end{array}\right]^T, \quad
+\widehat{b}^{(k)} = \left[\begin{array}{c c c} \widehat{b}_0^{(k)} & \cdots &
+    \widehat{b}_k^{(k)}\end{array}\right]^T
+\end{equation}
+and the reduction matrices:
+\begin{equation}
+U_k = U_k(s) = \left[\begin{array}{c c c c c c}
+    1 - s  & s      & 0      & \cdots & \cdots & 0      \\
+    0      & 1 - s  & s      & \ddots &        & \vdots \\
+    \vdots & \ddots & \ddots & \ddots & \ddots & \vdots \\
+    \vdots &        & \ddots & \ddots & \ddots & 0 \\
+    0      & \cdots & \cdots & 0      & 1 - s  & s
+\end{array}\right] \in \mathbf{R}^{k \times (k + 1)}.
+\end{equation}
+With this, we can express (\cite{Mainar1999}) the de Casteljau algorithm as
+\begin{equation}\label{matrix-de-casteljau}
+b^{(k)} = U_{k + 1} b^{(k + 1)}
+\Longrightarrow b^{(0)} = U_1 \cdots U_n b^{(n)}.
+\end{equation}
+
+In general, for a sequence \(v_0, \ldots, v_n\) we'll refer to \(v\)
+as the vector containing all of the values:
+\(v = \left[\begin{array}{c c c} v_0 & \cdots &
+    v_n\end{array}\right]^T.\)
+
+\section{B\'{e}zier Triangles}
 
 A \textbf{B\'{e}zier triangle} (\cite{Farin1986}) is a mapping from the
 unit triangle
@@ -204,37 +321,6 @@ the structure of the control net will be lost. The region will not in general
 be able to be described by a mapping from a simple space like
 \(\utri\).
 
-\section{Floating Point and Forward Error Analysis}
-
-We assume all floating point operations obey
-\begin{equation}
-  a \star b = \fl{a \circ b} = (a \circ b)(1 + \delta_1) =
-  (a \circ b) / (1 + \delta_2)
-\end{equation}
-where \(\star \in \left\{\oplus, \ominus, \otimes, \oslash\right\}\), \(\circ
-\in \left\{+, -, \times, \div\right\}\) and \(\left|\delta_1\right|,
-\left|\delta_2\right| \leq \mach\). The symbol \(\mach\) is the unit round-off
-and \(\star\) is a floating point operation, e.g.
-\(a \oplus b = \fl{a + b}\). (For IEEE-754 floating point double precision,
-\(\mach = 2^{-53}\).) We denote the computed result of
-\(\alpha \in \mathbf{R}\) in floating point arithmetic by
-\(\widehat{\alpha}\) or \(\fl{\alpha}\) and use \(\mathbf{F}\) as the set of
-all floating point numbers (see \cite{Higham2002} for more details).
-Following \cite{Higham2002}, we will use the following classic properties in
-error analysis.
-
-\begin{enumerate}
-  \item If \(\delta_i \leq \mach\), \(\rho_i = \pm 1\), then
-      \(\prod_{i = 1}^n (1 + \delta_i)^{\rho_i} = 1 + \theta_n\),
-  \item \(\left|\theta_n\right| \leq \gamma_n \coloneqq
-      n \mach / (1 - n \mach)\),
-  \item \((1 + \theta_k)(1 + \theta_j) = 1 + \theta_{k + j}\),
-  \item \(\gamma_k + \gamma_j + \gamma_k \gamma_j \leq \gamma_{k + j}
-    \Longleftrightarrow (1 + \gamma_k)(1 + \gamma_j) \leq 1 + \gamma_{k + j}\),
-  \item \((1 + \mach)^j \leq 1 / (1 - j \mach) \Longleftrightarrow
-  (1 + \mach)^j - 1 \leq \gamma_j\).
-\end{enumerate}
-
 \section{Error-Free Transformation}
 
 An error-free transformation is a computational method where both
@@ -262,87 +348,3 @@ The letters \(\sigma\) and \(\pi\) are used to indicate that the
 errors came from sum and product, respectively. See
 Appendix~\ref{chap:appendix-algo} for implementation details.
 \end{theorem}
-
-\section{de Casteljau Algorithm}
-
-Next, we recall\footnote{We have used slightly non-standard notation for the
-terms produced by the de Casteljau algorithm: we start the superscript at
-\(n\) and count down to \(0\) as is typically done when describing Horner's
-algorithm. For example, we use \(b_j^{(n - 2)}\) instead of
-\(b_j^{(2)}\).} the de Casteljau algorithm:
-
-\begin{breakablealgorithm}
-  \caption{\textit{de Casteljau algorithm for polynomial evaluation.}}
-  \label{alg:de-casteljau}
-
-  \begin{algorithmic}
-    \Function{\(\mathtt{result} = \mathtt{DeCasteljau}\)}{$b, s$}
-      \State \(n = \texttt{length}(b) - 1\)
-      \State \(\widehat{r} = 1 \ominus s\)
-      \\
-      \For{\(j = 0, \ldots, n\)}
-        \State \(\widehat{b}_j^{(n)} = b_j\)
-      \EndFor
-      \\
-      \For{\(k = n - 1, \ldots, 0\)}
-        \For{\(j = 0, \ldots, k\)}
-          \State \(\widehat{b}_j^{(k)} = \left(
-              \widehat{r} \otimes \widehat{b}_j^{(k + 1)}\right) \oplus
-              \left(s \otimes \widehat{b}_{j + 1}^{(k + 1)}\right)\)
-        \EndFor
-      \EndFor
-      \\
-      \State \(\mathtt{result} = \widehat{b}_0^{(0)}\)
-    \EndFunction
-  \end{algorithmic}
-\end{breakablealgorithm}
-
-\begin{theorem}[\cite{Mainar1999}, Corollary 3.2]
-If \(p(s) = \sum_{j = 0}^n b_j B_{j, n}(s)\) and \(\mathtt{DeCasteljau}(p, s)\)
-is the value computed by the de Casteljau algorithm then\footnote{In the
-original paper the factor on \(\widetilde{p}(s)\) is \(\gamma_{2n}\),
-but the authors did not consider round-off when computing
-\(1 \ominus s\).}
-\begin{equation}
-\left|p(s) - \mathtt{DeCasteljau}(p, s)\right| \leq \gamma_{3n}
-\sum_{j = 0}^n \left|b_j\right| B_{j, n}(s).
-\end{equation}
-\end{theorem}
-
-The relative condition number of the evaluation of \(p(s) = \sum_{j = 0}^n
-b_j B_{j, n}(s)\) in Bernstein form used in this paper is (see
-\cite{Mainar1999}, \cite{Farouki1987}):
-\begin{equation}
-\cond{p, s} = \frac{\widetilde{p}(s)}{\left|p(s)\right|},
-\end{equation}
-where
-\(\widetilde{p}(s) \coloneqq \sum_{j = 0}^n \left|b_j\right| B_{j, n}(s)\).
-
-To be able to express the algorithm in matrix form, we define
-the vectors
-\begin{equation}
-b^{(k)} = \left[\begin{array}{c c c} b_0^{(k)} & \cdots &
-b_k^{(k)}\end{array}\right]^T, \quad
-\widehat{b}^{(k)} = \left[\begin{array}{c c c} \widehat{b}_0^{(k)} & \cdots &
-    \widehat{b}_k^{(k)}\end{array}\right]^T
-\end{equation}
-and the reduction matrices:
-\begin{equation}
-U_k = U_k(s) = \left[\begin{array}{c c c c c c}
-    1 - s  & s      & 0      & \cdots & \cdots & 0      \\
-    0      & 1 - s  & s      & \ddots &        & \vdots \\
-    \vdots & \ddots & \ddots & \ddots & \ddots & \vdots \\
-    \vdots &        & \ddots & \ddots & \ddots & 0 \\
-    0      & \cdots & \cdots & 0      & 1 - s  & s
-\end{array}\right] \in \mathbf{R}^{k \times (k + 1)}.
-\end{equation}
-With this, we can express (\cite{Mainar1999}) the de Casteljau algorithm as
-\begin{equation}\label{matrix-de-casteljau}
-b^{(k)} = U_{k + 1} b^{(k + 1)}
-\Longrightarrow b^{(0)} = U_1 \cdots U_n b^{(n)}.
-\end{equation}
-
-In general, for a sequence \(v_0, \ldots, v_n\) we'll refer to \(v\)
-as the vector containing all of the values:
-\(v = \left[\begin{array}{c c c} v_0 & \cdots &
-    v_n\end{array}\right]^T.\)
