@@ -152,6 +152,7 @@ def make_images(session):
         ("k-compensated", "smooth_drawing.py"),
         ("k-compensated", "horner_inferior.py"),
         ("k-compensated", "compensated_insufficient.py"),
+        ("curved-mesh", "deform.py"),
         ("curved-mesh", "subdivision.py"),
     )
     for segments in script_paths:

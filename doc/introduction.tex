@@ -1,5 +1,59 @@
 \chapter{Introduction}
 
+The method of characteristics helps transform partial differential equations
+into ordinary differential equations by dividing the physical domain into
+a family of curves. For example, the simple transport equation
+\begin{equation}\label{eq:simple-transport}
+u_t + c u_x = 0
+\end{equation}
+can be transformed when restricting to the family of lines
+\(x(t) = x_0 + c t\). On these lines \(f(t) = u(x(t), t)\) is constant, by
+construction, and so the solution is ``transported'' from \(u(x_0, 0)\)
+along each line.
+
+Motivated by this, \textbf{Lagrangian methods} treat each point in the
+physical domain as a ``particle'' which moves along a characteristic curve
+over time and then monitor values associated with the particle (heat / energy,
+velocity, pressure, etc.). They are an effective way to solve PDEs,
+even with higher order or non-linear terms.
+For example, if we add a viscosity term to~\eqref{eq:simple-transport}
+\begin{equation}
+u_t + c u_x - \eps u_{xx} = 0
+\end{equation}
+then the same characteristics can be used, but the value \(f(t) = u(x(t), t)\)
+along each characteristic is no longer constant; instead it satisfies the
+ODE \(f' = \eps u_{xx}\).
+
+\begin{figure}
+  \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/mesh_deformation.pdf}
+  \centering
+  \caption{Deformation of elements caused by mesh adaptivity.}
+  \label{fig:mesh-deformation}
+\end{figure}
+
+This approach transforms the numerical solution of PDEs into a family of
+numerical solutions to many independent ODEs. It allows the use of familiar
+and well understood ODE solvers. When solving PDEs on unstructured meshes
+with Lagrangian methods, the nodes that determine the mesh move (since they
+are treated like particles) and the mesh adapts. However, mesh adaptivity
+can cause problems if it causes the mesh to leave the domain being
+analyzed or if it deforms the mesh until the element quality is too low
+in some mesh elements.
+For an example of such deformation (Figure~\ref{fig:mesh-deformation}),
+consider a PDE of the form
+\begin{equation}
+u_t + \left[ \begin{array}{c} y^2 \\ 1 \end{array}\right] \cdot \nabla u +
+  F\left(u, \nabla u\right) = 0.
+\end{equation}
+This has characteristics given by
+\begin{equation}
+x' = y^2, \; y' = 1 \Longrightarrow
+y(t) = y_0 + t, \; x(t) = x_0 + \frac{1}{3}\left(y(t)^3 - y_0^3\right)
+\end{equation}
+and after just one second the mesh becomes unusable.
+
+\section{CAD}
+
 In computer aided geometric design, polynomials are usually expressed in
 Bernstein form. Polynomials in this form are usually evaluated by the
 de Casteljau algorithm. This algorithm has a round-off error bound
