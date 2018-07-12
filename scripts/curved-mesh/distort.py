@@ -10,12 +10,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import bezier
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.spatial.qhull
 import shapely.geometry
 
 import plot_utils
+
+
+ALPHA = 0.375
+
+
+def point_on_characteristic(xv, yv, t):
+    yt = yv + t
+    xt = xv + (yt * yt * yt - yv * yv * yv) / 3
+    return xt, yt
+
+
+def get_title(t):
+    if t == int(t):
+        return "$t = {:d}.0$".format(int(t))
+    else:
+        return "$t = {:g}$".format(t)
 
 
 def plot_exterior(
@@ -46,7 +63,7 @@ def plot_exterior(
         nodes[:, 1],
         triangles,
         color=plot_utils.GREEN,
-        alpha=0.375,
+        alpha=ALPHA,
     )
 
 
@@ -174,8 +191,7 @@ def plot_distorted(filename, exterior=False):
     for index in range(9):
         ax = all_axes[index]
         t = 0.125 * index
-        yt = nodes_y + t
-        xt = nodes_x + (yt * yt * yt - nodes_y * nodes_y * nodes_y) / 3
+        xt, yt = point_on_characteristic(nodes_x, nodes_y, t)
         ax.triplot(xt, yt, triangles, color=plot_utils.BLUE)
 
         if exterior:
@@ -198,10 +214,7 @@ def plot_distorted(filename, exterior=False):
                 ax,
                 custom_tris=custom_tris,
             )
-        if t == int(t):
-            title = "$t = {:d}.0$".format(int(t))
-        else:
-            title = "$t = {:g}$".format(t)
+        title = get_title(t)
         ax.set_title(title)
         # Set the axis.
         ax.axis("scaled")
@@ -231,9 +244,127 @@ def plot_distorted(filename, exterior=False):
     plt.close(figure)
 
 
+def distort_cubic_tri():
+    node1 = np.array([-0.75, 0.0])
+    node2 = np.array([2.25, -1.5])
+    node3 = np.array([1.5, 1.5])
+    control_points = np.array(
+        [
+            node1,
+            0.5 * (node1 + node2),
+            node2,
+            0.5 * (node1 + node3),
+            0.5 * (node2 + node3),
+            node3,
+        ]
+    )
+
+    figure, all_axes = plt.subplots(2, 3)
+    min_y = -1.65
+    max_y = 2.8
+    control_x = control_points[:, 0]
+    control_y = control_points[:, 1]
+    bezier_nodes = np.empty((2, len(control_x)), order="F")
+
+    # First add characteristic curves to the top row of axes.
+    for i, xv in enumerate(control_x):
+        yv = control_y[i]
+        min_t = min_y - yv
+        max_t = max_y - yv
+        t_vals = np.linspace(min_t, max_t, 100)
+        to_plot = point_on_characteristic(xv, yv, t_vals)
+        for ax in all_axes[0, :]:
+            ax.plot(
+                to_plot[0], to_plot[1], color=plot_utils.GREEN, alpha=ALPHA
+            )
+
+    for index, ax_top in enumerate(all_axes[0, :]):
+        t = 0.5 * index
+        xt, yt = point_on_characteristic(control_x, control_y, t)
+
+        corner_x = xt[(0, 2, 5, 0),]
+        corner_y = yt[(0, 2, 5, 0),]
+        ax_top.plot(corner_x, corner_y)
+
+        title = get_title(t)
+        ax_top.set_title(title)
+
+        # Now plot the curved element in the "below" axis".
+        ax_below = all_axes[1, index]
+        # NOTE: This assumes quadratic nodes.
+        bezier_nodes[:, 0] = xt[0], yt[0]
+        bezier_nodes[:, 1] = (
+            2.0 * xt[1] - 0.5 * xt[0] - 0.5 * xt[2],
+            2.0 * yt[1] - 0.5 * yt[0] - 0.5 * yt[2],
+        )
+        bezier_nodes[:, 2] = xt[2], yt[2]
+        bezier_nodes[:, 3] = (
+            2.0 * xt[3] - 0.5 * xt[0] - 0.5 * xt[5],
+            2.0 * yt[3] - 0.5 * yt[0] - 0.5 * yt[5],
+        )
+        bezier_nodes[:, 4] = (
+            2.0 * xt[4] - 0.5 * xt[2] - 0.5 * xt[5],
+            2.0 * yt[4] - 0.5 * yt[2] - 0.5 * yt[5],
+        )
+        bezier_nodes[:, 5] = xt[5], yt[5]
+        surface = bezier.Surface.from_nodes(bezier_nodes)
+        surface.plot(256, ax=ax_below)
+
+        # Add "nodes" to both plots.
+        for ax in (ax_top, ax_below):
+            ax.plot(
+                xt,
+                yt,
+                color="black",
+                marker="o",
+                linestyle="None",
+                markersize=6,
+            )
+        # Add shadow "nodes" to top row for "next" plots.
+        for next_index in range(index + 1, 3):
+            ax = all_axes[0, next_index]
+            ax.plot(
+                xt,
+                yt,
+                color="black",
+                alpha=0.5 - 0.25 * (next_index - index - 1),
+                marker="o",
+                linestyle="None",
+                markersize=6,
+            )
+
+    for ax in all_axes.flatten():
+        ax.axis("scaled")
+        ax.set_xlim(-1.0, 5.9)
+        ax.set_ylim(min_y, max_y)
+    for ax in all_axes[:, 1:].flatten():
+        ax.set_yticklabels([])
+    for ax in all_axes[0, :].flatten():
+        ax.set_xticklabels([])
+    for ax in all_axes[:, 0]:
+        ax.set_yticks([-1.5, -0.5, 0.5, 1.5, 2.5])
+        ax.set_yticklabels(["$-1.5$", "$-0.5$", "$0.5$", "$1.5$", "$2.5$"])
+    for ax in all_axes[1, :]:
+        ax.set_xticks([0.0, 1.0, 2.0, 3.0, 4.0, 5.0])
+        ax.set_xticklabels(
+            ["$0.0$", "$1.0$", "$2.0$", "$3.0$", "$4.0$", "$5.0$"]
+        )
+
+    figure.set_size_inches(13.0, 6.37)
+    figure.subplots_adjust(
+        left=0.03, bottom=0.05, right=1.0, top=0.95, wspace=0.03, hspace=-0.03
+    )
+    filename = "element_distortion.pdf"
+    path = plot_utils.get_path("curved-mesh", filename)
+    figure.savefig(path, bbox_inches="tight")
+    print("Saved {}".format(filename))
+    plt.close(figure)
+
+
 def main():
     plot_distorted("mesh_distortion.pdf")
     plot_distorted("mesh_distortion_ext.pdf", exterior=True)
+    distort_cubic_tri()
 
 
 if __name__ == "__main__":
