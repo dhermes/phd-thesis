@@ -47,11 +47,11 @@ ODE \(\frac{d}{dt} u(x(t), t) = \eps u_{xx}\).
 This approach transforms the numerical solution of PDEs into a family of
 numerical solutions to many independent ODEs. It allows the use of familiar
 and well understood ODE solvers. In addition, Lagrangian methods often
-have less restrictive conditions on time steps than Eulerian methods.
+have less restrictive conditions on time steps than Eulerian
+methods\footnote{In Eulerian methods, the mesh is fixed.}.
 When solving PDEs on unstructured meshes
 with Lagrangian methods, the nodes that determine the mesh move (since they
-are treated like particles) and the mesh adapts. However, mesh adaptivity
-(\cite{Dukowicz1987, Jiao2004, Babuska1978})
+are treated like particles) and the mesh ``travels''. However, mesh changes
 can cause problems if it causes the mesh to leave the domain being
 analyzed or if it distorts the mesh until the element quality is too low
 in some mesh elements.
@@ -64,6 +64,12 @@ u_t + \left[ \begin{array}{c} y^2 \\ 1 \end{array}\right] \cdot \nabla u +
 The characteristics \(y(t) = y_0 + t, x(t) = x_0 +
 \left(y(t)^3 - y_0^3\right)/3\)
 distort the mesh considerably after just one second.
+
+Adaptive: \cite{Dukowicz1987, Babuska1978}, Data transfer:
+\cite{Jiao2004, Farrell2009, Farrell2011} (In many applications, the field
+must be conserved for physical reasons,
+e.g. mass or energy cannot leave or enter the system),
+Original ALE paper: \cite{Hirt1974}.
 
 %% Excerpt from DK87
 %% Traditionally, numerical fluid dynamics has taken the form of
@@ -101,21 +107,6 @@ distort the mesh considerably after just one second.
 %% ven element of the target mesh, which are very difficult to inte-
 %% grate by numerical quadrature schemes.
 
-Original ALE paper: \cite{Hirt1974}
-
-In \cite{Farrell2009, Farrell2011}, stuff happens
-
-In many applications, the field must be conserved for physical reasons,
-e.g. mass or energy cannot leave or enter the system.
-
-\begin{figure}
-  \includegraphics[width=0.9375\textwidth]
-                  {../images/curved-mesh/mesh_distortion_ext.pdf}
-  \centering
-  \caption{Handling partially overlapping meshes.}
-  \label{fig:mesh-distortion-ext}
-\end{figure}
-
 \begin{figure}
   \includegraphics[width=0.9375\textwidth]
                   {../images/curved-mesh/element_distortion.pdf}
@@ -124,6 +115,14 @@ e.g. mass or energy cannot leave or enter the system.
     by particle motion along the velocity field \(\left[ y^2 \; 1 \right]^T\)
     from \(t = 0\) to \(t = 1\) with \(\Delta t = 1/2\).}
   \label{fig:element-distortion}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/curved-mesh/mesh_distortion_ext.pdf}
+  \centering
+  \caption{Handling partially overlapping meshes.}
+  \label{fig:mesh-distortion-ext}
 \end{figure}
 
 \section{CAD}
