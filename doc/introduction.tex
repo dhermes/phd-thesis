@@ -25,10 +25,13 @@ along each characteristic is no longer constant; instead it satisfies the
 ODE \(\frac{d}{dt} u(x(t), t) = \eps u_{xx}\).
 
 \begin{figure}
-  \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/mesh_deformation.pdf}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/curved-mesh/mesh_distortion.pdf}
   \centering
-  \caption{Deformation of elements caused by particle motion.}
-  \label{fig:mesh-deformation}
+  \caption{Distortion of regular mesh caused by particle motion along
+    the velocity field \(\left[ y^2 \; 1 \right]^T\) from \(t = 0\)
+    to \(t = 1\) with \(\Delta t = 1/8\).}
+  \label{fig:mesh-distortion}
 \end{figure}
 
 This approach transforms the numerical solution of PDEs into a family of
@@ -40,20 +43,17 @@ with Lagrangian methods, the nodes that determine the mesh move (since they
 are treated like particles) and the mesh adapts. However, mesh adaptivity
 (\cite{Dukowicz1987, Jiao2004, Babuska1978})
 can cause problems if it causes the mesh to leave the domain being
-analyzed or if it deforms the mesh until the element quality is too low
+analyzed or if it distorts the mesh until the element quality is too low
 in some mesh elements.
-For an example of such deformation (Figure~\ref{fig:mesh-deformation}),
+For an example of such distortion (Figure~\ref{fig:mesh-distortion}),
 consider a PDE of the form
 \begin{equation}
 u_t + \left[ \begin{array}{c} y^2 \\ 1 \end{array}\right] \cdot \nabla u +
   F\left(u, \nabla u\right) = 0.
 \end{equation}
-This has characteristics given by
-\begin{equation}
-x' = y^2, \; y' = 1 \Longrightarrow
-y(t) = y_0 + t, \; x(t) = x_0 + \frac{1}{3}\left(y(t)^3 - y_0^3\right)
-\end{equation}
-and after just one second the mesh becomes unusable.
+The characteristics \(y(t) = y_0 + t, x(t) = x_0 +
+\left(y(t)^3 - y_0^3\right)/3\)
+distort the mesh considerably after just one second.
 
 %% Excerpt from DK87
 %% Traditionally, numerical fluid dynamics has taken the form of
@@ -99,10 +99,11 @@ In many applications, the field must be conserved for physical reasons,
 e.g. mass or energy cannot leave or enter the system.
 
 \begin{figure}
-  \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/mesh_deformation_ext.pdf}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/curved-mesh/mesh_distortion_ext.pdf}
   \centering
   \caption{Handling partially overlapping meshes.}
-  \label{fig:mesh-deformation-ext}
+  \label{fig:mesh-distortion-ext}
 \end{figure}
 
 \section{CAD}

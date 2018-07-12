@@ -50,7 +50,7 @@ def plot_exterior(
     )
 
 
-def plot_deformed(filename, exterior=False):
+def plot_distorted(filename, exterior=False):
     nodes_x = np.array(
         [
             -1.0,
@@ -232,8 +232,8 @@ def plot_deformed(filename, exterior=False):
 
 
 def main():
-    plot_deformed("mesh_deformation.pdf")
-    plot_deformed("mesh_deformation_ext.pdf", exterior=True)
+    plot_distorted("mesh_distortion.pdf")
+    plot_distorted("mesh_distortion_ext.pdf", exterior=True)
 
 
 if __name__ == "__main__":
