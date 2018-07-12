@@ -18,6 +18,13 @@ import os
 import seaborn
 
 
+_COLORS = seaborn.color_palette(palette="deep", n_colors=6)
+BLUE = _COLORS[0]
+GREEN = _COLORS[1]
+RED = _COLORS[2]
+del _COLORS
+
+
 def set_styles():
     """Set the styles used for plotting."""
     seaborn.set(style="white")

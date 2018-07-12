@@ -7,35 +7,38 @@ a family of curves. For example, the simple transport equation
 u_t + c u_x = 0
 \end{equation}
 can be transformed when restricting to the family of lines
-\(x(t) = x_0 + c t\). On these lines \(f(t) = u(x(t), t)\) is constant, by
+\(x(t) = x_0 + c t\). On these lines \(u(x(t), t)\) is constant, by
 construction, and so the solution is ``transported'' from \(u(x_0, 0)\)
-along each line.
+along each characteristic line.
 
 Motivated by this, \textbf{Lagrangian methods} treat each point in the
 physical domain as a ``particle'' which moves along a characteristic curve
 over time and then monitor values associated with the particle (heat / energy,
-velocity, pressure, etc.). They are an effective way to solve PDEs,
-even with higher order or non-linear terms.
+velocity, pressure, density, concentration, etc.). They are an effective way
+to solve PDEs, even with higher order or non-linear terms.
 For example, if we add a viscosity term to~\eqref{eq:simple-transport}
 \begin{equation}
 u_t + c u_x - \eps u_{xx} = 0
 \end{equation}
-then the same characteristics can be used, but the value \(f(t) = u(x(t), t)\)
+then the same characteristics can be used, but the value
 along each characteristic is no longer constant; instead it satisfies the
-ODE \(f' = \eps u_{xx}\).
+ODE \(\frac{d}{dt} u(x(t), t) = \eps u_{xx}\).
 
 \begin{figure}
   \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/mesh_deformation.pdf}
   \centering
-  \caption{Deformation of elements caused by mesh adaptivity.}
+  \caption{Deformation of elements caused by particle motion.}
   \label{fig:mesh-deformation}
 \end{figure}
 
 This approach transforms the numerical solution of PDEs into a family of
 numerical solutions to many independent ODEs. It allows the use of familiar
-and well understood ODE solvers. When solving PDEs on unstructured meshes
+and well understood ODE solvers. In addition, Lagrangian methods often
+have less restrictive conditions on time steps than Eulerian methods.
+When solving PDEs on unstructured meshes
 with Lagrangian methods, the nodes that determine the mesh move (since they
 are treated like particles) and the mesh adapts. However, mesh adaptivity
+(\cite{Dukowicz1987, Jiao2004, Babuska1978})
 can cause problems if it causes the mesh to leave the domain being
 analyzed or if it deforms the mesh until the element quality is too low
 in some mesh elements.
@@ -51,6 +54,56 @@ x' = y^2, \; y' = 1 \Longrightarrow
 y(t) = y_0 + t, \; x(t) = x_0 + \frac{1}{3}\left(y(t)^3 - y_0^3\right)
 \end{equation}
 and after just one second the mesh becomes unusable.
+
+%% Excerpt from DK87
+%% Traditionally, numerical fluid dynamics has taken the form of
+%% Lagrangian or Eulerian methods. Lagrangian methods, in which the computational
+%% mesh travels with the fluid, are ideal for the many problems which involve interfaces
+%% between materials or free surfaces. However, multidimensional Lagrangian calculations
+%% can typically be carried out for only a limited time before severe mesh distortion, or
+%% even mesh tangling, destroys the calculation. Eulerian methods, in which the mesh is
+%% fixed, are ideal for flows with large deformation but the sharp resolution of interfaces
+%% or free surfaces is lost.
+
+%% Excerpt from Iske+Kaser
+%% However, in order to balance the method's approximation quality and its computational costs
+%% effectively, adaptivity is an essential requirement, especially when modelling multiscale phenomena
+
+%% Excerpt from Jiao+Heath
+%% While the comparisons are
+%% performed with matching geometries, this paper also addresses additional complexities associated with
+%% non-matching surface meshes
+
+%% SUPERMESH == ``common refinement''
+
+%% b is the load vector, M is the mass matrix; Mx = b
+
+%% A limitation of the common-refinement-based approach is that the geometry
+%% of the source and target meshes in principle should discretize the same geometry, and some
+%% applications may involve partially overlapping meshes
+
+%% Solve PDE / construct S(t) that approximates INT f(x, t) dx: https://doi.org/10.1137/0915051
+%% Solve PDE on overlapping 2D meshes: https://doi.org/10.1137/S0036142997323582
+%% Solve PDE on overlapping 2D meshes (e.g. if during refinement): https://doi.org/10.1137/0724063
+
+%% However, the basis functions of the donor mesh
+%% are (in general) discontinuous piecewise polynomials over any gi-
+%% ven element of the target mesh, which are very difficult to inte-
+%% grate by numerical quadrature schemes.
+
+Original ALE paper: \cite{Hirt1974}
+
+In \cite{Farrell2009, Farrell2011}, stuff happens
+
+In many applications, the field must be conserved for physical reasons,
+e.g. mass or energy cannot leave or enter the system.
+
+\begin{figure}
+  \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/mesh_deformation_ext.pdf}
+  \centering
+  \caption{Handling partially overlapping meshes.}
+  \label{fig:mesh-deformation-ext}
+\end{figure}
 
 \section{CAD}
 

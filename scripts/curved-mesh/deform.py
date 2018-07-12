@@ -12,150 +12,161 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.spatial.qhull
+import shapely.geometry
 
 import plot_utils
 
 
-def main():
-    filename = "mesh_deformation.pdf"
+def plot_exterior(
+    internal_x, internal_y, external_x, external_y, ax, custom_tris=None
+):
+    N1 = len(internal_x)
+    N2 = len(external_x)
+    nodes = np.empty((N1 + N2, 2))
+    nodes[:N1, 0] = internal_x
+    nodes[:N1, 1] = internal_y
+    nodes[N1:, 0] = external_x
+    nodes[N1:, 1] = external_y
+    tessellation = scipy.spatial.qhull.Delaunay(nodes)
+    # Remove any triangles that cross the boundary.
+    to_keep = []
+    polygon1 = shapely.geometry.Polygon(nodes[:N1, :])
+    for i, tri in enumerate(tessellation.simplices):
+        polygon2 = shapely.geometry.Polygon(nodes[tri, :])
+        intersection = polygon1.intersection(polygon2)
+        if intersection.area == 0.0:
+            to_keep.append(i)
 
-    # NOTE: This was generated via
-    #           random_mesh(5, np.random.RandomState(seed=7230931))
-    #       where ``random_mesh`` comes from the curved mesh project.
+    triangles = tessellation.simplices[to_keep, :]
+    if custom_tris is not None:
+        triangles = np.vstack([triangles, custom_tris])
+    ax.triplot(
+        nodes[:, 0],
+        nodes[:, 1],
+        triangles,
+        color=plot_utils.GREEN,
+        alpha=0.375,
+    )
+
+
+def plot_deformed(filename, exterior=False):
     nodes_x = np.array(
         [
             -1.0,
+            -0.5,
+            0.0,
+            0.5,
+            1.0,
             -1.0,
+            -0.5,
+            0.0,
+            0.5,
+            1.0,
             -1.0,
+            -0.5,
+            0.0,
+            0.5,
+            1.0,
             -1.0,
+            -0.5,
+            0.0,
+            0.5,
+            1.0,
             -1.0,
-            -1.0,
+            -0.5,
+            0.0,
+            0.5,
             1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            -0.6,
-            -0.19999999999999996,
-            0.20000000000000018,
-            0.6000000000000001,
-            -0.6,
-            -0.19999999999999996,
-            0.20000000000000018,
-            0.6000000000000001,
-            -0.19349006859052886,
-            -0.41424360753592776,
-            0.4604249207295301,
-            0.10091468023596761,
-            -0.03762926676455603,
-            0.24054774626668213,
-            -0.3623135655163526,
-            0.6478850481938815,
-            0.5600774600085,
-            -0.4511045169829932,
-            0.3269886858565265,
-            0.3066965624530354,
-            0.3319243238454705,
-            -0.5309451470129688,
-            0.2706975232733759,
-            0.6189062528070872,
         ]
     )
     nodes_y = np.array(
         [
             -1.0,
-            -0.6,
-            -0.19999999999999996,
-            0.20000000000000018,
-            0.6000000000000001,
-            1.0,
-            -1.0,
-            -0.6,
-            -0.19999999999999996,
-            0.20000000000000018,
-            0.6000000000000001,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
             -1.0,
             -1.0,
             -1.0,
             -1.0,
-            0.0736248612304714,
-            0.08817602246010336,
-            -0.04617878507066997,
-            -0.24867264850826343,
-            -0.5798432722897898,
-            0.5362608529745471,
-            -0.24241940650019664,
-            0.13035429545886779,
-            -0.19374517234381208,
-            0.49667185660255964,
-            -0.6998830631694057,
-            -0.396693906250825,
-            -0.16563392390106765,
-            -0.6078277671901492,
-            0.04165930100991923,
-            -0.504605776399067,
+            -0.5,
+            -0.5,
+            -0.5,
+            -0.5,
+            -0.5,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
         ]
     )
+    external_x = np.array([-1.25, 1.125, 3.5, 3.5, 3.5, 1.125, -1.25, -1.25])
+    external_y = np.array([-1.25, -1.25, -1.25, 0.5, 2.25, 2.25, 2.25, 0.5])
     triangles = np.array(
         [
-            [25, 29, 20],
-            [29, 25, 13],
-            [1, 33, 2],
-            [33, 16, 17],
-            [16, 1, 0],
-            [1, 16, 33],
-            [33, 26, 2],
-            [9, 10, 27],
-            [10, 25, 27],
-            [7, 19, 6],
-            [26, 23, 20],
-            [25, 14, 13],
-            [29, 4, 3],
-            [12, 29, 13],
-            [4, 12, 5],
-            [12, 4, 29],
-            [21, 3, 2],
-            [26, 21, 2],
-            [21, 26, 20],
-            [29, 21, 20],
-            [21, 29, 3],
-            [8, 9, 27],
-            [18, 19, 30],
-            [25, 34, 27],
-            [34, 25, 20],
-            [23, 34, 20],
-            [24, 26, 33],
-            [24, 23, 26],
-            [24, 33, 17],
-            [18, 24, 17],
-            [24, 18, 30],
-            [15, 14, 25],
-            [15, 10, 11],
-            [10, 15, 25],
-            [28, 8, 27],
-            [34, 22, 27],
-            [22, 28, 27],
-            [8, 35, 7],
-            [28, 35, 8],
-            [19, 35, 30],
-            [35, 19, 7],
-            [22, 32, 28],
-            [32, 34, 23],
-            [32, 22, 34],
-            [31, 35, 28],
-            [32, 31, 28],
-            [35, 31, 30],
-            [31, 32, 23],
-            [31, 24, 30],
-            [24, 31, 23],
+            [0, 1, 6],
+            [0, 6, 5],
+            [1, 2, 7],
+            [1, 7, 6],
+            [2, 3, 8],
+            [2, 8, 7],
+            [3, 4, 9],
+            [3, 9, 8],
+            [5, 6, 11],
+            [5, 11, 10],
+            [6, 7, 12],
+            [6, 12, 11],
+            [7, 8, 13],
+            [7, 13, 12],
+            [8, 9, 14],
+            [8, 14, 13],
+            [10, 11, 16],
+            [10, 16, 15],
+            [11, 12, 17],
+            [11, 17, 16],
+            [12, 13, 18],
+            [12, 18, 17],
+            [13, 14, 19],
+            [13, 19, 18],
+            [15, 16, 21],
+            [15, 21, 20],
+            [16, 17, 22],
+            [16, 22, 21],
+            [17, 18, 23],
+            [17, 23, 22],
+            [18, 19, 24],
+            [18, 24, 23],
         ],
         dtype=np.int32,
+    )
+    # NOTE: These must be in order along the edge.
+    boundary_indices = (
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        14,
+        19,
+        24,
+        23,
+        22,
+        21,
+        20,
+        15,
+        10,
+        5,
     )
 
     figure, all_axes = plt.subplots(3, 3)
@@ -165,7 +176,28 @@ def main():
         t = 0.125 * index
         yt = nodes_y + t
         xt = nodes_x + (yt * yt * yt - nodes_y * nodes_y * nodes_y) / 3
-        ax.triplot(xt, yt, triangles)
+        ax.triplot(xt, yt, triangles, color=plot_utils.BLUE)
+
+        if exterior:
+            custom_tris = None
+            curr_ex = external_x
+            curr_ey = external_y
+            if index in (0, 1):
+                curr_ex = np.append(curr_ex, -1.25)
+                curr_ey = np.append(curr_ey, -0.375)
+            elif index in (7, 8):
+                curr_ex = np.append(curr_ex, 2.3125)
+                curr_ey = np.append(curr_ey, 2.25)
+            if index == 8:
+                custom_tris = np.array([[8, 20, 9]], dtype=np.int32)
+            plot_exterior(
+                xt[boundary_indices,],
+                yt[boundary_indices,],
+                curr_ex,
+                curr_ey,
+                ax,
+                custom_tris=custom_tris,
+            )
         if t == int(t):
             title = "$t = {:d}.0$".format(int(t))
         else:
@@ -173,8 +205,8 @@ def main():
         ax.set_title(title)
         # Set the axis.
         ax.axis("scaled")
-        ax.set_xlim(-1.22, 3.55)
-        ax.set_ylim(-1.15, 2.15)
+        ax.set_xlim(-1.35, 3.6)
+        ax.set_ylim(-1.35, 2.35)
 
     all_axes = all_axes.reshape(3, 3)
     for ax in all_axes[:, 0]:
@@ -191,12 +223,17 @@ def main():
 
     figure.set_size_inches(10.75, 8.61)
     figure.subplots_adjust(
-        left=0.04, bottom=0.02, right=0.98, top=0.98, wspace=0.04, hspace=0.0
+        left=0.04, bottom=0.02, right=0.98, top=0.98, wspace=0.04, hspace=0.1
     )
     path = plot_utils.get_path("curved-mesh", filename)
     figure.savefig(path, bbox_inches="tight")
     print("Saved {}".format(filename))
     plt.close(figure)
+
+
+def main():
+    plot_deformed("mesh_deformation.pdf")
+    plot_deformed("mesh_deformation_ext.pdf", exterior=True)
 
 
 if __name__ == "__main__":
