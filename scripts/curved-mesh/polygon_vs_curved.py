@@ -150,8 +150,18 @@ def bezier_triangle_area():
     plt.close(figure)
 
 
+def contains_column(vec, mat):
+    d, = vec.shape
+    rows, cols = mat.shape
+    if rows != d:
+        raise ValueError(mat.shape, mat, vec)
+    broadcast_eq = vec.reshape((d, 1)) == mat
+    eq_by_col = np.all(broadcast_eq, axis=0)
+    return np.any(eq_by_col)
+
+
 def intersection_area():
-    # NOTE: These are surfaces 1Q and 2Q from the ``bezier`` project.
+    # NOTE: These are surfaces 30Q and 31Q from the ``bezier`` project.
     nodes1 = np.asfortranarray(
         [
             [-0.25, 0.1875, 0.625, -0.25, 0.1875, -0.25],
@@ -230,6 +240,33 @@ def intersection_area():
                 matplotlib.path.Path(boundary),
                 alpha=0.625,
                 color=plot_utils.RED,
+            )
+            new_nodes = []
+            for i, node in enumerate(boundary):
+                if not (
+                    contains_column(node, polygon_nodes1)
+                    or contains_column(node, polygon_nodes2)
+                ):
+                    new_nodes.append(i)
+
+            if new_nodes:
+                ax.plot(
+                    boundary[new_nodes, 0],
+                    boundary[new_nodes, 1],
+                    color=plot_utils.RED,
+                    marker="o",
+                    markersize=5,
+                    linestyle="none",
+                )
+            ax.plot(
+                boundary[:-1, 0],
+                boundary[:-1, 1],
+                color=plot_utils.RED,
+                marker="o",
+                markersize=5,
+                markeredgewidth=1,
+                markerfacecolor="none",
+                linestyle="none",
             )
             ax.add_patch(patch)
             ax.set_title("$N = {:d}$".format(N))
