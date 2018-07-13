@@ -130,12 +130,28 @@ e.g. mass or energy cannot leave or enter the system),
   \includegraphics[width=0.9375\textwidth]
                   {../images/curved-mesh/polygon_vs_curved.pdf}
   \centering
-  \caption{Comparing the relative error for the computed area of a B\'{e}zier
-    triangle. In one method, the curved boundary is used with Green's method
-    and it is correct to machine precision. In the other, the curved edges
-    are approximated by polygonal paths. These paths are generated from
-    equally spaced parameters, for example a B\'{e}zier curve \(b(s)\) with
-    \(N = 4\) would be approximated by a line connecting \(b(0), b(1/4),
-    b(1/2), b(3/4)\) and \(b(1)\).}
+  \caption{Comparing the relative error for the computed area of a quadratic
+    B\'{e}zier triangle. In one method, the curved boundary is used with
+    Green's method and it is correct to machine precision. In the other,
+    the curved edges are approximated by polygonal paths. These paths are
+    generated from equally spaced parameters, for example a B\'{e}zier curve
+    \(b(s)\) with \(N = 4\) would be approximated by a line connecting
+    \(b(0), b(1/4), b(1/2), b(3/4)\) and \(b(1)\).}
   \label{fig:polygon-vs-curved}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/curved-mesh/polygon_vs_curved_intersection.pdf}
+  \centering
+  \caption{Comparing the relative error for the computed area of the
+    intersection of two quadratic B\'{e}zier triangles. In one method, the
+    intersection boundary is fully specified as the union of B\'{e}zier curve
+    segments and the area is found via Green's method. This method is correct
+    to machine precision. In the other, the curved edges are approximated by
+    polygonal paths and the intersection of the resulting polygons is computed.
+    These paths are generated from equally spaced parameters, for example a
+    B\'{e}zier curve \(b(s)\) with \(N = 4\) would be approximated by a line
+    connecting \(b(0), b(1/4), b(1/2), b(3/4)\) and \(b(1)\).}
+  \label{fig:polygon-vs-curved-intersection}
 \end{figure}
