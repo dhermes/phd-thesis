@@ -20,6 +20,103 @@ import plot_utils
 
 
 ALPHA = 0.375
+NODES_X = np.array(
+    [
+        -1.0,
+        -0.5,
+        0.0,
+        0.5,
+        1.0,
+        -1.0,
+        -0.5,
+        0.0,
+        0.5,
+        1.0,
+        -1.0,
+        -0.5,
+        0.0,
+        0.5,
+        1.0,
+        -1.0,
+        -0.5,
+        0.0,
+        0.5,
+        1.0,
+        -1.0,
+        -0.5,
+        0.0,
+        0.5,
+        1.0,
+    ]
+)
+NODES_Y = np.array(
+    [
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -0.5,
+        -0.5,
+        -0.5,
+        -0.5,
+        -0.5,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+    ]
+)
+TRIANGLES = np.array(
+    [
+        [0, 1, 6],
+        [0, 6, 5],
+        [1, 2, 7],
+        [1, 7, 6],
+        [2, 3, 8],
+        [2, 8, 7],
+        [3, 4, 9],
+        [3, 9, 8],
+        [5, 6, 11],
+        [5, 11, 10],
+        [6, 7, 12],
+        [6, 12, 11],
+        [7, 8, 13],
+        [7, 13, 12],
+        [8, 9, 14],
+        [8, 14, 13],
+        [10, 11, 16],
+        [10, 16, 15],
+        [11, 12, 17],
+        [11, 17, 16],
+        [12, 13, 18],
+        [12, 18, 17],
+        [13, 14, 19],
+        [13, 19, 18],
+        [15, 16, 21],
+        [15, 21, 20],
+        [16, 17, 22],
+        [16, 22, 21],
+        [17, 18, 23],
+        [17, 23, 22],
+        [18, 19, 24],
+        [18, 24, 23],
+    ],
+    dtype=np.int32,
+)
+# NOTE: These must be in order along the edge.
+BOUNDARY_INDICES = (0, 1, 2, 3, 4, 9, 14, 19, 24, 23, 22, 21, 20, 15, 10, 5)
 
 
 def point_on_characteristic(xv, yv, t):
@@ -68,131 +165,16 @@ def plot_exterior(
 
 
 def plot_distorted(filename, exterior=False):
-    nodes_x = np.array(
-        [
-            -1.0,
-            -0.5,
-            0.0,
-            0.5,
-            1.0,
-            -1.0,
-            -0.5,
-            0.0,
-            0.5,
-            1.0,
-            -1.0,
-            -0.5,
-            0.0,
-            0.5,
-            1.0,
-            -1.0,
-            -0.5,
-            0.0,
-            0.5,
-            1.0,
-            -1.0,
-            -0.5,
-            0.0,
-            0.5,
-            1.0,
-        ]
-    )
-    nodes_y = np.array(
-        [
-            -1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-            -0.5,
-            -0.5,
-            -0.5,
-            -0.5,
-            -0.5,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.5,
-            0.5,
-            0.5,
-            0.5,
-            0.5,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-        ]
-    )
     external_x = np.array([-1.25, 1.125, 3.5, 3.5, 3.5, 1.125, -1.25, -1.25])
     external_y = np.array([-1.25, -1.25, -1.25, 0.5, 2.25, 2.25, 2.25, 0.5])
-    triangles = np.array(
-        [
-            [0, 1, 6],
-            [0, 6, 5],
-            [1, 2, 7],
-            [1, 7, 6],
-            [2, 3, 8],
-            [2, 8, 7],
-            [3, 4, 9],
-            [3, 9, 8],
-            [5, 6, 11],
-            [5, 11, 10],
-            [6, 7, 12],
-            [6, 12, 11],
-            [7, 8, 13],
-            [7, 13, 12],
-            [8, 9, 14],
-            [8, 14, 13],
-            [10, 11, 16],
-            [10, 16, 15],
-            [11, 12, 17],
-            [11, 17, 16],
-            [12, 13, 18],
-            [12, 18, 17],
-            [13, 14, 19],
-            [13, 19, 18],
-            [15, 16, 21],
-            [15, 21, 20],
-            [16, 17, 22],
-            [16, 22, 21],
-            [17, 18, 23],
-            [17, 23, 22],
-            [18, 19, 24],
-            [18, 24, 23],
-        ],
-        dtype=np.int32,
-    )
-    # NOTE: These must be in order along the edge.
-    boundary_indices = (
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        9,
-        14,
-        19,
-        24,
-        23,
-        22,
-        21,
-        20,
-        15,
-        10,
-        5,
-    )
 
     figure, all_axes = plt.subplots(3, 3)
     all_axes = all_axes.flatten()
     for index in range(9):
         ax = all_axes[index]
         t = 0.125 * index
-        xt, yt = point_on_characteristic(nodes_x, nodes_y, t)
-        ax.triplot(xt, yt, triangles, color=plot_utils.BLUE)
+        xt, yt = point_on_characteristic(NODES_X, NODES_Y, t)
+        ax.triplot(xt, yt, TRIANGLES, color=plot_utils.BLUE)
 
         if exterior:
             custom_tris = None
@@ -207,8 +189,8 @@ def plot_distorted(filename, exterior=False):
             if index == 8:
                 custom_tris = np.array([[8, 20, 9]], dtype=np.int32)
             plot_exterior(
-                xt[boundary_indices,],
-                yt[boundary_indices,],
+                xt[BOUNDARY_INDICES,],
+                yt[BOUNDARY_INDICES,],
                 curr_ex,
                 curr_ey,
                 ax,
@@ -361,10 +343,62 @@ def distort_cubic_tri():
     plt.close(figure)
 
 
+def remesh():
+    figure, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True)
+
+    # Update to 1-second ahead in time.
+    xt, yt = point_on_characteristic(NODES_X, NODES_Y, 1.0)
+    nodes = np.empty((len(NODES_X), 2))
+    nodes[:, 0] = xt
+    nodes[:, 1] = yt
+    for ax in (ax1, ax2):
+        ax.triplot(nodes[:, 0], nodes[:, 1], TRIANGLES, color=plot_utils.BLUE)
+
+    # Do a Delaunay triangulation and discard exterior triangles.
+    tessellation = scipy.spatial.qhull.Delaunay(nodes)
+    polygon1 = shapely.geometry.Polygon(nodes[BOUNDARY_INDICES, :])
+    to_keep = []
+    for i, tri in enumerate(tessellation.simplices):
+        polygon2 = shapely.geometry.Polygon(nodes[tri, :])
+        intersection = polygon1.intersection(polygon2)
+        int_area = intersection.area
+        if int_area == polygon2.area:
+            to_keep.append(i)
+        elif int_area != 0:
+            raise NotImplementedError
+
+    triangles_new = tessellation.simplices[to_keep, :]
+    for ax in (ax2, ax3):
+        ax.triplot(
+            nodes[:, 0], nodes[:, 1], triangles_new, color=plot_utils.GREEN
+        )
+
+    ax1.set_yticks([-0.5, 1.0, 2.5])
+    for ax in (ax1, ax2, ax3):
+        ax.axis("scaled")
+        ax.set_xlim(-1.3, 3.6)
+        ax.set_ylim(-0.75, 2.75)
+        ax.set_xticks([-1.0, 1.0, 3.0])
+        ax.set_xticklabels(["$-1.0$", "$1.0$", "$3.0$"])
+    ax1.set_title("Before Remeshing", fontsize=24)
+    ax3.set_title("After Remeshing", fontsize=24)
+
+    figure.set_size_inches(16.3, 3.85)
+    figure.subplots_adjust(
+        left=0.03, bottom=0.0, right=0.99, top=1.0, wspace=0.04, hspace=0.2
+    )
+    filename = "distortion_remesh.pdf"
+    path = plot_utils.get_path("curved-mesh", filename)
+    figure.savefig(path, bbox_inches="tight")
+    print("Saved {}".format(filename))
+    plt.close(figure)
+
+
 def main():
     plot_distorted("mesh_distortion.pdf")
     plot_distorted("mesh_distortion_ext.pdf", exterior=True)
     distort_cubic_tri()
+    remesh()
 
 
 if __name__ == "__main__":
