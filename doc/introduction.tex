@@ -1,3 +1,40 @@
 \chapter{Introduction}
 
-Hello
+In computational physics, the problem of data transfer between meshes
+occurs in several applications. For example, by allowing the underyling
+computational domain to change during a simulation, computational
+effort can be focused dynamically to resolve sensitive features
+of a numerical solution. Mesh adaptivity (see, for example,
+\cite{Dukowicz1987, Babuska1978}), this in-flight change in the mesh,
+requires translating the numerical solution from the old mesh to the new,
+i.e. data transfer. As another example, Lagrangian or particle-based methods
+treat each node in mesh as a particle and so with each timestep the mesh
+travels \textbf{with} the fluid (see, for example, \cite{Hirt1974}).
+However, over (typically limited) time the mesh
+becomes distorted and suffers a loss in element quality which causes
+catastrophic loss in the accuracy of computation. To overcome this, the
+domain must be remeshed or rezoned and the solution must be
+transferred (remapped) onto the new mesh configuration.
+
+When pointwise interpolation is used to transfer a solution, quantities with
+physical meaning (e.g. mass, concentration, energy) may not be conserved.
+To address this, there have been many explorations (for example,
+\cite{Jiao2004, Farrell2009, Farrell2011}) of
+\textbf{conservative interpolation} (typically using Galerkin or
+\(L_2\)-minimizing methods). In this work, the author introduces a
+conservative interpolation method for data transfer between high-order
+meshes. These high-order meshes are typically curved, but not necessarily
+all elements or at all timesteps.
+
+High-order CFD is good: \cite{Wang2013}.
+%% High-order CFD methods have received considerable attention in the
+%% research community in the past two decades because of their potential
+%% in delivering higher accuracy with lower cost than low-order
+%% methods
+%% ...
+%% Amazingly, we received a unanimous definition of high order:
+%% third order or higher
+
+%% Many practical problems involve time-varying geometries,
+%% such as rotor-stator flows, flapping flight or
+%% fluid-structure interactions.

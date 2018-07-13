@@ -71,7 +71,6 @@ Adaptive: \cite{Dukowicz1987, Babuska1978}, Data transfer:
 \cite{Jiao2004, Farrell2009, Farrell2011} (In many applications, the field
 must be conserved for physical reasons,
 e.g. mass or energy cannot leave or enter the system),
-Original ALE paper: \cite{Hirt1974}.
 
 %% Excerpt from DK87
 %% Traditionally, numerical fluid dynamics has taken the form of
@@ -125,4 +124,18 @@ Original ALE paper: \cite{Hirt1974}.
   \centering
   \caption{Handling partially overlapping meshes.}
   \label{fig:mesh-distortion-ext}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/curved-mesh/polygon_vs_curved.pdf}
+  \centering
+  \caption{Comparing the relative error for the computed area of a B\'{e}zier
+    triangle. In one method, the curved boundary is used with Green's method
+    and it is correct to machine precision. In the other, the curved edges
+    are approximated by polygonal paths. These paths are generated from
+    equally spaced parameters, for example a B\'{e}zier curve \(b(s)\) with
+    \(N = 4\) would be approximated by a line connecting \(b(0), b(1/4),
+    b(1/2), b(3/4)\) and \(b(1)\).}
+  \label{fig:polygon-vs-curved}
 \end{figure}
