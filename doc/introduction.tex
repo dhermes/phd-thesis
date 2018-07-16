@@ -2,6 +2,7 @@
 
 This is a work in two parts, each in a different subfield of mathematics.
 The first part is a general-purpose tool for computational physics problems.
+The tool enables data transfer across two curved meshes.
 Since the tool requires a significant amount of computational geometry, the
 second half focuses on computational geometry. In particular, it considers
 cases where the geometric methods used have seriously degraded accuracy due to
@@ -35,33 +36,45 @@ conservative interpolation method for data transfer between high-order
 meshes. These high-order meshes are typically curved, but not necessarily
 all elements or at all timesteps.
 
-High-order CFD is good: \cite{Wang2013}.
-%% High-order CFD methods have received considerable attention in the
-%% research community in the past two decades because of their potential
-%% in delivering higher accuracy with lower cost than low-order
-%% methods
-%% ...
-%% Amazingly, we received a unanimous definition of high order:
-%% third order or higher
-
-%% Many practical problems involve time-varying geometries,
-%% such as rotor-stator flows, flapping flight or
-%% fluid-structure interactions. In such cases, it is necessary to properly
-%% account for the time variation of the solution domain if accurate solutions
-%% are to be obtained.
-
-%% https://doi.org/10.1016/j.cma.2009.01.012 (Per and Peraire)
-%% There is a growing interest in high-order methods for fluid
-%% problems, largely because of their ability to produce highly accurate
-%% solutions with minimum numerical dispersion.
-
-%% J. Donea, Arbitrary Lagrangian-Eulerian finite element methods, in: T.
-%% Belytschko, T. Hughes (Eds.), Computational Methods for Transient Analysis,
-%% vol. 1, Elsevier, Amsterdam, 1983, pp. 474-515.
-%% I. Lomtev, R.M. Kirby, G.E. Karniadakis, A discontinuous Galerkin ALE method
-%% for compressible viscous flows in moving domains, J. Comput. Phys. 155 (1)
-%% (1999) 128-159.
+The existing work on data transfer has considered straight-sided meshes,
+which use shape functions that have degree \(p = 1\) to represent solutions
+on each element. However, both to allow for greater geometric flexibility
+and for high-order of convergence, this paper will consider the case
+of curved isoparametric\footnote{I.e. the degree of the discrete field on the
+mesh is same as the degree of the shape functions that determine the
+mesh.} meshes. Allowing curved geometries is useful since many practical
+problems involve geometries that change over time, such as flapping flight
+or fluid-structure interactions. In addition, high-order CFD methods
+(\cite{Wang2013}) have the ability to produce highly accurate solutions
+with low dissipation and low dispersion error.
 
 \section{Computational Geometry}
 
-Placeholder.
+As a parameter approaches a root of a function in Bernstein form,
+the condition number of evaluation becomes infinite. Similarly,
+as a (transversal) intersection of two B\'{e}zier curves approaches a
+point of tangency, the condition number of intersection becomes
+infinite. In either case...
+
+``double roots, though rare, are overwhelmingly more common in practice
+than are roots of higher multiplicity'' (\cite{Kahan1972}, page 6)
+
+\section{Organization}
+
+This work is organized as follows. Chapter~\ref{chap:preliminaries}
+establishes common notation and reviews basic results relevant to the
+topics at hand. Chapter~\ref{chap:bezier-intersection} is an
+in-depth discussion of the computational geometry methods we'll need
+to implement to enable data transfer. Chapter~\ref{chap:data-transfer}
+describes the data transfer process and gives results of some
+numerical experiments confirming the rate of convergence.
+Chapter~\ref{chap:k-compensated} describes a compensated algorithm for
+evaluating functions in Bernstein form (such as B\'{e}zier curves);
+this algorithm produces results that are as accurate as if
+the computations were done in \(K\) times the working precision
+and then rounded back to the working precision.
+Chapter~\ref{chap:compensated-newton} describes two modified Newton's
+methods which allow for greater accuracy in the presence of
+ill-conditioning; one is used for computing simple zeros
+of polynomials in Bernstein form and the other for computing
+B\'{e}zier curve intersections.

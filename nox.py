@@ -100,6 +100,7 @@ def build_tex(session):
         "abstract",
         "algorithms",
         "bezier-intersection",
+        "compensated-newton",
         "data-transfer",
         "introduction",
         "k-compensated",
