@@ -16,6 +16,7 @@ import bezier
 import matplotlib.patches
 import matplotlib.path
 import matplotlib.pyplot as plt
+import mpmath
 import numpy as np
 import shapely.geometry
 
@@ -30,6 +31,16 @@ def shoelace_for_area(nodes):
     if num_nodes == 3:
         shoelace = ((2, 0, 1), (1, 0, 2), (2, 1, 2))
         scale_factor = 6.0
+    elif num_nodes == 4:
+        shoelace = (
+            (6, 0, 1),
+            (3, 0, 2),
+            (1, 0, 3),
+            (3, 1, 2),
+            (3, 1, 3),
+            (6, 2, 3),
+        )
+        scale_factor = 20.0
     else:
         raise NotImplementedError
 
@@ -318,9 +329,219 @@ def intersection_area():
     plt.close(figure)
 
 
+def approximate_circle():
+    ctx = mpmath.MPContext()
+    ctx.prec = 500
+
+    figure, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+    for ax in (ax1, ax2, ax3):
+        circle = matplotlib.patches.Circle(
+            (0.0, 0.0), radius=1.0, color=plot_utils.BLUE, alpha=0.625
+        )
+        ax.add_patch(circle)
+
+    error_vals1 = []
+    error_vals2 = []
+    error_vals3 = []
+    for n in range(1, 20 + 1):
+        N = 3 * 2 ** n
+        # First, put points on the boundary.
+        theta = np.linspace(0.0, 2.0 * np.pi, N + 1)[:-1]
+        polygon_nodes = np.empty((N, 2))
+        polygon_nodes[:, 0] = np.cos(theta)
+        polygon_nodes[:, 1] = np.sin(theta)
+        # Then, approximate by line segments.
+        polygon = shapely.geometry.Polygon(polygon_nodes)
+        rel_error = abs(ctx.pi - polygon.area) / ctx.pi
+        rel_error = plot_utils.to_float(rel_error)
+        error_vals1.append((N, rel_error))
+
+        if n == 1:
+            ax1.plot(
+                polygon_nodes[:, 0],
+                polygon_nodes[:, 1],
+                marker="o",
+                markersize=5,
+                color=plot_utils.RED,
+            )
+            ax1.plot(
+                polygon_nodes[(-1, 0), 0],
+                polygon_nodes[(-1, 0), 1],
+                marker="o",
+                markersize=5,
+                color=plot_utils.RED,
+            )
+            ax1.plot(
+                polygon_nodes[:, 0],
+                polygon_nodes[:, 1],
+                color="black",
+                marker="o",
+                markersize=5,
+                markeredgewidth=1,
+                markerfacecolor="none",
+                linestyle="none",
+            )
+            ax1.set_title("6 lines")
+
+        # Then, approximate by quadratics (for n <= 15).
+        if n > 15:
+            continue
+        edges = []
+        for j in range(0, N, 2):
+            edge_nodes = np.empty((2, 3), order="F")
+            edge_nodes[:, 0] = polygon_nodes[j, :]
+            final_j = j + 2
+            if final_j == N:
+                final_j = 0
+            edge_nodes[:, 1] = (
+                2.0 * polygon_nodes[j + 1, :]
+                - 0.5 * polygon_nodes[j, :]
+                - 0.5 * polygon_nodes[final_j, :]
+            )
+            edge_nodes[:, 2] = polygon_nodes[final_j, :]
+            curr_edge = bezier.Curve(edge_nodes, degree=2, _copy=False)
+            edges.append(curr_edge)
+
+        if n == 1:
+            for edge in edges:
+                edge.plot(256, ax=ax2, color=plot_utils.RED)
+            ax2.plot(
+                polygon_nodes[:, 0],
+                polygon_nodes[:, 1],
+                color=plot_utils.RED,
+                linestyle="none",
+                marker="o",
+                markersize=5,
+            )
+            ax2.plot(
+                polygon_nodes[::2, 0],
+                polygon_nodes[::2, 1],
+                color="black",
+                marker="o",
+                markersize=5,
+                markeredgewidth=1,
+                markerfacecolor="none",
+                linestyle="none",
+            )
+            ax2.set_title("3 quadratics")
+
+        area = compute_area(*edges)
+        rel_error = abs(ctx.pi - area) / ctx.pi
+        rel_error = plot_utils.to_float(rel_error)
+        error_vals2.append((N, rel_error))
+        # Finally, approximate by cubics (for n <= 10).
+        if n > 10:
+            continue
+        edges = []
+        for j in range(0, N, 3):
+            edge_nodes = np.empty((2, 4), order="F")
+            edge_nodes[:, 0] = polygon_nodes[j, :]
+            final_j = j + 3
+            if final_j == N:
+                final_j = 0
+            edge_nodes[:, 1] = (
+                3.0 * polygon_nodes[j + 1, :]
+                - 1.5 * polygon_nodes[j + 2, :]
+                + (polygon_nodes[final_j, :] - 2.5 * polygon_nodes[j, :]) / 3.0
+            )
+            edge_nodes[:, 2] = (
+                3.0 * polygon_nodes[j + 2, :]
+                - 1.5 * polygon_nodes[j + 1, :]
+                + (polygon_nodes[j, :] - 2.5 * polygon_nodes[final_j, :]) / 3.0
+            )
+            edge_nodes[:, 3] = polygon_nodes[final_j, :]
+            curr_edge = bezier.Curve(edge_nodes, degree=3, _copy=False)
+            edges.append(curr_edge)
+
+        if n == 1:
+            for edge in edges:
+                edge.plot(256, ax=ax3, color=plot_utils.RED)
+            ax3.plot(
+                polygon_nodes[:, 0],
+                polygon_nodes[:, 1],
+                color=plot_utils.RED,
+                linestyle="none",
+                marker="o",
+                markersize=5,
+            )
+            ax3.plot(
+                polygon_nodes[::3, 0],
+                polygon_nodes[::3, 1],
+                color="black",
+                marker="o",
+                markersize=5,
+                markeredgewidth=1,
+                markerfacecolor="none",
+                linestyle="none",
+            )
+            ax3.set_title("2 cubics")
+
+        area = compute_area(*edges)
+        rel_error = abs(ctx.pi - area) / ctx.pi
+        rel_error = plot_utils.to_float(rel_error)
+        error_vals3.append((N, rel_error))
+
+    error_vals1 = np.array(error_vals1)
+    ax4.loglog(
+        error_vals1[:, 0],
+        error_vals1[:, 1],
+        basex=2,
+        marker="o",
+        markersize=5,
+        label="Polygonal",
+    )
+    error_vals2 = np.array(error_vals2)
+    ax4.loglog(
+        error_vals2[:, 0],
+        error_vals2[:, 1],
+        basex=2,
+        marker="o",
+        markersize=5,
+        label="Quadratic",
+    )
+    error_vals3 = np.array(error_vals3)
+    ax4.loglog(
+        error_vals3[:, 0],
+        error_vals3[:, 1],
+        basex=2,
+        marker="o",
+        markersize=5,
+        label="Cubic",
+    )
+    ax4.legend()
+    # BEGIN
+    # [a, b] = np.polyfit(log(N), log(err), 1)
+    # log(err) ~= a log(N) + b
+    # err ~= 2^b N^a
+    A1, B1 = np.polyfit(
+        np.log2(error_vals1[:, 0]), np.log2(error_vals1[:, 1]), 1
+    )
+    print("err1 ~= {:g} N^{{{:g}}}".format(2.0 ** B1, A1))
+    A2, B2 = np.polyfit(
+        np.log2(error_vals2[:, 0]), np.log2(error_vals2[:, 1]), 1
+    )
+    print("err2 ~= {:g} N^{{{:g}}}".format(2.0 ** B2, A2))
+    A3, B3 = np.polyfit(
+        np.log2(error_vals3[:, 0]), np.log2(error_vals3[:, 1]), 1
+    )
+    print("err3 ~= {:g} N^{{{:g}}}".format(2.0 ** B3, A3))
+    # END
+
+    for ax in (ax1, ax2, ax3):
+        ax.axis("equal")
+    ax1.set_xticklabels([])
+    ax2.set_xticklabels([])
+    ax2.set_yticklabels([])
+
+    if True:
+        plt.show()
+        return
+
+
 def main():
-    bezier_triangle_area()
-    intersection_area()
+    # bezier_triangle_area()
+    # intersection_area()
+    approximate_circle()
 
 
 if __name__ == "__main__":
