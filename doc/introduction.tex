@@ -50,21 +50,40 @@ with low dissipation and low dispersion error.
 
 \section{Computational Geometry}
 
-As a parameter approaches a root of a function in Bernstein form,
-the condition number of evaluation becomes infinite. Similarly,
+For a function in Bernstein form, the condition number of evaluation
+becomes infinite as the input approaches a root. Similarly,
 as a (transversal) intersection of two B\'{e}zier curves approaches a
 point of tangency, the condition number of intersection becomes
-infinite. In either case...
-
+infinite. These breakdowns in accuracy cause problems when evaluating
+integrals on elements of a curved mesh or on the intersections of two
+elements. For example, consider the problem of data transfer from
+one mesh to another. As both meshes are refined simultaneously, the
+probability of an ``almost tangent'' pair of curved edges increases
+towards unity. Tangent curves correspond to the case of a double root
+of a polynomial. Though they are unlikely for a random mesh pair
 ``double roots, though rare, are overwhelmingly more common in practice
-than are roots of higher multiplicity'' (\cite{Kahan1972}, page 6)
+than are roots of higher multiplicity'' (\cite{Kahan1972}, page 6).
+
+Two approaches will be described that can help recover this lost accuracy
+in the presence of ill-conditioning. The first allows for greater
+accuracy when performing the de Casteljau algorithm to evaluate
+a function in Bernstein form. This \textbf{compensated algorithm}
+(Chapter~\ref{chap:k-compensated}) produces results that are as accurate as if
+the computations were done in \(K\) times the working precision
+and then rounded back to the working precision. By just using a
+more precise evaluation of the residual function,
+\cite{Tisseur2001} showed that the accuracy of Newton's method can
+be improved. So as a natural extension, the second approach
+explores the improvement in Newton's method applied both to
+root-finding and B\'{e}zier curve intersection
+(Chapter~\ref{chap:compensated-newton}).
 
 \section{Organization}
 
 This work is organized as follows. Chapter~\ref{chap:preliminaries}
 establishes common notation and reviews basic results relevant to the
 topics at hand. Chapter~\ref{chap:bezier-intersection} is an
-in-depth discussion of the computational geometry methods we'll need
+in-depth discussion of the computational geometry methods needed
 to implement to enable data transfer. Chapter~\ref{chap:data-transfer}
 describes the data transfer process and gives results of some
 numerical experiments confirming the rate of convergence.
