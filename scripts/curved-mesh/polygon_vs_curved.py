@@ -332,13 +332,27 @@ def intersection_area():
 def approximate_circle():
     ctx = mpmath.MPContext()
     ctx.prec = 500
+    expected_area = ctx.mpf(
+        "8.907796815213572033797271433182908833704274345412784293832739900430"
+        "39792446602016517568872559945814983025941995396993416994237852627970"
+        "209187793740761013"
+    )
 
     figure, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
     for ax in (ax1, ax2, ax3):
-        circle = matplotlib.patches.Circle(
-            (0.0, 0.0), radius=1.0, color=plot_utils.BLUE, alpha=0.625
+        theta = np.linspace(0.0, 2.0 * np.pi, 1000)
+        polygon_nodes = np.empty((1000, 2))
+        # radius = np.sqrt(1 + np.cos(3.0 * theta) / 3.0)
+        radius = 1 + theta * (2 * np.pi - theta) / 10.0
+        polygon_nodes[:, 0] = radius * np.cos(theta)
+        polygon_nodes[:, 1] = radius * np.sin(theta)
+        patch = matplotlib.patches.PathPatch(
+            matplotlib.path.Path(polygon_nodes),
+            color=plot_utils.BLUE,
+            alpha=0.625,
         )
-        ax.add_patch(circle)
+        ax.add_patch(patch)
+        # print(shapely.geometry.Polygon(polygon_nodes[:-1, :]).area)
 
     error_vals1 = []
     error_vals2 = []
@@ -348,11 +362,13 @@ def approximate_circle():
         # First, put points on the boundary.
         theta = np.linspace(0.0, 2.0 * np.pi, N + 1)[:-1]
         polygon_nodes = np.empty((N, 2))
-        polygon_nodes[:, 0] = np.cos(theta)
-        polygon_nodes[:, 1] = np.sin(theta)
+        # radius = np.sqrt(1 + np.cos(3.0 * theta) / 3.0)
+        radius = 1 + theta * (2 * np.pi - theta) / 10.0
+        polygon_nodes[:, 0] = radius * np.cos(theta)
+        polygon_nodes[:, 1] = radius * np.sin(theta)
         # Then, approximate by line segments.
         polygon = shapely.geometry.Polygon(polygon_nodes)
-        rel_error = abs(ctx.pi - polygon.area) / ctx.pi
+        rel_error = abs(expected_area - polygon.area) / expected_area
         rel_error = plot_utils.to_float(rel_error)
         error_vals1.append((N, rel_error))
 
@@ -426,7 +442,7 @@ def approximate_circle():
             ax2.set_title("3 quadratics")
 
         area = compute_area(*edges)
-        rel_error = abs(ctx.pi - area) / ctx.pi
+        rel_error = abs(expected_area - area) / expected_area
         rel_error = plot_utils.to_float(rel_error)
         error_vals2.append((N, rel_error))
         # Finally, approximate by cubics (for n <= 10).
@@ -477,7 +493,7 @@ def approximate_circle():
             ax3.set_title("2 cubics")
 
         area = compute_area(*edges)
-        rel_error = abs(ctx.pi - area) / ctx.pi
+        rel_error = abs(expected_area - area) / expected_area
         rel_error = plot_utils.to_float(rel_error)
         error_vals3.append((N, rel_error))
 
