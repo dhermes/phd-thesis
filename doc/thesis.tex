@@ -22,6 +22,7 @@
 \usepackage{indentfirst}
 
 \usepackage{amsthm,amssymb,amsmath}
+\usepackage{bm}
 \allowdisplaybreaks
 \usepackage{textcomp}
 %% H/T: https://tex.stackexchange.com/a/56877/32270
@@ -71,6 +72,8 @@
 \counterwithin{lemma}{chapter}
 
 \renewcommand{\qed}{\(\blacksquare\)}
+\newcommand{\reals}{\mathbf{R}}
+\newcommand{\floats}{\mathbf{F}}
 \newcommand{\eps}{\varepsilon}
 \newcommand{\cond}[1]{\operatorname{cond}\left(#1\right)}
 \newcommand{\fl}[1]{\operatorname{fl}\left(#1\right)}
@@ -124,7 +127,8 @@
 \begin{dedication}
 \null\vfil
 \begin{center}
-To my wife Sharona and my sons Jack and Max.
+To my family of four that I gained during the PhD: my wife Sharona, who
+I proposed to and married during graduate school and our sons Jack and Max.
 \end{center}
 \vfil\null
 \end{dedication}
@@ -136,7 +140,14 @@ To my wife Sharona and my sons Jack and Max.
 \listoftables
 
 \begin{acknowledgements}
-I want to thank my advisor for his patience and guidance.
+I would like to acknowledge all my fellow graduate students with and from
+whom I have learned, especially Will Pazner, Chris Miller and
+Qiaochu Yuan. I am also thankful to all the mathematics faculty
+at UC Berkeley from whom I have learned so much.
+
+I am especially grateful to my adviser, Per-Olof Persson, for guidance,
+support and ideas. I also would like to thank John Strain for many
+enlightening, enriching and entertaining conversations.
 \end{acknowledgements}
 
 \end{frontmatter}

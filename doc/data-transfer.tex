@@ -108,6 +108,35 @@ e.g. mass or energy cannot leave or enter the system),
 %% element of the target mesh, which are very difficult to integrate
 %% by numerical quadrature schemes.
 
+%% B\'{e}zier curves and triangles were selected for defining
+%% mesh elements for two main reasons. Firstly, using
+%% curved instead of linear elements allows us to use
+%% meshes with far fewer elements, both for representing
+%% geometry and for obtaining accurate numeric solutions.
+%% Secondly, B\'{e}zier curves and triangles have a
+%% number of mathematical properties leading to elegant
+%% algorithms.
+
+%% B\'{e}zier curves are completely defined by their control
+%% points which form the control polygon. Similarly,
+%% B\'{e}zier triangles are completely defined by their control
+%% points which form a control net. See Figure 1.
+%% For more information about B\'{e}zier curves and triangles
+%% see [11, 12] among others.
+
+%% Since adapting the mesh changes the domain for \(\bm{f}\), we
+%% must project \(\bm{f}\) onto the new mesh domain. This is
+%% accomplished by making local projections of \(\bm{f}\) whenever
+%% local mesh modifications are made, and then computing
+%% the local reinterpolation error. The choice of a
+%% relevant error norm and projection is problem dependent,
+%% but the computations are generally easy, since
+%% they are done in a local setting with few degrees of
+%% freedom. If the calculated re-interpolation error due
+%% to a mesh modification is too great, then the modification
+%% can be aborted and can be replaced with a mesh
+%% refinement.
+
 \begin{figure}
   \includegraphics[width=0.9375\textwidth]
                   {../images/curved-mesh/element_distortion.pdf}

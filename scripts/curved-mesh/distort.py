@@ -299,7 +299,7 @@ def distort_cubic_tri():
                 yt,
                 color="black",
                 marker="o",
-                linestyle="None",
+                linestyle="none",
                 markersize=6,
             )
         # Add shadow "nodes" to top row for "next" plots.
@@ -311,7 +311,7 @@ def distort_cubic_tri():
                 color="black",
                 alpha=0.5 - 0.25 * (next_index - index - 1),
                 marker="o",
-                linestyle="None",
+                linestyle="none",
                 markersize=6,
             )
 

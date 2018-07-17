@@ -154,6 +154,8 @@ def make_images(session):
         ("k-compensated", "horner_inferior.py"),
         ("k-compensated", "compensated_insufficient.py"),
         ("curved-mesh", "distort.py"),
+        ("curved-mesh", "inverted_element.py"),
+        ("curved-mesh", "locate_in_triangle.py"),
         ("curved-mesh", "polygon_vs_curved.py"),
         ("curved-mesh", "simple_transport.py"),
         ("curved-mesh", "subdivision.py"),

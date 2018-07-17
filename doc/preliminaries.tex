@@ -2,15 +2,17 @@
 
 \section{General Notation}
 
-We'll refer to \(\mathbf{R}\) for the reals, \(\utri\) represents
-the unit triangle (or unit simplex) in \(\mathbf{R}^2\):
+We'll refer to \(\reals\) for the reals, \(\utri\) represents
+the unit triangle (or unit simplex) in \(\reals^2\):
 \(\utri = \left\{(s, t) \mid 0 \leq s, t, s + t \leq 1\right\}\).
-When dealing to sequences with multiple indices, e.g.
-\(s_{m, n} = m + n\), we'll use bold notation to represent
-a multi-index: \(\mathbf{i} = (m, n)\). The binomial coefficient
+When dealing with sequences with multiple indices, e.g.
+\(s_{m, n} = m + n\), we'll use bold symbols to represent
+a multi-index: \(\bm{i} = (m, n)\). We'll use \(\left|\bm{i}\right|\) to
+represent the sum of the components in a multi-index.
+The binomial coefficient
 \(\binom{n}{k}\) is equal to \(\frac{n!}{k! (n - k)!}\) and the trinomial
 coefficient \(\binom{n}{i, j, k}\) is equal to \(\frac{n!}{i! j! k!}\)
-when \(i + j + k = n\). The notation \(\delta_{ij}\) represents the
+(where \(i + j + k = n\)). The notation \(\delta_{ij}\) represents the
 Kronecker delta, a value which is \(1\) when \(i = j\) and \(0\)
 otherwise.
 
@@ -27,8 +29,8 @@ where \(\star \in \left\{\oplus, \ominus, \otimes, \oslash\right\}\), \(\circ
 and \(\star\) is a floating point operation, e.g.
 \(a \oplus b = \fl{a + b}\). (For IEEE-754 floating point double precision,
 \(\mach = 2^{-53}\).) We denote the computed result of
-\(\alpha \in \mathbf{R}\) in floating point arithmetic by
-\(\widehat{\alpha}\) or \(\fl{\alpha}\) and use \(\mathbf{F}\) as the set of
+\(\alpha \in \reals\) in floating point arithmetic by
+\(\widehat{\alpha}\) or \(\fl{\alpha}\) and use \(\floats\) as the set of
 all floating point numbers (see \cite{Higham2002} for more details).
 Following \cite{Higham2002}, we will use the following classic properties in
 error analysis.
@@ -49,12 +51,12 @@ error analysis.
 
 A \textbf{B\'{e}zier curve} is a mapping from the unit interval
 that is determined by a set of control points
-\(\left\{\mathbf{p}_j\right\}_{j = 0}^n \subset \mathbf{R}^d\).
+\(\left\{\bm{p}_j\right\}_{j = 0}^n \subset \reals^d\).
 For a parameter \(s \in \left[0, 1\right]\), there is a corresponding
 point on the curve:
 \begin{equation}
-b(s) = \sum_{j = 0}^n \binom{n}{j} (1 - s)^{n - j} s^j \mathbf{p}_j \in
-  \mathbf{R}^d.
+b(s) = \sum_{j = 0}^n \binom{n}{j} (1 - s)^{n - j} s^j \bm{p}_j \in
+  \reals^d.
 \end{equation}
 This is a combination of the control points weighted by
 each Bernstein basis function
@@ -112,7 +114,7 @@ but the authors did not consider round-off when computing
 \end{theorem}
 
 The relative condition number of the evaluation of \(p(s) = \sum_{j = 0}^n
-b_j B_{j, n}(s)\) in Bernstein form used in this paper is (see
+b_j B_{j, n}(s)\) in Bernstein form used in this work is (see
 \cite{Mainar1999}, \cite{Farouki1987}):
 \begin{equation}
 \cond{p, s} = \frac{\widetilde{p}(s)}{\left|p(s)\right|},
@@ -136,7 +138,7 @@ U_k = U_k(s) = \left[\begin{array}{c c c c c c}
     \vdots & \ddots & \ddots & \ddots & \ddots & \vdots \\
     \vdots &        & \ddots & \ddots & \ddots & 0 \\
     0      & \cdots & \cdots & 0      & 1 - s  & s
-\end{array}\right] \in \mathbf{R}^{k \times (k + 1)}.
+\end{array}\right] \in \reals^{k \times (k + 1)}.
 \end{equation}
 With this, we can express (\cite{Mainar1999}) the de Casteljau algorithm as
 \begin{equation}\label{matrix-de-casteljau}
@@ -151,10 +153,14 @@ as the vector containing all of the values:
 
 \section{B\'{e}zier Triangles}
 
-A \textbf{B\'{e}zier triangle} (\cite{Farin1986}) is a mapping from the
-unit triangle
+A \textbf{B\'{e}zier triangle} (\cite[Chapter~17]{Farin2001}) is a
+mapping from the unit triangle
 \(\utri\) and is determined by a control net
-\(\left\{\mathbf{p}_{i, j, k}\right\}_{i + j + k = n} \subset \mathbf{R}^d\).
+\(\left\{\bm{p}_{i, j, k}\right\}_{i + j + k = n} \subset \reals^d\).
+A B\'{e}zier triangle is a particular kind of B\'{e}zier surface, i.e. one
+in which there are two cartesian or three barycentric input parameters.
+Often the term B\'{e}zier surface is used to refer to a tensor product or
+rectangular patch.
 For \((s, t) \in \utri\) we can define barycentric weights
 \(\lambda_1 = 1 - s - t, \lambda_2 = s, \lambda_3 = t\) so that
 \begin{equation}
@@ -165,6 +171,7 @@ For \((s, t) \in \utri\) we can define barycentric weights
 Using this we can similarly define a (triangular) Bernstein basis
 \begin{equation}
 B_{i, j, k}(s, t) = \binom{n}{i, j, k} (1 - s - t)^i s^j t^k
+  = \binom{n}{i, j, k} \lambda_1^i \lambda_2^j \lambda_3^k
 \end{equation}
 that is in \(\left[0, 1\right]\) when \((s, t)\) is in \(\utri\).
 Using this, we define points on the B\'{e}zier triangle as a
@@ -172,7 +179,7 @@ convex combination of the control net:
 \begin{equation}
 b(s, t) = \sum_{i + j + k = n} \binom{n}{i, j, k}
   \lambda_1^i \lambda_2^j \lambda_3^k
-  \mathbf{p}_{i, j, k} \in \mathbf{R}^d.
+  \bm{p}_{i, j, k} \in \reals^d.
 \end{equation}
 
 \begin{figure}
@@ -184,64 +191,110 @@ b(s, t) = \sum_{i + j + k = n} \binom{n}{i, j, k}
 
 \noindent Rather than defining a B\'{e}zier triangle by the control net, it can
 also be uniquely determined by the image of a standard lattice of
-points in \(\utri\): \(b\left(j/n, k/n\right) = \mathbf{n}_{i, j, k}\);
+points in \(\utri\): \(b\left(j/n, k/n\right) = \bm{n}_{i, j, k}\);
 we'll refer to these as \textbf{standard nodes}.
 Figure~\ref{fig:cubic-bezier-example} shows these standard nodes for
-a cubic triangle. To see the correspondence,
+a cubic triangle in \(\reals^2\). To see the correspondence,
 when \(p = 1\) the standard nodes \textbf{are} the control net
 \begin{equation}
-b(s, t) = \lambda_1 \mathbf{n}_{1, 0, 0} +
-\lambda_2 \mathbf{n}_{0, 1, 0} + \lambda_3 \mathbf{n}_{0, 0, 1}
+b(s, t) = \lambda_1 \bm{n}_{1, 0, 0} +
+\lambda_2 \bm{n}_{0, 1, 0} + \lambda_3 \bm{n}_{0, 0, 1}
 \end{equation}
 and when \(p = 2\)
 \begin{multline}
-b(s, t) = \lambda_1\left(2 \lambda_1 - 1\right) \mathbf{n}_{2, 0, 0} +
-\lambda_2\left(2 \lambda_2 - 1\right) \mathbf{n}_{0, 2, 0} +
-\lambda_3\left(2 \lambda_3 - 1\right) \mathbf{n}_{0, 0, 2} + \\
-4 \lambda_1 \lambda_2 \mathbf{n}_{1, 1, 0} +
-4 \lambda_2 \lambda_3 \mathbf{n}_{0, 1, 1} +
-4 \lambda_3 \lambda_1 \mathbf{n}_{1, 0, 1}.
+b(s, t) = \lambda_1\left(2 \lambda_1 - 1\right) \bm{n}_{2, 0, 0} +
+\lambda_2\left(2 \lambda_2 - 1\right) \bm{n}_{0, 2, 0} +
+\lambda_3\left(2 \lambda_3 - 1\right) \bm{n}_{0, 0, 2} + \\
+4 \lambda_1 \lambda_2 \bm{n}_{1, 1, 0} +
+4 \lambda_2 \lambda_3 \bm{n}_{0, 1, 1} +
+4 \lambda_3 \lambda_1 \bm{n}_{1, 0, 1}.
 \end{multline}
 However, it's worth noting that the transformation between
 the control net and the standard nodes has condition
-number that grows exponentially with \(n\) (see~\cite{Farouki1991}).
+number that grows exponentially with \(n\) (see~\cite{Farouki1991}, which
+is related but does not directly show this).
 This may make working with
 higher degree triangles prohibitively unstable.
+
+A \textbf{valid} B\'{e}zier triangle is one which is
+diffeomorphic to \(\utri\), i.e. \(b(s, t)\) is bijective and has
+an everywhere invertible Jacobian. For example, in
+Figure~\ref{fig:inverted-element}, the image of \(\utri\) under
+the map \(b(s, t) = \left[\begin{array}{c c} (1 - s - t)^2 + s^2 & s^2 + t^2
+\end{array}\right]^T\) is not valid because the Jacobian is zero along
+the curve \(s^2 - st - t^2 - s + t = 0\) (the dashed line). Elements that
+are not valid are called \textbf{inverted} because they have regions with
+``negative area''. For the example, the image \(b\left(\utri\right)\)
+leaves the boundary determined by the edge curves: \(b(r, 0)\),
+\(b(1 - r, r)\) and \(b(0, 1 - r)\) when \(r \in \left[0, 1\right]\).
+This region outside the boundary is traced twice, once with
+a positive Jacobian and once with a negative Jacobian.
+\begin{figure}
+  \includegraphics[width=0.75\textwidth]
+                  {../images/curved-mesh/inverted_element.pdf}
+  \centering
+  \caption{The B\'{e}zier triangle given by \(b(s, t) = \left[
+    (1 - s - t)^2 + s^2 \; \; s^2 + t^2 \right]^T\) produces an
+    inverted element. It traces the same region twice, once with
+    a positive Jacobian (the middle column) and once with a negative
+    Jacobian (the right column).}
+  \label{fig:inverted-element}
+\end{figure}
 
 \section{Curved Elements}
 
 We define a curved mesh element \(\mathcal{T}\) of degree \(p\)
-to be a B\'{e}zier triangle in \(\mathbf{R}^2\) of the same degree.
+to be a B\'{e}zier triangle in \(\reals^2\) of the same degree.
 We refer to the component functions of \(b(s, t)\) (the map that
 defined \(\mathcal{T}\)) as \(x(s, t)\) and \(y(s, t)\).
+
+This fits a typical definition (\cite[Chapter~12]{FEM-ClaesJohnson})
+of a curved element, but gives a special meaning to the mapping from
+the reference triangle. Interpreting elements as B\'{e}zier triangles
+has been used for Lagrangian methods where
+mesh adaptivity is needed (e.g. ~\cite{CardozeMOP04}). Typically curved
+elements only have one curved side (\cite{McLeod1972}) since they are used
+to resolve geometric features of a boundary. See also
+\cite{Zlmal1973, Zlmal1974}.
+
+Note that a B\'{e}zier triangle can be
+determined from many different sources of data (for example the control net
+or the standard nodes). The choice of this data may be changed to suit the
+underlying physical problem without changing the actual mapping. Conversely,
+the data can be fixed (e.g. as the control net) to avoid costly basis
+conversion; once fixed, the equations of motion and other PDE terms can
+be recast relative to the new basis (for an example, see \cite{Persson2009},
+where the domain varies with time but the problem is reduced to
+solving a transformed conservation law in a fixed reference configuration).
 
 \subsection{Shape Functions}
 
 When defining shape functions (i.e. a basis with geometric meaning) on a
 curved element there are (at least) two choices. When the degree of the
-shape functions is the same as the degree of the B\'{e}zier triangle,
+shape functions is the same as the degree of the function being
+represented on the B\'{e}zier triangle,
 we say the element \(\mathcal{T}\) is \textbf{isoparametric}.
 For the multi-index
-\(\mathbf{i} = (i, j , k)\), we define \(\mathbf{u}_{\mathbf{i}} =
+\(\bm{i} = (i, j , k)\), we define \(\bm{u}_{\bm{i}} =
 \left(j/n, k/n\right)\) and the corresponding standard node
-\(\mathbf{n}_{\mathbf{i}} = b\left(\mathbf{u}_{\mathbf{i}}\right)\).
+\(\bm{n}_{\bm{i}} = b\left(\bm{u}_{\bm{i}}\right)\).
 Given these points, two choices for shape functions present
 themselves:
 \begin{itemize}
   \item \textbf{Pre-Image Basis}:
-    \(\varphi_{\mathbf{j}}\left(\mathbf{n}_{\mathbf{i}}\right) =
-      \widehat{\varphi}_{\mathbf{j}}\left(\mathbf{u}_{\mathbf{i}}\right) =
-      \widehat{\varphi}_{\mathbf{j}}\left(b^{-1}\left(
-      \mathbf{n}_{\mathbf{i}}\right)\right)\)
-    where \(\widehat{\varphi}_{\mathbf{j}}\) is a canonical basis function
+    \(\varphi_{\bm{j}}\left(\bm{n}_{\bm{i}}\right) =
+      \widehat{\varphi}_{\bm{j}}\left(\bm{u}_{\bm{i}}\right) =
+      \widehat{\varphi}_{\bm{j}}\left(b^{-1}\left(
+      \bm{n}_{\bm{i}}\right)\right)\)
+    where \(\widehat{\varphi}_{\bm{j}}\) is a canonical basis function
     on \(\utri\), i.e.
-    \(\widehat{\varphi}_{\mathbf{j}}\) a degree \(p\) bivariate polynomial and
-    \(\widehat{\varphi}_{\mathbf{j}}\left(\mathbf{u}_{\mathbf{i}}\right) =
-    \delta_{\mathbf{i} \mathbf{j}}\)
+    \(\widehat{\varphi}_{\bm{j}}\) a degree \(p\) bivariate polynomial and
+    \(\widehat{\varphi}_{\bm{j}}\left(\bm{u}_{\bm{i}}\right) =
+    \delta_{\bm{i} \bm{j}}\)
   \item \textbf{Global Coordinates Basis}:
-    \(\varphi_{\mathbf{j}}\left(\mathbf{n}_{\mathbf{i}}\right) =
-    \delta_{\mathbf{i} \mathbf{j}}\), i.e. a canonical basis function
-    on the standard nodes \(\left\{\mathbf{n}_{\mathbf{i}}\right\}\).
+    \(\varphi_{\bm{j}}\left(\bm{n}_{\bm{i}}\right) =
+    \delta_{\bm{i} \bm{j}}\), i.e. a canonical basis function
+    on the standard nodes \(\left\{\bm{n}_{\bm{i}}\right\}\).
 \end{itemize}
 
 \noindent For example, consider a quadratic B\'{e}zier triangle:
@@ -251,12 +304,12 @@ b(s, t) = \left[ \begin{array}{c c}
   \end{array}\right]^T \\
 \Longrightarrow
 \left[ \begin{array}{c c c c c c}
-    \mathbf{n}_{2, 0, 0} &
-    \mathbf{n}_{1, 1, 0} &
-    \mathbf{n}_{0, 2, 0} &
-    \mathbf{n}_{1, 0, 1} &
-    \mathbf{n}_{0, 1, 1} &
-    \mathbf{n}_{0, 0, 2}
+    \bm{n}_{2, 0, 0} &
+    \bm{n}_{1, 1, 0} &
+    \bm{n}_{0, 2, 0} &
+    \bm{n}_{1, 0, 1} &
+    \bm{n}_{0, 1, 1} &
+    \bm{n}_{0, 0, 2}
   \end{array}\right] = \left[ \begin{array}{c c c c c c}
     0 & 2 & 4 & 2 & 5 & 4 \\
     4 & 4 & 4 & 6 & 7 & 8
@@ -278,7 +331,7 @@ and together they give
 \begin{equation}
 \varphi^{P}_{0, 1, 1}(x, y) = \frac{(y - 4) (x - y + 4)}{x - y + 8}.
 \end{equation}
-In general \(\varphi_{\mathbf{j}}^P\) may not even be a rational bivariate
+In general \(\varphi_{\bm{j}}^P\) may not even be a rational bivariate
 function; due to composition with \(b^{-1}\) we can only guarantee that
 it is algebraic (i.e. it can be defined as the zero set of polynomials).
 
@@ -299,7 +352,7 @@ For example, in Figure~\ref{fig:bezier-triangle-intersect}, a
 \(\mathcal{T}_0\) and \(\mathcal{T}_1\) are intersected.
 
 A \textbf{curved polygon} is defined by a collection of B\'{e}zier curves
-in \(\mathbf{R}^2\) that determine the boundary. In order to be
+in \(\reals^2\) that determine the boundary. In order to be
 a valid polygon, none of the boundary curves may cross and the
 ends of consecutive edge curves must meet. For our example in
 Figure~\ref{fig:bezier-triangle-intersect}, the triangles
@@ -326,14 +379,14 @@ be able to be described by a mapping from a simple space like
 An error-free transformation is a computational method where both
 the computed result and the round-off error are returned. It
 is considered ``free'' of error if the round-off can be represented
-exactly as an element or elements of \(\mathbf{F}\).
-The error-free transformations used in this paper are
+exactly as an element or elements of \(\floats\).
+The error-free transformations used in this work are
 the \texttt{TwoSum} algorithm by Knuth (\cite{Knuth1997}) and
 \texttt{TwoProd} algorithm by Dekker (\cite{Dekker1971}, Section 5),
 respectively.
 
 \begin{theorem}[\cite{Ogita2005}, Theorem 3.4]\label{thm:eft}
-For \(a, b \in \mathbf{F}\) and \(P, \pi, S, \sigma \in \mathbf{F}\),
+For \(a, b \in \floats\) and \(P, \pi, S, \sigma \in \floats\),
 \texttt{TwoSum} and \texttt{TwoProd} satisfy
 \begin{alignat}{4}
 \left[S, \sigma\right] &= \mathtt{TwoSum}(a, b), & \, S &= \fl{a + b},

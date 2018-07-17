@@ -3,15 +3,15 @@
 \section{Intersecting B\'{e}zier Curves}
 
 The problem of intersecting two B\'{e}zier curves is a core building
-block for intersecting two B\'{e}zier triangles in \(\mathbf{R}^2\).
-Since a curve is a degree one object, the intersections will either
-be a curve segment common to both curves (if they coincide) or a finite
-set of points.
-Many algorithsm have been described in the literature, both
+block for intersecting two B\'{e}zier triangles in \(\reals^2\)
+Since a curve is an algebraic variety of dimension one,
+the intersections will either be a curve segment common to both curves (if
+they coincide) or a finite set of points (i.e. dimension zero).
+Many algorithms have been described in the literature, both
 geometric (\cite{Sederberg1986, Sederberg1990, Kim1998}) and
 algebraic (\cite{Manocha:CSD-92-698}).
 
-In the implementation for this paper, the B\'{e}zier subdivision
+In the implementation for this work, the B\'{e}zier subdivision
 algorithm is used.
 In the case of a transversal intersection (i.e. one where the
 tangents to each curve are not parallel and both are non-zero),
@@ -22,17 +22,19 @@ actual intersection. Non-transversal intersections
 have infinite condition number, but transversal intersections with
 very high condition number can also cause convergence problems.
 
-In the the B\'{e}zier subdivision algorithm, we first check if the
-bounding boxes for the curves are disjoint
-(Figure~\ref{fig:bounding-box-check}).
-
 \begin{figure}[H]
-  \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/bbox_check.pdf}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/curved-mesh/bbox_check.pdf}
   \centering
-  \caption{Bounding box check.}
+  \caption{Bounding box intersection predicate. This is a cheap way to
+    conclude that two curves don't intersect, though it inherently is
+    susceptible to false positives.}
   \label{fig:bounding-box-check}
 \end{figure}
 
+In the B\'{e}zier subdivision algorithm, we first check if the
+bounding boxes for the curves are disjoint
+(Figure~\ref{fig:bounding-box-check}).
 We use the bounding boxes
 rather than the convex hulls since they are easier to compute and
 the intersections of boxes are easier to check.
@@ -75,7 +77,7 @@ Once both curve segments are linear (to tolerance), the intersection is
 approximated by intersecting the lines connecting the endpoints of each
 curve segment. This approximation is used as a starting point for Newton's
 method, to find a root of \(F(s, t) = b_0(s) - b_1(t)\). Since
-\(b_0(s), b_1(t) \in \mathbf{R}^2\) we have Jacobian \(J =
+\(b_0(s), b_1(t) \in \reals^2\) we have Jacobian \(J =
 \left[ \begin{array}{c c} b_0'(s) & -b_1'(t) \end{array}\right]\).
 With these, Newton's method is
 \begin{equation}
@@ -89,11 +91,11 @@ singular.
 
 \section{Intersecting B\'{e}zier Triangles}
 
-The chief difficulty in intersecting two surfaces is intersecting their edges.
+The chief difficulty in intersecting two surfaces is intersecting their edges,
+which are B\'{e}zier curves.
 Though this is just a part of the overall algorithm, it proved to be the
-most difficult to implement.
-
-To intersect two B\'{e}zier surfaces, we first find all points
+\textbf{most difficult} to implement. So the first part of the algorithm is
+to find all points
 where the edges intersect (Figure~\ref{fig:edge-intersections}).
 
 \begin{figure}[H]
@@ -104,7 +106,8 @@ where the edges intersect (Figure~\ref{fig:edge-intersections}).
 \end{figure}
 
 To determine the curve segments that bound the curved polygon region(s)
-(see~\ref{sec:curved-polygons}) of intersection, we not only need to keep track
+(see~\ref{sec:curved-polygons} for more about curved polygons) of
+intersection, we not only need to keep track
 of the coordinates of intersection, we also need to keep note of
 \textbf{which} edges the intersection occurred on and the parameters along
 each curve.
@@ -254,15 +257,13 @@ curve onto the relevant interval. For example,
 \(p_0 = \left[ \begin{array}{c} -2 \\ 4 \end{array}\right]\),
 \(p_1 = \left[ \begin{array}{c} 4 \\ -4 \end{array}\right]\),
 \(p_2 = \left[ \begin{array}{c} 10 \\ 4 \end{array}\right]\)
-and we reparameterize on \(\left[\frac{1}{6}, \frac{3}{4}\right]\) to control
-points
+and we reparameterize on \(\alpha = \frac{1}{6}, \beta = \frac{3}{4}\) to
+control points
 \begin{align}
   q_0 &= E_3\left(\frac{1}{6}\right) =
   \frac{16}{9} \left[ \begin{array}{c} 0 \\ 1 \end{array}\right] \\
-  q_1 &= \left(1 - \frac{1}{6}\right) \left[\left(1 - \frac{3}{4}\right) p_0 +
-    \frac{3}{4} p_1\right] +
-    \frac{1}{6} \left[\left(1 - \frac{3}{4}\right) p_1 +
-    \frac{3}{4} p_2\right] = \frac{1}{6} \left[
+  q_1 &= (1 - \alpha) \left[(1 - \beta) p_0 + \beta p_1\right] +
+   \alpha \left[(1 - \beta) p_1 + \beta p_2\right] = \frac{1}{6} \left[
     \begin{array}{c} 21 \\ -8 \end{array}\right] \\
   q_2 &= E_3\left(\frac{3}{4}\right) = \left[
     \begin{array}{c} 7 \\ 1 \end{array}\right].
@@ -271,4 +272,28 @@ points
 \section{B\'{e}zier Triangle Inverse}
 
 The problem of determining the parameters \((s, t)\) given a point
-\((x, y)\) in a B\'{e}zier triangle...
+\(\bm{p} = \left[\begin{array}{c c} x & y\end{array}\right]^T\)
+in a B\'{e}zier triangle can also be solved by using
+subdivision with a bounding box predicate and then Newton's method
+at the end.
+
+\begin{figure}[H]
+  \includegraphics[width=0.625\textwidth]
+                  {../images/curved-mesh/locate_in_triangle.pdf}
+  \centering
+  \caption{Checking for a point \(\bm{p}\) in each of four subregions
+    when subdividing a B\'{e}zier triangle.}
+  \label{fig:locate-in-triangle}
+\end{figure}
+
+For example, Figure~\ref{fig:locate-in-triangle} shows
+how regions of \(\utri\) can be discarded recursively until the
+suitable region for \((s, t)\) has a sufficiently small area. At
+this point, we can apply Newton's method to the map \(F(s, t) =
+b(s, t) - \bm{p}\). It's very helpful (for Newton's method) that
+\(F: \reals^2 \longrightarrow \reals^2\) since the Jacobian will
+always be invertible
+when the B\'{e}zier triangle is valid. If \(\bm{p} \in \reals^3\)
+then the system would be underdetermined. Similarly, if
+\(\bm{p} \in \reals^2\) but \(b(s)\) is a B\'{e}zier curve then the
+system would be overdetermined.
