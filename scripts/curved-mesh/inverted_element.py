@@ -138,11 +138,16 @@ def main():
         horizontalalignment="center",
         verticalalignment="center",
         fontsize=16,
+        fontweight="bold",
         color="black",
     )
     ax2.add_patch(
         matplotlib.patches.Circle(
-            (0.3, 0.35), radius=0.06, fill=False, edgecolor="black"
+            (0.3, 0.35),
+            radius=0.06,
+            fill=False,
+            edgecolor="black",
+            linewidth=1.0,
         )
     )
     ax3.text(
@@ -152,11 +157,16 @@ def main():
         horizontalalignment="center",
         verticalalignment="center",
         fontsize=16,
+        fontweight="bold",
         color="black",
     )
     ax3.add_patch(
         matplotlib.patches.Circle(
-            (0.1, 0.42), radius=0.06, fill=False, edgecolor="black"
+            (0.1, 0.422),
+            radius=0.06,
+            fill=False,
+            edgecolor="black",
+            linewidth=1.0,
         )
     )
     figure.set_size_inches(7.45, 5.19)
