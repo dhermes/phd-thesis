@@ -29,8 +29,8 @@ def main():
     figure = plt.figure()
     ax = figure.gca()
 
-    ax.plot(x_vals, u0, label="$u(x, 0)$")
-    ax.plot(x_vals, u2, label="$u(x, 2)$")
+    ax.plot(x_vals, u0, label="$u(x, 0)$", color=plot_utils.BLUE)
+    ax.plot(x_vals, u2, label="$u(x, 2)$", color=plot_utils.GREEN)
     ax.annotate(
         "",
         xy=(2.875, 0.75),

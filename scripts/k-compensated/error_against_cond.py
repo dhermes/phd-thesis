@@ -114,6 +114,7 @@ def main(filename=None):
         linestyle="none",
         zorder=2,
         label=r"$\mathtt{DeCasteljau}$",
+        color=plot_utils.BLUE,
     )
     ax.loglog(
         cond_nums,
@@ -122,6 +123,7 @@ def main(filename=None):
         linestyle="none",
         zorder=2,
         label=r"$\mathtt{CompDeCasteljau}$",
+        color=plot_utils.GREEN,
     )
     ax.loglog(
         cond_nums,
@@ -130,6 +132,7 @@ def main(filename=None):
         linestyle="none",
         zorder=1.5,  # Beneath ``K=2``.
         label=r"$\mathtt{CompDeCasteljau3}$",
+        color=plot_utils.RED,
     )
     ax.loglog(
         cond_nums,
@@ -138,6 +141,7 @@ def main(filename=None):
         linestyle="none",
         zorder=1.25,  # Beneath ``K=2, 3``.
         label=r"$\mathtt{CompDeCasteljau4}$",
+        color=plot_utils.PURPLE,
     )
     # Figure out the bounds before adding the bounding lines.
     min_y, max_y = ax.get_ylim()
@@ -307,6 +311,7 @@ def main_jlcs10(filename=None):
         linestyle="none",
         zorder=2,
         label=r"$\mathtt{DeCasteljau}$",
+        color=plot_utils.BLUE,
     )
     ax.loglog(
         cond_nums,
@@ -315,6 +320,7 @@ def main_jlcs10(filename=None):
         linestyle="none",
         zorder=2,
         label=r"$\mathtt{CompDeCasteljau}$",
+        color=plot_utils.GREEN,
     )
     # Figure out the bounds before adding the bounding lines.
     min_y, max_y = ax.get_ylim()

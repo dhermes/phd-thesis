@@ -186,9 +186,9 @@ def intersection_area():
 
     ax = all_axes[0]
     intersection, = surface1.intersect(surface2)
-    surface1.plot(256, ax=ax)
-    surface2.plot(256, ax=ax)
-    intersection.plot(256, ax=ax)
+    surface1.plot(256, ax=ax, color=plot_utils.BLUE)
+    surface2.plot(256, ax=ax, color=plot_utils.GREEN)
+    intersection.plot(256, ax=ax, color=plot_utils.RED)
     ax.set_title("Curved")
 
     error_vals = []

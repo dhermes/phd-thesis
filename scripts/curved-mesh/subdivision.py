@@ -81,19 +81,14 @@ def add_patch(curve, ax, color):
         ]
     )
     patch = matplotlib.patches.PathPatch(
-        matplotlib.path.Path(polygon), facecolor=color, alpha=0.625
+        matplotlib.path.Path(polygon), color=color, alpha=0.625
     )
     ax.add_patch(patch)
 
 
-def plot_with_bbox(curve, ax, color=None):
+def plot_with_bbox(curve, ax, color):
     curve.plot(256, color=color, ax=ax)
-    if color is None:
-        line = ax.lines[-1]
-        color = line.get_color()
-
     add_patch(curve, ax, color)
-    return color
 
 
 def bbox_intersect(curve1, curve2):
@@ -134,14 +129,16 @@ def image2():
     figure, all_axes = plt.subplots(2, 3, sharex=True, sharey=True)
     ax1, ax2, ax3, ax4, ax5, ax6 = all_axes.flatten()
 
-    color1 = plot_with_bbox(curve15, ax1)
-    color2 = plot_with_bbox(curve25, ax1)
+    color1 = plot_utils.BLUE
+    color2 = plot_utils.GREEN
+    plot_with_bbox(curve15, ax1, color1)
+    plot_with_bbox(curve25, ax1, color2)
 
     left, right = refine_candidates([curve15], [curve25])
     for curve in left:
-        plot_with_bbox(curve, ax2, color=color1)
+        plot_with_bbox(curve, ax2, color1)
     for curve in right:
-        plot_with_bbox(curve, ax2, color=color2)
+        plot_with_bbox(curve, ax2, color2)
 
     for ax in (ax3, ax4, ax5, ax6):
         left, right = refine_candidates(left, right)
@@ -150,7 +147,7 @@ def image2():
             plot_with_bbox(curve, ax, color=color1)
         curve25.plot(256, color=color2, alpha=0.5, ax=ax)
         for curve in right:
-            plot_with_bbox(curve, ax, color=color2)
+            plot_with_bbox(curve, ax, color2)
 
     for ax in (ax1, ax2, ax3, ax4, ax5, ax6):
         simple_axis(ax)
@@ -177,8 +174,8 @@ def image3():
         [[0.25, -0.125, 0.5], [-0.125, 0.375, 1.0]]
     )
     curve1b = bezier.Curve(control_pts1b, degree=2)
-    plot_with_bbox(curve1a, ax1)
-    plot_with_bbox(curve1b, ax1)
+    plot_with_bbox(curve1a, ax1, plot_utils.BLUE)
+    plot_with_bbox(curve1b, ax1, plot_utils.GREEN)
 
     control_pts2a = np.asfortranarray([[0.0, 0.75, 1.0], [1.0, 0.75, 0.0]])
     curve2a = bezier.Curve(control_pts2a, degree=2)
@@ -186,15 +183,15 @@ def image3():
         [[0.375, 0.625, 1.375], [1.375, 0.625, 0.375]]
     )
     curve2b = bezier.Curve(control_pts2b, degree=2)
-    plot_with_bbox(curve2a, ax2)
-    plot_with_bbox(curve2b, ax2)
+    plot_with_bbox(curve2a, ax2, plot_utils.BLUE)
+    plot_with_bbox(curve2b, ax2, plot_utils.GREEN)
 
     control_pts3a = np.asfortranarray([[0.0, 0.25, 1.0], [-0.25, 0.25, -0.75]])
     curve3a = bezier.Curve(control_pts3a, degree=2)
     control_pts3b = np.asfortranarray([[1.0, 1.5, 2.0], [-1.0, -1.5, -1.0]])
     curve3b = bezier.Curve(control_pts3b, degree=2)
-    plot_with_bbox(curve3a, ax3)
-    plot_with_bbox(curve3b, ax3)
+    plot_with_bbox(curve3a, ax3, plot_utils.BLUE)
+    plot_with_bbox(curve3b, ax3, plot_utils.GREEN)
 
     for ax in (ax1, ax2, ax3):
         simple_axis(ax)
@@ -225,10 +222,10 @@ def image4():
     nodes25 = np.asfortranarray([[0.0, 0.25, 0.75, 1.0], [0.5, 1.0, 1.5, 0.5]])
     curve25 = bezier.Curve(nodes25, degree=3)
 
-    curve15.plot(256, ax=all_axes[0])
-    color1 = all_axes[0].lines[-1].get_color()
-    curve25.plot(256, ax=all_axes[0])
-    color2 = all_axes[0].lines[-1].get_color()
+    color1 = plot_utils.BLUE
+    curve15.plot(256, ax=all_axes[0], color=color1)
+    color2 = plot_utils.GREEN
+    curve25.plot(256, ax=all_axes[0], color=color2)
 
     choices1 = [1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1]
     choices2 = [1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1]
@@ -240,8 +237,8 @@ def image4():
         index2 = choices2[i]
         first = first.subdivide()[index1]
         second = second.subdivide()[index2]
-        first.plot(256, ax=ax)
-        second.plot(256, ax=ax)
+        first.plot(256, ax=ax, color=color1)
+        second.plot(256, ax=ax, color=color2)
         # After splitting, put the bounding box on the previous axis.
         prev_ax = all_axes[i]
         add_patch(first, prev_ax, color1)
