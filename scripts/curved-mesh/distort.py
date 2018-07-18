@@ -132,94 +132,35 @@ def get_title(t):
         return "$t = {:g}$".format(t)
 
 
-def plot_exterior(
-    internal_x, internal_y, external_x, external_y, ax, custom_tris=None
-):
-    N1 = len(internal_x)
-    N2 = len(external_x)
-    nodes = np.empty((N1 + N2, 2))
-    nodes[:N1, 0] = internal_x
-    nodes[:N1, 1] = internal_y
-    nodes[N1:, 0] = external_x
-    nodes[N1:, 1] = external_y
-    tessellation = scipy.spatial.qhull.Delaunay(nodes)
-    # Remove any triangles that cross the boundary.
-    to_keep = []
-    polygon1 = shapely.geometry.Polygon(nodes[:N1, :])
-    for i, tri in enumerate(tessellation.simplices):
-        polygon2 = shapely.geometry.Polygon(nodes[tri, :])
-        intersection = polygon1.intersection(polygon2)
-        if intersection.area == 0.0:
-            to_keep.append(i)
-
-    triangles = tessellation.simplices[to_keep, :]
-    if custom_tris is not None:
-        triangles = np.vstack([triangles, custom_tris])
-    ax.triplot(
-        nodes[:, 0],
-        nodes[:, 1],
-        triangles,
-        color=plot_utils.GREEN,
-        alpha=ALPHA,
-    )
-
-
-def plot_distorted(filename, exterior=False):
-    external_x = np.array([-1.25, 1.125, 3.5, 3.5, 3.5, 1.125, -1.25, -1.25])
-    external_y = np.array([-1.25, -1.25, -1.25, 0.5, 2.25, 2.25, 2.25, 0.5])
-
-    figure, all_axes = plt.subplots(3, 3)
+def plot_distorted():
+    figure, all_axes = plt.subplots(1, 5, sharex=True, sharey=True)
     all_axes = all_axes.flatten()
-    for index in range(9):
+    for index in range(5):
         ax = all_axes[index]
-        t = 0.125 * index
+        t = index / 4.0
         xt, yt = point_on_characteristic(NODES_X, NODES_Y, t)
-        ax.triplot(xt, yt, TRIANGLES, color=plot_utils.BLUE)
+        ax.triplot(xt, yt, TRIANGLES, color=plot_utils.BLUE, linewidth=0.9)
 
-        if exterior:
-            custom_tris = None
-            curr_ex = external_x
-            curr_ey = external_y
-            if index in (0, 1):
-                curr_ex = np.append(curr_ex, -1.25)
-                curr_ey = np.append(curr_ey, -0.375)
-            elif index in (7, 8):
-                curr_ex = np.append(curr_ex, 2.3125)
-                curr_ey = np.append(curr_ey, 2.25)
-            if index == 8:
-                custom_tris = np.array([[8, 20, 9]], dtype=np.int32)
-            plot_exterior(
-                xt[BOUNDARY_INDICES,],
-                yt[BOUNDARY_INDICES,],
-                curr_ex,
-                curr_ey,
-                ax,
-                custom_tris=custom_tris,
-            )
         title = get_title(t)
-        ax.set_title(title)
+        ax.set_title(title, fontsize=10)
         # Set the axis.
         ax.axis("scaled")
         ax.set_xlim(-1.35, 3.6)
         ax.set_ylim(-1.35, 2.35)
 
-    all_axes = all_axes.reshape(3, 3)
-    for ax in all_axes[:, 0]:
-        ax.set_yticks([-1.0, 0.5, 2.0])
-    for col in (1, 2):
-        for ax in all_axes[:, col]:
-            ax.set_yticklabels([])
-    for row in (0, 1):
-        for ax in all_axes[row, :]:
-            ax.set_xticklabels([])
-    for ax in all_axes[2, :]:
-        ax.set_xticks([-1.0, 1.0, 3.0])
-        ax.set_xticklabels(["$-1.0$", "$1.0$", "$3.0$"])
+    label_size = 7
+    all_axes[0].yaxis.set_tick_params(labelsize=label_size)
+    for ax in all_axes:
+        ax.xaxis.set_tick_params(labelsize=label_size)
 
-    figure.set_size_inches(10.75, 8.61)
+    all_axes[0].set_yticks([-1.0, 0.5, 2.0])
+    all_axes[0].set_xticks([-1.0, 1.0, 3.0])
+    all_axes[0].set_xticklabels(["$-1.0$", "$1.0$", "$3.0$"])
+    figure.set_size_inches(6.5, 1.45)
     figure.subplots_adjust(
-        left=0.04, bottom=0.02, right=0.98, top=0.98, wspace=0.04, hspace=0.1
+        left=0.07, bottom=0.02, right=0.99, top=0.98, wspace=0.07, hspace=0.2
     )
+    filename = "mesh_distortion.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
     figure.savefig(path, bbox_inches="tight")
     print("Saved {}".format(filename))
@@ -395,8 +336,7 @@ def remesh():
 
 
 def main():
-    plot_distorted("mesh_distortion.pdf")
-    plot_distorted("mesh_distortion_ext.pdf", exterior=True)
+    plot_distorted()
     distort_cubic_tri()
     remesh()
 

@@ -37,12 +37,11 @@ along each characteristic is no longer constant; instead it satisfies the
 ODE \(\frac{d}{dt} u(x(t), t) = \eps u_{xx}\).
 
 \begin{figure}
-  \includegraphics[width=0.9375\textwidth]
-                  {../images/curved-mesh/mesh_distortion.pdf}
+  \includegraphics{../images/curved-mesh/mesh_distortion.pdf}
   \centering
   \caption{Distortion of regular mesh caused by particle motion along
     the velocity field \(\left[ y^2 \; 1 \right]^T\) from \(t = 0\)
-    to \(t = 1\) with \(\Delta t = 1/8\).}
+    to \(t = 1\) with \(\Delta t = 1/4\).}
   \label{fig:mesh-distortion}
 \end{figure}
 
@@ -149,14 +148,6 @@ e.g. mass or energy cannot leave or enter the system),
 
 \begin{figure}
   \includegraphics[width=0.9375\textwidth]
-                  {../images/curved-mesh/mesh_distortion_ext.pdf}
-  \centering
-  \caption{Handling partially overlapping meshes.}
-  \label{fig:mesh-distortion-ext}
-\end{figure}
-
-\begin{figure}
-  \includegraphics[width=0.9375\textwidth]
                   {../images/curved-mesh/polygon_vs_curved.pdf}
   \centering
   \caption{Comparing the relative error for the computed area of a quadratic
@@ -193,4 +184,21 @@ e.g. mass or energy cannot leave or enter the system),
     along the velocity field \(\left[ y^2 \; 1 \right]^T\) from \(t = 0\)
     to \(t = 1\).}
   \label{fig:distortion-remesh}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/main_figure27.pdf}
+  \centering
+  \caption{Comparing straight sided meshes to a curved mesh when approximating
+    the unit disc in \(\reals^2\).}
+  \label{fig:curved-vs-straight-mesh}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=0.96875\textwidth]{../images/curved-mesh/main_figure29.pdf}
+  \centering
+  \caption{Partially overlapping meshes on a near identical domain. Both are
+    linear meshes that approximate the unit disc in \(\reals^2\). The outermost
+    columns show how the domain of each mesh can be expanded so they agree.}
+  \label{fig:partially-overlapping}
 \end{figure}
