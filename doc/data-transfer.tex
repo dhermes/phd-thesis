@@ -2,6 +2,43 @@
 
 \section{Introduction}
 
+In this chapter, an algorithm for conservative data transfer between curved
+meshes will be described. This has practical applications to many methods in
+computational physics. Data transfer is needed when a solution (approximated
+by a discrete field) is known a \textbf{source} mesh and must be transferred
+to a \textbf{target} mesh. In many applications, the field must be conserved
+for physical reasons, e.g. mass or energy cannot leave or enter the system,
+hence the focus on \textbf{conservative} data transfer. A few
+scenarios where data transfer is necessary will be considered below to
+motivate the ``black box'' data transfer algorithm.
+
+Since data transfer is so commonly needed in physical applications, this
+problem of conservative interpolation has been considered already for
+straight sided meshes. The \textbf{common refinement} approach in
+\cite{Jiao2004} is used to compare several methods for data transfer across two
+meshes. However, the problem of constructing such a common refinement is
+not discussed. The problem of constructing such a refinement is considered
+in \cite{Farrell2009, Farrell2011} (called a supermesh by the authors).
+However, the data transfer becomes considerably more challenging for curved
+meshes. For a sense of the difference between the straight sided and curved
+cases, consider the problem of intersecting an element from the source mesh
+with an element from the target mesh. If the elements are triangles, the
+intersection is either a convex polygon or has measure zero. If the elements
+are curved, the intersection can be non-convex and can even split into
+multiple disjoint regions.
+
+\subsection{Lagrangian Methods}
+
+\begin{figure}
+  \includegraphics{../images/curved-mesh/simple_transport.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{The solution to \(u_t + u_x = 0, \; u(x, 0) = x^3\) plotted in
+    the \(xu\)-plane. Demonstrates simple transport of
+    the solution.}
+  \label{fig:simple-transport}
+\end{figure}
+
 The method of characteristics helps transform partial differential equations
 into ordinary differential equations by dividing the physical domain into
 a family of curves. For example, the simple transport equation
@@ -11,23 +48,14 @@ u_t + c u_x = 0
 can be transformed when restricting to the family of lines
 \(x(t) = x_0 + c t\). On these lines \(u(x(t), t)\) is constant, by
 construction, and so the solution is ``transported'' from \(u(x_0, 0)\)
-along each characteristic line.
-
-\begin{figure}[H]
-  \includegraphics{../images/curved-mesh/simple_transport.pdf}
-  \centering
-  \caption{The solution to \(u_t + u_x = 0, \; u(x, 0) = x^3\) plotted in
-    the \(xu\)-plane. Demonstrates simple transport of
-    the solution.}
-  \label{fig:simple-transport}
-\end{figure}
+along each characteristic line (Figure~\ref{fig:simple-transport}).
 
 Motivated by this, \textbf{Lagrangian methods} treat each point in the
 physical domain as a ``particle'' which moves along a characteristic curve
 over time and then monitor values associated with the particle (heat / energy,
 velocity, pressure, density, concentration, etc.). They are an effective way
 to solve PDEs, even with higher order or non-linear terms.
-For example, if we add a viscosity term to~\eqref{eq:simple-transport}
+For example, if a viscosity term is added to~\eqref{eq:simple-transport}
 \begin{equation}
 u_t + c u_x - \eps u_{xx} = 0
 \end{equation}
@@ -35,29 +63,34 @@ then the same characteristics can be used, but the value
 along each characteristic is no longer constant; instead it satisfies the
 ODE \(\frac{d}{dt} u(x(t), t) = \eps u_{xx}\).
 
-\begin{figure}
-  \includegraphics{../images/curved-mesh/mesh_distortion.pdf}
-  \centering
-  \caption{Distortion of regular mesh caused by particle motion along
-    the velocity field \(\left[ y^2 \; 1 \right]^T\) from \(t = 0\)
-    to \(t = 1\) with \(\Delta t = 1/4\).}
-  \label{fig:mesh-distortion}
-\end{figure}
-
 This approach transforms the numerical solution of PDEs into a family of
 numerical solutions to many independent ODEs. It allows the use of familiar
 and well understood ODE solvers. In addition, Lagrangian methods often
 have less restrictive conditions on time steps than Eulerian
 methods\footnote{In Eulerian methods, the mesh is fixed.}.
 When solving PDEs on unstructured meshes
-with Lagrangian methods, the nodes that determine the mesh move (since they
-are treated like particles) and the mesh ``travels''. However, mesh changes
-can cause problems if it causes the mesh to leave the domain being
-analyzed or if it distorts the mesh until the element quality is too low
-in some mesh elements.
+with Lagrangian methods, the nodes move (since they
+are treated like particles) and the mesh ``travels''.
+
+\subsection{Remeshing and Adaptivity}
+
+\begin{figure}
+  \includegraphics{../images/curved-mesh/mesh_distortion.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Distortion of a regular mesh caused by particle motion along
+    the velocity field \(\left[ y^2 \; 1 \right]^T\) from \(t = 0\)
+    to \(t = 1\) with \(\Delta t = 1/4\).}
+  \label{fig:mesh-distortion}
+\end{figure}
+
+A flow-based change to a mesh can cause problems if it causes the mesh to
+leave the domain being analyzed or if it distorts the mesh until the element
+quality is too low in some mesh elements. Over enough time, the mesh can
+even tangle (i.e. elements begin to overlap).
 For an example of such distortion (Figure~\ref{fig:mesh-distortion}),
 consider a PDE of the form
-\begin{equation}
+\begin{equation}\label{eq:non-rigid-characteristics}
 u_t + \left[ \begin{array}{c} y^2 \\ 1 \end{array}\right] \cdot \nabla u +
   F\left(u, \nabla u\right) = 0.
 \end{equation}
@@ -65,37 +98,85 @@ The characteristics \(y(t) = y_0 + t, x(t) = x_0 +
 \left(y(t)^3 - y_0^3\right)/3\)
 distort the mesh considerably after just one second.
 
-Adaptive: \cite{Dukowicz1987, Babuska1978}, Data transfer:
-\cite{Jiao2004, Farrell2009, Farrell2011} (In many applications, the field
-must be conserved for physical reasons,
-e.g. mass or energy cannot leave or enter the system),
+\begin{figure}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/curved-mesh/distortion_remesh.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Remeshing a domain after distortion caused by particle motion
+    along the velocity field \(\left[ y^2 \; 1 \right]^T\) from \(t = 0\)
+    to \(t = 1\).}
+  \label{fig:distortion-remesh}
+\end{figure}
 
-%% Excerpt from DK87
-%% Traditionally, numerical fluid dynamics has taken the form of
-%% Lagrangian or Eulerian methods. Lagrangian methods, in which the computational
-%% mesh travels with the fluid, are ideal for the many problems which involve interfaces
-%% between materials or free surfaces. However, multidimensional Lagrangian calculations
-%% can typically be carried out for only a limited time before severe mesh distortion, or
-%% even mesh tangling, destroys the calculation. Eulerian methods, in which the mesh is
-%% fixed, are ideal for flows with large deformation but the sharp resolution of interfaces
-%% or free surfaces is lost.
+To deal with distortion, one can allow the mesh to adapt in between time
+steps. For example, Figure~\ref{fig:distortion-remesh} shows an example
+remeshing of the domain.
+In addition to improving mesh quality, mesh
+adaptivity can be used to dynamically focus computational effort to resolve
+sensitive features of a numerical solution. From~\cite{Iske2004}
+\begin{quote}
+{\small In order to balance the method's approximation quality and its
+computational costs effectively, adaptivity is an essential requirement,
+especially when modelling multiscale phenomena.}
+\end{quote}
+For more on mesh adaptivity,
+see \cite{Dukowicz1987, Babuska1978, Iske2004}.
 
-%% Excerpt from Iske+Kaser
-%% However, in order to balance the method's approximation quality and its computational costs
-%% effectively, adaptivity is an essential requirement, especially when modelling multiscale phenomena
+In either case, the change in the
+mesh between time steps requires transferring a known solution on the
+discarded mesh to the mesh produced by the remeshing process. Without
+the ability to change the mesh, Lagrangian methods (or, more generally,
+ALE~\cite{Hirt1974}) would not be useful, since after a limited time the
+mesh will distort.
 
-%% Excerpt from Jiao+Heath
-%% While the comparisons are
-%% performed with matching geometries, this paper also addresses additional complexities associated with
-%% non-matching surface meshes
+\subsection{High-order Meshes}
 
-%% SUPERMESH == ``common refinement''
+\begin{figure}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/curved-mesh/main_figure27.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Comparing straight sided meshes to a curved mesh when approximating
+    the unit disc in \(\reals^2\).}
+  \label{fig:curved-vs-straight-mesh}
+\end{figure}
 
-%% b is the load vector, M is the mass matrix; Mx = b
+To allow for greater geometric flexibility and for high order of convergence,
+curved mesh elements can be used in the finite element method. Though the
+complexity of a method can steeply rise when allowing curved elements, the
+trade for high-order convergence can be worth it. (See~\cite{Wang2013} for
+more on high-order CFD methods.) Curved meshes can typically
+represent a given geometry with far fewer elements than a straight sided mesh
+(for example, Figure~\ref{fig:curved-vs-straight-mesh}).
+The increase in accuracy also allows for the use of fewer elements, which
+in turn can also facilitate a reduction in the overall computation time.
 
-%% A limitation of the common-refinement-based approach is that the geometry
-%% of the source and target meshes in principle should discretize the same geometry, and some
-%% applications may involve partially overlapping meshes
+\begin{figure}
+  \includegraphics{../images/curved-mesh/element_distortion.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Movement of nodes in a quadratic element under distortion caused
+    by particle motion along the velocity field \(\left[ y^2 \; 1 \right]^T\)
+    from \(t = 0\) to \(t = 1\) with \(\Delta t = 1/2\). The green curves
+    represent the characteristics that each node travels along.}
+  \label{fig:element-distortion}
+\end{figure}
+
+Even if the domain has no inherent curvature, high-order (degree \(p\)) shape
+functions allow for order \(p + 1\) convergence, which is desirable in
+it's own right. However, even in such cases, a Lagrangian method must either
+curve the mesh or information about the flow of the geometry will be lost.
+Figure~\ref{fig:element-distortion} shows what happens to a given
+quadratic element as the nodes move along the
+characteristics from~\eqref{eq:non-rigid-characteristics}.
+This element uses the triangle vertices and edge
+midpoints to determine the shape functions. However, as the nodes move
+with the flow, the midpoints are no longer on the lines connecting
+the vertex nodes. To allow the mesh to more accurately represent the
+solution, the edges can instead curve so that the midpoint nodes remain
+halfway between (i.e. half of the parameter space) the vertex nodes along
+an edge.
 
 %% Solve PDE / construct S(t) that approximates INT f(x, t) dx: https://doi.org/10.1137/0915051
 %% Solve PDE on overlapping 2D meshes: https://doi.org/10.1137/S0036142997323582
@@ -107,20 +188,10 @@ e.g. mass or energy cannot leave or enter the system),
 %% by numerical quadrature schemes.
 
 %% B\'{e}zier curves and triangles were selected for defining
-%% mesh elements for two main reasons. Firstly, using
-%% curved instead of linear elements allows us to use
-%% meshes with far fewer elements, both for representing
-%% geometry and for obtaining accurate numeric solutions.
+%% mesh elements for two main reasons...
 %% Secondly, B\'{e}zier curves and triangles have a
 %% number of mathematical properties leading to elegant
 %% algorithms.
-
-%% B\'{e}zier curves are completely defined by their control
-%% points which form the control polygon. Similarly,
-%% B\'{e}zier triangles are completely defined by their control
-%% points which form a control net. See Figure 1.
-%% For more information about B\'{e}zier curves and triangles
-%% see [11, 12] among others.
 
 %% Since adapting the mesh changes the domain for \(\bm{f}\), we
 %% must project \(\bm{f}\) onto the new mesh domain. This is
@@ -135,19 +206,36 @@ e.g. mass or energy cannot leave or enter the system),
 %% can be aborted and can be replaced with a mesh
 %% refinement.
 
+\subsection{Multiphysics}
+
+Pass
+
+\subsection{Comparing Methods}
+
+Pass
+
+\subsection{Limitations}
+
+Pass
+
 \begin{figure}
-  \includegraphics{../images/curved-mesh/element_distortion.pdf}
+  \includegraphics[width=0.96875\textwidth]
+                  {../images/curved-mesh/main_figure29.pdf}
   \centering
-  \caption{Movement of nodes in a quadratic element under distortion caused
-    by particle motion along the velocity field \(\left[ y^2 \; 1 \right]^T\)
-    from \(t = 0\) to \(t = 1\) with \(\Delta t = 1/2\).}
-  \label{fig:element-distortion}
+  \captionsetup{width=.75\linewidth}
+  \caption{Partially overlapping meshes on a near identical domain. Both are
+    linear meshes that approximate the unit disc in \(\reals^2\). The outermost
+    columns show how the domain of each mesh can be expanded so they agree.}
+  \label{fig:partially-overlapping}
 \end{figure}
+
+\section{Curved versus Polygonal Computing}
 
 \begin{figure}
   \includegraphics[width=0.9375\textwidth]
                   {../images/curved-mesh/polygon_vs_curved.pdf}
   \centering
+  \captionsetup{width=.75\linewidth}
   \caption{Comparing the relative error for the computed area of a quadratic
     B\'{e}zier triangle. In one method, the curved boundary is used with
     Green's method and it is correct to machine precision. In the other,
@@ -162,6 +250,7 @@ e.g. mass or energy cannot leave or enter the system),
   \includegraphics[width=0.9375\textwidth]
                   {../images/curved-mesh/polygon_vs_curved_intersection.pdf}
   \centering
+  \captionsetup{width=.75\linewidth}
   \caption{Comparing the relative error for the computed area of the
     intersection of two quadratic B\'{e}zier triangles. In one method, the
     intersection boundary is fully specified as the union of B\'{e}zier curve
@@ -172,31 +261,4 @@ e.g. mass or energy cannot leave or enter the system),
     B\'{e}zier curve \(b(s)\) with \(N = 4\) would be approximated by a line
     connecting \(b(0), b(1/4), b(1/2), b(3/4)\) and \(b(1)\).}
   \label{fig:polygon-vs-curved-intersection}
-\end{figure}
-
-\begin{figure}
-  \includegraphics[width=0.9375\textwidth]
-                  {../images/curved-mesh/distortion_remesh.pdf}
-  \centering
-  \caption{Remeshing a domain after distortion caused by particle motion
-    along the velocity field \(\left[ y^2 \; 1 \right]^T\) from \(t = 0\)
-    to \(t = 1\).}
-  \label{fig:distortion-remesh}
-\end{figure}
-
-\begin{figure}
-  \includegraphics[width=0.9375\textwidth]{../images/curved-mesh/main_figure27.pdf}
-  \centering
-  \caption{Comparing straight sided meshes to a curved mesh when approximating
-    the unit disc in \(\reals^2\).}
-  \label{fig:curved-vs-straight-mesh}
-\end{figure}
-
-\begin{figure}
-  \includegraphics[width=0.96875\textwidth]{../images/curved-mesh/main_figure29.pdf}
-  \centering
-  \caption{Partially overlapping meshes on a near identical domain. Both are
-    linear meshes that approximate the unit disc in \(\reals^2\). The outermost
-    columns show how the domain of each mesh can be expanded so they agree.}
-  \label{fig:partially-overlapping}
 \end{figure}
