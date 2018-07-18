@@ -38,13 +38,16 @@ def main():
         arrowprops={"arrowstyle": "->", "linewidth": 2.0},
     )
 
-    ax.legend(loc="upper left", fontsize=12)
+    ax.legend(loc="upper left", fontsize=plot_utils.TEXT_SIZE)
     ax.axis("scaled")
     ax.set_xlim(min_x, max_x)
     ax.set_ylim(-1.1, 1.1)
-    ax.set_xlabel("$x$", fontsize=16)
-    ax.set_ylabel("$u$", rotation=0, fontsize=16)
+    ax.set_xlabel("$x$", fontsize=plot_utils.TEXT_SIZE)
+    ax.set_ylabel("$u$", rotation=0, fontsize=plot_utils.TEXT_SIZE)
+    ax.xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    ax.yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
 
+    figure.set_size_inches(4.8, 3.6)
     filename = "simple_transport.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
     figure.savefig(path, bbox_inches="tight")

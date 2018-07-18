@@ -25,6 +25,8 @@ GREEN = _COLORS[2]
 RED = _COLORS[3]
 PURPLE = _COLORS[4]
 del _COLORS
+TEXT_SIZE = 10  # NOTE: Thesis text uses 12 point.
+TICK_SIZE = 7
 
 
 def set_styles():

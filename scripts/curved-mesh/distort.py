@@ -142,21 +142,20 @@ def plot_distorted():
         ax.triplot(xt, yt, TRIANGLES, color=plot_utils.BLUE, linewidth=0.9)
 
         title = get_title(t)
-        ax.set_title(title, fontsize=10)
+        ax.set_title(title, fontsize=plot_utils.TEXT_SIZE)
         # Set the axis.
         ax.axis("scaled")
         ax.set_xlim(-1.35, 3.6)
         ax.set_ylim(-1.35, 2.35)
 
-    label_size = 7
-    all_axes[0].yaxis.set_tick_params(labelsize=label_size)
+    all_axes[0].yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
     for ax in all_axes:
-        ax.xaxis.set_tick_params(labelsize=label_size)
+        ax.xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
 
     all_axes[0].set_yticks([-1.0, 0.5, 2.0])
     all_axes[0].set_xticks([-1.0, 1.0, 3.0])
     all_axes[0].set_xticklabels(["$-1.0$", "$1.0$", "$3.0$"])
-    figure.set_size_inches(6.5, 1.45)
+    figure.set_size_inches(6.4, 1.45)
     figure.subplots_adjust(
         left=0.07, bottom=0.02, right=0.99, top=0.98, wspace=0.07, hspace=0.2
     )
@@ -182,7 +181,7 @@ def distort_cubic_tri():
         ]
     )
 
-    figure, all_axes = plt.subplots(2, 3)
+    figure, all_axes = plt.subplots(2, 3, sharex=True, sharey=True)
     min_y = -1.65
     max_y = 2.8
     control_x = control_points[:, 0]
@@ -210,7 +209,7 @@ def distort_cubic_tri():
         ax_top.plot(corner_x, corner_y)
 
         title = get_title(t)
-        ax_top.set_title(title)
+        ax_top.set_title(title, fontsize=plot_utils.TEXT_SIZE)
 
         # Now plot the curved element in the "below" axis".
         ax_below = all_axes[1, index]
@@ -241,7 +240,7 @@ def distort_cubic_tri():
                 color="black",
                 marker="o",
                 linestyle="none",
-                markersize=6,
+                markersize=4,
             )
         # Add shadow "nodes" to top row for "next" plots.
         for next_index in range(index + 1, 3):
@@ -253,29 +252,29 @@ def distort_cubic_tri():
                 alpha=0.5 - 0.25 * (next_index - index - 1),
                 marker="o",
                 linestyle="none",
-                markersize=6,
+                markersize=4,
             )
 
     for ax in all_axes.flatten():
         ax.axis("scaled")
-        ax.set_xlim(-1.0, 5.9)
-        ax.set_ylim(min_y, max_y)
-    for ax in all_axes[:, 1:].flatten():
-        ax.set_yticklabels([])
-    for ax in all_axes[0, :].flatten():
-        ax.set_xticklabels([])
-    for ax in all_axes[:, 0]:
-        ax.set_yticks([-1.5, -0.5, 0.5, 1.5, 2.5])
-        ax.set_yticklabels(["$-1.5$", "$-0.5$", "$0.5$", "$1.5$", "$2.5$"])
+    # One axis, all axes (since sharex/sharey).
+    ax1 = all_axes[0, 0]
+    ax1.set_xlim(-1.0, 5.9)
+    ax1.set_ylim(min_y, max_y)
+    ax1.set_xticks([0.0, 1.0, 2.0, 3.0, 4.0, 5.0])
+    ax1.set_xticklabels(
+        ["$0.0$", "$1.0$", "$2.0$", "$3.0$", "$4.0$", "$5.0$"]
+    )
+    ax1.set_yticks([-1.5, -0.5, 0.5, 1.5, 2.5])
+    ax1.set_yticklabels(["$-1.5$", "$-0.5$", "$0.5$", "$1.5$", "$2.5$"])
+    ax1.yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[1, 0].yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
     for ax in all_axes[1, :]:
-        ax.set_xticks([0.0, 1.0, 2.0, 3.0, 4.0, 5.0])
-        ax.set_xticklabels(
-            ["$0.0$", "$1.0$", "$2.0$", "$3.0$", "$4.0$", "$5.0$"]
-        )
+        ax.xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
 
-    figure.set_size_inches(13.0, 6.37)
+    figure.set_size_inches(6.0, 2.9)
     figure.subplots_adjust(
-        left=0.03, bottom=0.05, right=1.0, top=0.95, wspace=0.03, hspace=-0.03
+        left=0.07, bottom=0.05, right=0.99, top=0.97, wspace=0.04, hspace=-0.1
     )
     filename = "element_distortion.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
@@ -293,7 +292,7 @@ def remesh():
     nodes[:, 0] = xt
     nodes[:, 1] = yt
     for ax in (ax1, ax2):
-        ax.triplot(nodes[:, 0], nodes[:, 1], TRIANGLES, color=plot_utils.BLUE)
+        ax.triplot(nodes[:, 0], nodes[:, 1], TRIANGLES, color=plot_utils.BLUE, linewidth=1.0)
 
     # Do a Delaunay triangulation and discard exterior triangles.
     tessellation = scipy.spatial.qhull.Delaunay(nodes)
@@ -311,7 +310,7 @@ def remesh():
     triangles_new = tessellation.simplices[to_keep, :]
     for ax in (ax2, ax3):
         ax.triplot(
-            nodes[:, 0], nodes[:, 1], triangles_new, color=plot_utils.GREEN
+            nodes[:, 0], nodes[:, 1], triangles_new, color=plot_utils.GREEN, linewidth=1.0
         )
 
     ax1.set_yticks([-0.5, 1.0, 2.5])
@@ -321,12 +320,15 @@ def remesh():
         ax.set_ylim(-0.75, 2.75)
         ax.set_xticks([-1.0, 1.0, 3.0])
         ax.set_xticklabels(["$-1.0$", "$1.0$", "$3.0$"])
-    ax1.set_title("Before Remeshing", fontsize=24)
-    ax3.set_title("After Remeshing", fontsize=24)
+        ax.xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+        ax.yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
 
-    figure.set_size_inches(16.3, 3.85)
+    ax1.set_title("Before Remeshing", fontsize=plot_utils.TEXT_SIZE)
+    ax3.set_title("After Remeshing", fontsize=plot_utils.TEXT_SIZE)
+
+    figure.set_size_inches(6.0, 1.8)
     figure.subplots_adjust(
-        left=0.03, bottom=0.0, right=0.99, top=1.0, wspace=0.04, hspace=0.2
+        left=0.06, bottom=0.01, right=0.99, top=1.0, wspace=0.04, hspace=0.2
     )
     filename = "distortion_remesh.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
