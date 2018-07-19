@@ -5,7 +5,7 @@
 In this chapter, an algorithm for conservative data transfer between curved
 meshes will be described. This has practical applications to many methods in
 computational physics. Data transfer is needed when a solution (approximated
-by a discrete field) is known a \textbf{source} mesh and must be transferred
+by a discrete field) is known on a \textbf{source} mesh and must be transferred
 to a \textbf{target} mesh. In many applications, the field must be conserved
 for physical reasons, e.g. mass or energy cannot leave or enter the system,
 hence the focus on \textbf{conservative} data transfer. A few
@@ -17,8 +17,9 @@ problem of conservative interpolation has been considered already for
 straight sided meshes. The \textbf{common refinement} approach in
 \cite{Jiao2004} is used to compare several methods for data transfer across two
 meshes. However, the problem of constructing such a common refinement is
-not discussed. The problem of constructing such a refinement is considered
-in \cite{Farrell2009, Farrell2011} (called a supermesh by the authors).
+not discussed there. The problem of constructing such a refinement is
+considered in \cite{Farrell2009, Farrell2011} (called a supermesh by
+the authors).
 However, the data transfer becomes considerably more challenging for curved
 meshes. For a sense of the difference between the straight sided and curved
 cases, consider the problem of intersecting an element from the source mesh
@@ -246,7 +247,7 @@ correspondence to elements in the source mesh.
 
 The case of partially overlapping meshes can be addressed in particular
 cases (i.e. with more information). For example, consider a problem
-defined on \(\Omega = \reals^2\) with no boundary condition and solution
+defined on \(\Omega = \reals^2\) and solution
 that tends towards zero as points tend to infinity. A typical approach
 may be to compute the solution on a circle of large enough radius and
 consider the numerical solution to be zero outside the circle.
