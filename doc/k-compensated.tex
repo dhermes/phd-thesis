@@ -18,7 +18,7 @@ precision \(\mach\) when evaluating \(p(s)\) is ill-conditioned.
 The relative accuracy of the computed
 evaluation with the de Casteljau algorithm (\texttt{DeCasteljau}) satisfies
 (\cite{Mainar1999}) the following a priori bound:
-\begin{equation}\label{de-casteljau-error}
+\begin{equation}\label{eq:de-casteljau-error}
   \frac{\left|p(s) - \mathtt{DeCasteljau}(p, s)\right|}{\left|p(s)\right|} \leq
   \cond{p, s} \times \bigO{\mach}.
 \end{equation}
@@ -55,7 +55,7 @@ Casteljau algorithm. In both cases, the \(\cond{p, s}\) factor is moved
 from \(\mach\) to \(\mach^2\) and the computed value is as accurate
 as if the computations were done in twice the working precision. For example,
 the compensated de Casteljau algorithm (\texttt{CompDeCasteljau}) satisfies
-\begin{equation}\label{de-casteljau-2-error}
+\begin{equation}\label{eq:de-casteljau-2-error}
   \frac{\left|p(s) - \mathtt{CompDeCasteljau}(p, s)\right|}{
     \left|p(s)\right|} \leq \mach + \cond{p, s} \times
     \bigO{\mach^2}.
@@ -88,8 +88,8 @@ from the group above it. For example, when
 \((1 - s) b_j^{(n)} + s b_{j + 1}^{(n)}\) is computed in floating point, any
 error is filtered down to the error group below it.
 
-As in~\eqref{de-casteljau-error}, the accuracy of the compensated
-result~\eqref{de-casteljau-2-error} may be arbitrarily bad for ill-conditioned
+As in~\eqref{eq:de-casteljau-error}, the accuracy of the compensated
+result~\eqref{eq:de-casteljau-2-error} may be arbitrarily bad for ill-conditioned
 polynomial evaluations. For example, as the condition number grows in
 Figure~\ref{fig:jlcs-10}, some points have relative error exactly equal to
 \(1\); this indicates that \(\mathtt{CompDeCasteljau}(p, s) = 0\), which is
@@ -139,7 +139,7 @@ With these, we can exactly describe the local error between the exact
 update and computed update:
 \begin{gather}
 \ell_{1, j}^{(k)} = \pi_1 + \pi_2 + \sigma_3 + \rho \cdot
-  \widehat{b}_j^{(k + 1)} \label{ell-j} \\
+  \widehat{b}_j^{(k + 1)} \label{eq:ell-j} \\
 (1 - s) \cdot \widehat{b}_j^{(k + 1)} +
   s \cdot \widehat{b}_{j + 1}^{(k + 1)} =
 \widehat{b}_j^{(k)} + \ell_{1, j}^{(k)}.
@@ -160,7 +160,7 @@ update and computed update:
 we can see (Figure~\ref{fig:loc-err-accumulate}) that the local errors
 accumulate in
 \(\db{1}^{(k)}\):
-\begin{equation}\label{err-update}
+\begin{equation}\label{eq:err-update}
   \db{1}_j^{(k)} = (1 - s) \cdot \db{1}_j^{(k + 1)} + s \cdot
   \db{1}_{j + 1}^{(k + 1)} + \ell_{1, j}^{(k)}.
 \end{equation}
@@ -168,7 +168,7 @@ When computed in exact arithmetic
 \begin{equation}
   p(s) = \widehat{b}_0^{(0)} + \db{1}_0^{(0)}
 \end{equation}
-and by using \eqref{err-update}, we can continue to compute
+and by using \eqref{eq:err-update}, we can continue to compute
 approximations of \(\db{1}_j^{(k)}\). The idea behind the compensated
 de Casteljau algorithm is to compute both the local error and the updates
 of the global error with floating point operations:
@@ -351,7 +351,7 @@ for the ``missing'' \(\rho \cdot \cdb{F}_j^{(k + 1)}\) in
   \left(s \otimes \cdb{F}_{j + 1}^{(k + 1)}\right) \oplus
   \left(\widehat{r} \otimes \cdb{F}_j^{(k + 1)}\right)\)
 \end{itemize}
-For example, in~\eqref{ell-j}:
+For example, in~\eqref{eq:ell-j}:
 %% H/T: https://tex.stackexchange.com/a/154333/32270
 \begin{equation}
 \ell_{1, j}^{(k)} =
@@ -540,7 +540,7 @@ The local error bounds \(\widetilde{\ell}_{F, j}\) satisfy:
   \gamma_3 \left(
   (1 - s) \left|\widehat{b}_j^{(k + 1)}\right| +
   s \left|\widehat{b}_{j + 1}^{(k + 1)}\right|\right)
-  \label{ell-tilde-1} \\
+  \label{eq:ell-tilde-1} \\
 \widetilde{\ell}_{F + 1, j}^{(k)} &\leq
   \gamma_3 \left(
   (1 - s) \left|\cdb{F}_j^{(k + 1)}\right| +
@@ -565,7 +565,7 @@ L_{F, n - k} &\leq \left[\left(3^F \binom{k}{F - 1} + \bigO{k^{F - 1}}\right)
 \sum_{k = 0}^{n - 1} \gamma_{3k + 5F} L_{F, k} &\leq
   \left[\left(3^{F + 1} \binom{n}{F + 1} + \bigO{n^F}\right)
   \mach^{F + 1} + \bigO{\mach^{F + 2}}\right] \cdot \widetilde{p}(s).
-  \label{L-sum-bound}
+  \label{eq:L-sum-bound}
 \end{align}
 In particular, this means that
 \(\sum_{k = 0}^{n - 1} \gamma_{3k + 5F} L_{F, k} =
@@ -586,7 +586,7 @@ The \(K\) order error \(\db{K}^{(0)}_0\) satisfies
 \end{lemma}
 
 \begin{proof}
-As in \eqref{matrix-de-casteljau}, we can express the compensated
+As in \eqref{eq:matrix-de-casteljau}, we can express the compensated
 de Casteljau algorithm as
 \begin{equation}
 \db{F}^{(k)} = U_{k + 1} \db{F}^{(k + 1)} + \ell_{F}^{(k)}
@@ -640,7 +640,7 @@ we see that
 \left|\db{F + 1}_0^{(0)}\right| \leq \sum_{k = 0}^{n - 1}
 \gamma_{3k + 5F} \sum_{j = 0}^k \widetilde{\ell}_{F, j}^{(k)} B_{j, k}(s).
 \end{equation}
-Applying \eqref{L-sum-bound} directly gives
+Applying \eqref{eq:L-sum-bound} directly gives
 \begin{equation}
 \left|\db{F + 1}_0^{(0)}\right| \leq
   \left[\left(3^{F + 1} \binom{n}{F + 1} + \bigO{n^F}\right)
@@ -667,7 +667,7 @@ Since
   \widehat{b}_0^{(0)}, \ldots, \cdb{K - 1}_0^{(0)}\right], K\right),
 \end{equation}
 applying Theorem~\ref{thm:sum-k} tells us that
-\begin{equation}\label{sum-k-applied}
+\begin{equation}\label{eq:sum-k-applied}
 \left|\mathtt{CompDeCasteljau}(p, s, K) - \sum_{F = 0}^{K - 1}
 \cdb{F}_0^{(0)}\right| \leq
 \left(\mach + 3 \gamma_{n - 1}^2\right) \left|\sum_{F = 0}^{K - 1}
@@ -688,7 +688,7 @@ we have
 \left|\mathtt{CompDeCasteljau}(p, s, K) - p(s)\right| \leq
 \left|\mathtt{CompDeCasteljau}(p, s, K) - \sum_{F = 0}^{K - 1}
 \cdb{F}_0^{(0)}\right| +
-\left|\db{K}_0^{(0)}\right| \label{triangle-ps}.
+\left|\db{K}_0^{(0)}\right| \label{eq:triangle-ps}.
 \end{gather}
 Due to Lemma~\ref{lemma:k-order}, \(\db{F}_0^{(0)} =
 \bigO{\mach^F} \widetilde{p}(s)\), hence
@@ -705,7 +705,7 @@ Due to Lemma~\ref{lemma:k-order}, \(\db{F}_0^{(0)} =
   \bigO{\mach} \widetilde{p}(s)\right] +
 \bigO{\mach^{K + 1}} \widetilde{p}(s).
 \end{align}
-Combining this with \eqref{sum-k-applied} and \eqref{triangle-ps}, we
+Combining this with \eqref{eq:sum-k-applied} and \eqref{eq:triangle-ps}, we
 see
 \begin{align}
 & \left|\mathtt{CompDeCasteljau}(p, s, K) - p(s)\right| \\

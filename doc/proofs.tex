@@ -91,7 +91,7 @@ must have
 \sum_{j = 0}^k \left[(1 - s) v_j + s v_{j + 1}\right] B_{j, k}(s) =
 \sum_{j = 0}^{k + 1} v_j B_{j, k + 1}(s).
 \end{equation}
-For example of this in use, via \eqref{ell-tilde-1}, we have
+For example of this in use, via \eqref{eq:ell-tilde-1}, we have
 \begin{equation}
   L_{1, k} \leq \gamma_3 \sum_{j = 0}^{k + 1} \left|
   \widehat{b}_j^{(k + 1)}\right| B_{j, k + 1}(s).
@@ -105,9 +105,9 @@ D_{F, k} &\coloneqq \sum_{j = 0}^k \left|\cdb{F}_j^{(k)}\right| B_{j, k}(s).
 \end{align}
 Hence Lemma~\ref{lemma:ell-tilde} gives
 \begin{align}
-L_{1, k} &\leq \gamma_3 D_{0, k + 1} \label{ell-1-k} \\
+L_{1, k} &\leq \gamma_3 D_{0, k + 1} \label{eq:ell-1-k} \\
 L_{F + 1, k} &\leq \gamma_3 D_{F, k + 1} + \gamma_{5F} L_{F, k}
-\label{ell-F-k}
+\label{eq:ell-F-k}
 \end{align}
 In addition, for \(F \geq 1\) since
 \begin{align}
@@ -119,7 +119,7 @@ In addition, for \(F \geq 1\) since
   \widehat{\ell}_{F, j}^{(k)} (1 + \theta_2)
 \end{align}
 we have
-\begin{equation}\label{df-first}
+\begin{equation}\label{eq:df-first}
 D_{F, k} \leq (1 + \gamma_3) D_{F, k + 1} + (1 + \gamma_2) \sum_{j = 0}^k
 \left|\widehat{\ell}_{F, j}^{(k)}\right| B_{j, k}(s).
 \end{equation}
@@ -128,18 +128,18 @@ involves a product), the terms in the computed value will be involved in
 at most \(5F - 2\) flops, hence
 \(\left|\widehat{\ell}_{F, j}^{(k)}\right| \leq
 \left(1 + \gamma_{5F - 2}\right) \widetilde{\ell}_{F, j}^{(k)}.\)
-Combined with \eqref{df-first} and the fact that there is no local error
+Combined with \eqref{eq:df-first} and the fact that there is no local error
 when \(F = 0\), this means
 \begin{align}
-D_{0, k} &\leq (1 + \gamma_3) D_{0, k + 1} \label{d-0-k} \\
+D_{0, k} &\leq (1 + \gamma_3) D_{0, k + 1} \label{eq:d-0-k} \\
 D_{F, k} &\leq (1 + \gamma_3) D_{F, k + 1} + (1 + \gamma_{5F}) L_{F, k}.
-\label{d-F-k}
+\label{eq:d-F-k}
 \end{align}
-The four inequalities \eqref{ell-1-k}, \eqref{ell-F-k}, \eqref{d-0-k}
-and \eqref{d-F-k} allow us to write all bounds in terms of
-\(D_{0, n} = \widetilde{p}(s)\) and \(D_{F, n} = 0\). From \eqref{d-0-k}
+The four inequalities \eqref{eq:ell-1-k}, \eqref{eq:ell-F-k}, \eqref{eq:d-0-k}
+and \eqref{eq:d-F-k} allow us to write all bounds in terms of
+\(D_{0, n} = \widetilde{p}(s)\) and \(D_{F, n} = 0\). From \eqref{eq:d-0-k}
 we can conclude that \(D_{0, n - k} \leq \left(1 + \gamma_{3k}\right) \cdot
-\widetilde{p}(s)\) and from \eqref{ell-1-k} that \(L_{1, n - k} \leq
+\widetilde{p}(s)\) and from \eqref{eq:ell-1-k} that \(L_{1, n - k} \leq
 \gamma_3 \left(1 + \gamma_{3(k - 1)}\right) \cdot \widetilde{p}(s)\).
 
 To show the bounds for higher values of \(F\), we'll assume we have
@@ -149,9 +149,9 @@ bounds of the form
 \(L_{F, n - k} \leq \left(r_F(k) \mach^F + \bigO{\mach^{F + 1}}\right) \cdot
 \widetilde{p}(s)\) for two families of polynomials \(q_F(k), r_F(k)\). We
 have \(q_0(k) = 1\) and \(r_1(k) = 3\) as our base cases and can build from
-there. To satisfy \eqref{d-F-k}, we'd like
+there. To satisfy \eqref{eq:d-F-k}, we'd like
 \(q_F(k) = q_F(k - 1) + r_F(k)\)
-and for \eqref{ell-F-k}
+and for \eqref{eq:ell-F-k}
 \(r_{F + 1}(k) = 3 q_F(k - 1) + 5 F r_F(k)\).
 Since the forward difference \(\Delta q_F(k) = r_F(k + 1)\) is known,
 we can inductively solve for \(q_F\) in terms of \(q_F(0)\). But

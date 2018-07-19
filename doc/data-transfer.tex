@@ -178,10 +178,6 @@ solution, the edges can instead curve so that the midpoint nodes remain
 halfway between (i.e. half of the parameter space) the vertex nodes along
 an edge.
 
-%% Solve PDE / construct S(t) that approximates INT f(x, t) dx: https://doi.org/10.1137/0915051
-%% Solve PDE on overlapping 2D meshes: https://doi.org/10.1137/S0036142997323582
-%% Solve PDE on overlapping 2D meshes (e.g. if during refinement): https://doi.org/10.1137/0724063
-
 %% However, the basis functions of the donor mesh
 %% are (in general) discontinuous piecewise polynomials over any given
 %% element of the target mesh, which are very difficult to integrate
@@ -206,17 +202,25 @@ an edge.
 %% can be aborted and can be replaced with a mesh
 %% refinement.
 
-\subsection{Multiphysics}
+\subsection{Multiphysics and Comparing Methods}
 
-Pass
+In multiphysics simulations, a problem is partitioned into physical components.
+This partitioning can apply to both the physical domain (e.g. separating a
+solid and fluid at an interface) and the simulation data itself (e.g. solving
+for pressure on one mesh and velocity on another). Each (multi-)physics
+component is solved for on its own mesh. When the components interact, the
+simulation data must be transferred between those meshes.
 
-\subsection{Comparing Methods}
-
-Pass
+In a similar category of application, data transfer enables the comparison
+of solutions defined on different meshes. For example, if a reference
+solution is known on a very fine special-purpose mesh, the error can be
+computed for a coarse mesh by transferring the solution from the fine
+mesh and taking the difference. Or, if the same method is used on
+different meshes of the same domain, the resulting computed solutions can
+be compared via data transfer. Or, if two different methods use two
+different meshes of the same domain.
 
 \subsection{Limitations}
-
-Pass
 
 \begin{figure}
   \includegraphics[width=0.96875\textwidth]
@@ -228,6 +232,35 @@ Pass
     columns show how the domain of each mesh can be expanded so they agree.}
   \label{fig:partially-overlapping}
 \end{figure}
+
+The method described in this work only applies to meshes in \(\reals^2\).
+Application to meshes in \(\reals^3\) is a direction for future research,
+though the geometric kernels (see Chapter~\ref{chap:bezier-intersection})
+become significantly more challenging to describe and implement. In
+addition, the method will assume that every element in the
+target mesh is contained in the source mesh. This ensures that the data
+transfer is \textit{interpolation}. In the case where all target elements are
+partially covered, \textit{extrapolation} could be used to extend a solution
+outside the domain, but for totally uncovered elements there is no clear
+correspondence to elements in the source mesh.
+
+The case of partially overlapping meshes can be addressed in particular
+cases (i.e. with more information). For example, consider a problem
+defined on \(\Omega = \reals^2\) with no boundary condition and solution
+that tends towards zero as points tend to infinity. A typical approach
+may be to compute the solution on a circle of large enough radius and
+consider the numerical solution to be zero outside the circle.
+Figure~\ref{fig:partially-overlapping} shows how data transfer could be
+performed in such cases when the meshes partially overlap: construct a
+simple region containing both computational domains and then mesh the
+newly introduced area. However, the assumption that the numerical solution
+is zero in the newly introduced area is very specific and
+a similar approach may not apply in other cases of partial overlap.
+
+Some attempts (\cite{Berger1987, Chesshire1994, Cai1999}) have been
+made to interpolate fluxes between overlapping meshes. These perform
+an interpolation on the region common to both meshes and then numerically
+solve the PDE to determine the values on the uncovered elements.
 
 \section{Curved versus Polygonal Computing}
 
