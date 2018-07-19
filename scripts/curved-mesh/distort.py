@@ -262,9 +262,7 @@ def distort_cubic_tri():
     ax1.set_xlim(-1.0, 5.9)
     ax1.set_ylim(min_y, max_y)
     ax1.set_xticks([0.0, 1.0, 2.0, 3.0, 4.0, 5.0])
-    ax1.set_xticklabels(
-        ["$0.0$", "$1.0$", "$2.0$", "$3.0$", "$4.0$", "$5.0$"]
-    )
+    ax1.set_xticklabels(["$0.0$", "$1.0$", "$2.0$", "$3.0$", "$4.0$", "$5.0$"])
     ax1.set_yticks([-1.5, -0.5, 0.5, 1.5, 2.5])
     ax1.set_yticklabels(["$-1.5$", "$-0.5$", "$0.5$", "$1.5$", "$2.5$"])
     ax1.yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
@@ -292,7 +290,13 @@ def remesh():
     nodes[:, 0] = xt
     nodes[:, 1] = yt
     for ax in (ax1, ax2):
-        ax.triplot(nodes[:, 0], nodes[:, 1], TRIANGLES, color=plot_utils.BLUE, linewidth=1.0)
+        ax.triplot(
+            nodes[:, 0],
+            nodes[:, 1],
+            TRIANGLES,
+            color=plot_utils.BLUE,
+            linewidth=1.0,
+        )
 
     # Do a Delaunay triangulation and discard exterior triangles.
     tessellation = scipy.spatial.qhull.Delaunay(nodes)
@@ -310,7 +314,11 @@ def remesh():
     triangles_new = tessellation.simplices[to_keep, :]
     for ax in (ax2, ax3):
         ax.triplot(
-            nodes[:, 0], nodes[:, 1], triangles_new, color=plot_utils.GREEN, linewidth=1.0
+            nodes[:, 0],
+            nodes[:, 1],
+            triangles_new,
+            color=plot_utils.GREEN,
+            linewidth=1.0,
         )
 
     ax1.set_yticks([-0.5, 1.0, 2.5])

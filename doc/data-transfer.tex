@@ -417,7 +417,114 @@ partitioning of the domain:
 In other words, the integral over \(\mathcal{T}\) splits into integrals
 over intersections \(\mathcal{T} \cap \mathcal{T}'\) for all
 \(\mathcal{T}'\) in the donor mesh that intersect \(\mathcal{T}\)
-(Figure~\ref{fig:target-elt-all-matching}).
+(Figure~\ref{fig:target-elt-all-matching}). Since both \(\phi\) and
+\(\left.\bm{q}_D\right|_{\mathcal{T}'}\) are polynomials on
+\(\mathcal{T} \cap \mathcal{T}'\), the integrals will be exact when
+using a quadrature scheme of an appropriate degree of accuracy.
+Without partitioning \(\mathcal{T}\), the integrand is not a polynomial
+(in fact, possibly not smooth), so the quadrature cannot be exact.
+
+In order to compute \(M_{TD} \bm{d}\), we'll need to compute the
+\textbf{common refinement}, i.e. an intermediate mesh that contains
+both the donor and target meshes. This will consist of all non-empty
+\(\mathcal{T} \cap \mathcal{T}'\) as \(\mathcal{T}\) varies over
+elements of the target mesh and \(\mathcal{T}'\) over elements of the
+donor mesh. This requires solving three specific subproblems:
+\begin{itemize}
+%% H/T: https://tex.stackexchange.com/a/6086/32270
+\itemsep 0em
+\item Forming the region(s) of intersection between two elements that
+  are B\'{e}zier triangles.
+\item Finding all pairs of elements, one each from the target and donor mesh,
+  that intersect.
+\item Numerically integrating over a region of intersection between two
+  elements.
+\end{itemize}
+The first subproblem has been addressed in Section~\ref{sec:intersect-bez-tri}
+and the curved polygon region(s) of intersection have been described
+in Section~\ref{subsec:curved-polygons}. The second will be considered
+in Section~\ref{subsec:advancing-front} and the third in
+in Section~\ref{subsec:tessellation-integration} below.
+
+\subsection{Advancing Front}\label{subsec:advancing-front}
+
+\begin{figure}
+  \includegraphics[width=0.8125\textwidth]
+                  {../images/curved-mesh/main_figure13.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Brute force search for a donor element \(\mathcal{T}'\) that matches
+    a fixed target element \(\mathcal{T}\).}
+  \label{fig:target-elt-brute-force}
+\end{figure}
+
+We seek to identify all pairs \(\mathcal{T}\) and \(\mathcal{T}'\) of
+target and donor elements. The na\"{i}ve approach just considers every pair
+of elements and takes \(\bigO{\left|\mathcal{M}_D\right|
+\left|\mathcal{M}_T\right|}\) to complete.\footnote{For a mesh \(\mathcal{M}\),
+the expression \(\left|\mathcal{M}\right|\) represents the number of elements
+in the mesh.} Taking after \cite{Farrell2011}, we can do much better than this
+quadratic time search. In fact, we can compute all integrals in
+\(\bigO{\left|\mathcal{M}_D\right| + \left|\mathcal{M}_T\right|}\).
+First, we fix an element of the target mesh and perform a brute-force search
+to find an intersecting element in the donor mesh
+(Figure~\ref{fig:target-elt-brute-force}). This has worst-case time
+\(\bigO{\left|\mathcal{M}_D\right|}\).
+
+\begin{figure}
+  \includegraphics[width=0.8125\textwidth]
+                  {../images/curved-mesh/main_figure14.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{All donor elements \(\mathcal{T}'\) that cover a target element
+    \(\mathcal{T}\), with an extra layer of neighbors in the donor mesh
+    that \textbf{do not} intersect \(\mathcal{T}\).}
+  \label{fig:target-elt-overlap-extra-layer}
+\end{figure}
+
+Once we have such a match, we use the connectivity of the
+donor mesh to perform a breadth first search
+for neighbors that also intersect the target
+element \(\mathcal{T}\) (Figure~\ref{fig:target-elt-overlap-extra-layer}).
+This search takes \(\bigO{1}\) time. It's also worthwhile to keep the first
+layer of donor elements that don't intersect \(\mathcal{T}\) because they are
+more likely to intersect the neighbors of \(\mathcal{T}\)\footnote{In the
+very unlikely case that the boundary of \(\mathcal{T}\)
+\textbf{exactly matches} the boundaries of the donor elements that cover it,
+\textbf{none} of the overlapping donor elements can intersect the neighbors of
+\(\mathcal{T}\) so the first layer of non-intersected donor
+elements must be considered.}. Using the list of intersected elements, a
+neighbor of \(\mathcal{T}\) can find a donor element it intersects with in
+\(\bigO{1}\) time (Figure~\ref{fig:target-elt-neighbor}).
+As seen, after our \(\bigO{\left|\mathcal{M}_D\right|}\)
+initial brute-force search, the localized intersections for each
+target element \(\mathcal{T}\) take
+\(\bigO{1}\) time. So together, the process takes
+\(\bigO{\left|\mathcal{M}_D\right| + \left|\mathcal{M}_T\right|}\).
+
+For special cases, e.g. ALE methods, the initial brute-force search
+can be reduced to \(\bigO{1}\). This could be enabled by tracking
+the remeshing process so a correspondence already exists. If a full
+mapping from donor to target mesh exists, the process of computing
+\(M_T\) and \(M_{TD} \bm{d}\) can be fully parallelized across
+elements of the target mesh, or even across shape functions
+\(\phi_T^{(j)}\).
+
+\begin{figure}
+  \includegraphics[width=0.8125\textwidth]
+                  {../images/curved-mesh/main_figure15.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{First match between a neighbor of the previously considered
+    target element and all the donor elements that match the
+    previously considered target element.}
+  \label{fig:target-elt-neighbor}
+\end{figure}
+
+\subsection{Tessellation and Integration over Curved Polygons}
+\label{subsec:tessellation-integration}
+
+Integrate.
 
 \subsection{Curved versus Polygonal Computing}
 
