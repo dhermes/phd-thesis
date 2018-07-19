@@ -16,7 +16,7 @@ Since data transfer is so commonly needed in physical applications, this
 problem of conservative interpolation has been considered already for
 straight sided meshes. The \textbf{common refinement} approach in
 \cite{Jiao2004} is used to compare several methods for data transfer across two
-meshes. However, the problem of constructing such a common refinement is
+meshes. However, the problem of constructing a common refinement is
 not discussed there. The problem of constructing such a refinement is
 considered in \cite{Farrell2009, Farrell2011} (called a supermesh by
 the authors).
@@ -220,6 +220,31 @@ mesh and taking the difference. Or, if the same method is used on
 different meshes of the same domain, the resulting computed solutions can
 be compared via data transfer. Or, if two different methods use two
 different meshes of the same domain.
+
+\subsection{Local versus Global Transfer}
+
+Conservative data transfer has been around since the advent of ALE,
+and as a result much of the existing literature focuses on mesh-mesh
+pairs that will occur during an ALE-based simulation. When flow-based
+mesh distortion occurs, elements are typically ``flipped'' (e.g. a
+diagonal is switched in a pair of elements) or elements are subdivided
+or combined. These operations are inherently local, hence the data
+transfer can be done locally across known neighbors. Typically, this
+locality is crucial to data transfer methods. In \cite{Margolin2003},
+the transfer is based on partitioning cells of the updated mesh into
+components of elements from the old mesh and ``swept regions'' from
+neighbouring elements. In \cite{Kucharik2008}, the (locally) changing
+connectivity of the mesh is addressed. In \cite{Garimella2007}, the
+local transfer is done on polyhedral meshes.
+
+Global data transfer instead seeks to conserve the solution across
+the whole mesh. It makes no assumptions about the relationship between
+the source and target meshes. The loss in local information makes
+the mesh intersection problem more computationally expensive, but the
+added flexibility reduces timestep restrictions since it allows remeshing
+to be done less often. In \cite{Dukowicz1984, Dukowicz1987}, a global
+transfer is enabled by transforming volume integrals to surface integrals
+via the divergence theorem to reduce the complexity of the problem.
 
 \subsection{Limitations}
 
