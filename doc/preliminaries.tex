@@ -219,7 +219,8 @@ higher degree triangles prohibitively unstable.
 
 A \textbf{valid} B\'{e}zier triangle is one which is
 diffeomorphic to \(\utri\), i.e. \(b(s, t)\) is bijective and has
-an everywhere invertible Jacobian. For example, in
+an everywhere invertible Jacobian. We must also have the orientation
+preserved, i.e. the Jacobian must have positive determinant. For example, in
 Figure~\ref{fig:inverted-element}, the image of \(\utri\) under
 the map \(b(s, t) = \left[\begin{array}{c c} (1 - s - t)^2 + s^2 & s^2 + t^2
 \end{array}\right]^T\) is not valid because the Jacobian is zero along
@@ -243,7 +244,7 @@ a positive Jacobian and once with a negative Jacobian.
   \label{fig:inverted-element}
 \end{figure}
 
-\section{Curved Elements}
+\section{Curved Elements}\label{sec:curved-elements}
 
 We define a curved mesh element \(\mathcal{T}\) of degree \(p\)
 to be a B\'{e}zier triangle in \(\reals^2\) of the same degree.
@@ -269,7 +270,7 @@ be recast relative to the new basis (for an example, see \cite{Persson2009},
 where the domain varies with time but the problem is reduced to
 solving a transformed conservation law in a fixed reference configuration).
 
-\subsection{Shape Functions}
+\subsection{Shape Functions}\label{subsec:shape-functions}
 
 When defining shape functions (i.e. a basis with geometric meaning) on a
 curved element there are (at least) two choices. When the degree of the

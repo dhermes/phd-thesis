@@ -5,7 +5,7 @@
 In this chapter, an algorithm for conservative data transfer between curved
 meshes will be described. This has practical applications to many methods in
 computational physics. Data transfer is needed when a solution (approximated
-by a discrete field) is known on a \textbf{source} mesh and must be transferred
+by a discrete field) is known on a \textbf{donor} mesh and must be transferred
 to a \textbf{target} mesh. In many applications, the field must be conserved
 for physical reasons, e.g. mass or energy cannot leave or enter the system,
 hence the focus on \textbf{conservative} data transfer. A few
@@ -22,7 +22,7 @@ considered in \cite{Farrell2009, Farrell2011} (called a supermesh by
 the authors).
 However, the data transfer becomes considerably more challenging for curved
 meshes. For a sense of the difference between the straight sided and curved
-cases, consider the problem of intersecting an element from the source mesh
+cases, consider the problem of intersecting an element from the donor mesh
 with an element from the target mesh. If the elements are triangles, the
 intersection is either a convex polygon or has measure zero. If the elements
 are curved, the intersection can be non-convex and can even split into
@@ -238,7 +238,7 @@ local transfer is done on polyhedral meshes.
 
 Global data transfer instead seeks to conserve the solution across
 the whole mesh. It makes no assumptions about the relationship between
-the source and target meshes. The loss in local information makes
+the donor and target meshes. The loss in local information makes
 the mesh intersection problem more computationally expensive, but the
 added flexibility reduces timestep restrictions since it allows remeshing
 to be done less often. In \cite{Dukowicz1984, Dukowicz1987}, a global
@@ -263,11 +263,11 @@ Application to meshes in \(\reals^3\) is a direction for future research,
 though the geometric kernels (see Chapter~\ref{chap:bezier-intersection})
 become significantly more challenging to describe and implement. In
 addition, the method will assume that every element in the
-target mesh is contained in the source mesh. This ensures that the data
+target mesh is contained in the donor mesh. This ensures that the data
 transfer is \textit{interpolation}. In the case where all target elements are
 partially covered, \textit{extrapolation} could be used to extend a solution
 outside the domain, but for totally uncovered elements there is no clear
-correspondence to elements in the source mesh.
+correspondence to elements in the donor mesh.
 
 The case of partially overlapping meshes can be addressed in particular
 cases (i.e. with more information). For example, consider a problem
@@ -287,7 +287,139 @@ made to interpolate fluxes between overlapping meshes. These perform
 an interpolation on the region common to both meshes and then numerically
 solve the PDE to determine the values on the uncovered elements.
 
-\section{Curved versus Polygonal Computing}
+\section{Galerkin Projection}
+
+\begin{figure}
+  \includegraphics[width=0.8125\textwidth]
+                  {../images/curved-mesh/main_figure00.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Mesh pair: donor mesh \(\mathcal{M}_D\) and
+    target mesh \(\mathcal{M}_T\).}
+  \label{fig:donor-target-pair}
+\end{figure}
+
+Consider a donor mesh \(\mathcal{M}_D\) with shape function basis
+\(\phi_D^{(j)}\) and a known field \(\bm{q}_D = \sum_j d_j \phi_D^{(j)}\) and a
+target mesh \(\mathcal{M}_T\) with shape function basis \(\phi_T^{(j)}\)
+(Figure~\ref{fig:donor-target-pair}).
+Each shape function \(\phi\) corresponds to a
+given isoparametric curved element (see Section~\ref{sec:curved-elements})
+\(\mathcal{T}\) in one of these meshes and has
+\(\operatorname{supp}(\phi) = \mathcal{T}\).
+Additionally, the shape functions are polynomial degree \(p\) (see
+Section~\ref{subsec:shape-functions} for a discussion of shape functions),
+but the degree of the donor mesh need not be the same as that of the
+target mesh. We assume that both meshes cover the same domain \(\Omega \subset
+\reals^2\), however we really only require the donor mesh to cover the
+target mesh.
+
+We seek the \(L_2\)-optimal interpolant \(\bm{q}_T = \sum_j t_j \phi_T^{(j)}\):
+\begin{equation}
+\left \lVert \bm{q}_T - \bm{q}_D \right \rVert_2 =
+\min_{\bm{q} \in \mathcal{V}_T}
+\left \lVert \bm{q} - \bm{q}_D \right \rVert_2
+\end{equation}
+where \(\mathcal{V}_T = \operatorname{Span}_j\left\{\phi_T^{(j)}\right\}\)
+is the function space defined on the target mesh. Since this is optimal in
+the \(L_2\) sense, by differentiating with respect to each \(t_j\) in
+\(\bm{q}_T\) we find the weak form:
+\begin{equation}
+\int_{\Omega} \bm{q}_D \phi_T^{(j)} \, dV =
+  \int_{\Omega} \bm{q}_T \phi_T^{(j)} \, dV, \qquad \text{for all} j.
+\end{equation}
+If the constant function \(1\) is contained in \(\mathcal{V}_T\),
+conservation follows from the weak form and linearity of the integral
+\begin{equation}
+\int_{\Omega} \bm{q}_D \, dV =
+  \int_{\Omega} \bm{q}_T \, dV.
+\end{equation}
+Expanding \(\bm{q}_D\) and \(\bm{q}_T\) with respect to their coefficients
+\(\bm{d}\) and \(\bm{t}\), the weak form gives rise to a linear system
+\begin{equation}\label{eq:weak-form-system}
+M_T \bm{t} = M_{TD} \bm{d}.
+\end{equation}
+Here \(M_T\) is the mass matrix for
+\(\mathcal{M}_T\) given by
+\begin{equation}
+\left(M_T\right)_{ij} = \int_{\Omega} \phi_T^{(i)} \phi_T^{(j)} \, dV.
+\end{equation}
+In the discontinuous Galerkin case, \(M_T\) is block diagonal with blocks
+that correspond to each element, so \eqref{eq:weak-form-system} can be
+solved locally on each element \(\mathcal{T}\) in the target mesh. By
+construction, \(M_T\) is symmetric and sparse since \(\left(M_T\right)_{ij}\)
+will be \(0\) unless \(\phi_T^{(i)}\) and \(\phi_T^{(j)}\) are supported
+on the same element \(\mathcal{T}\). In the continuous case, \(M_T\) is
+globally coupled since coefficients corresponding to boundary nodes interact
+with multiple elements. The matrix \(M_{TD}\) is a ``mixed'' mass matrix
+between the target and donor meshes:
+\begin{equation}
+\left(M_{TD}\right)_{ij} = \int_{\Omega} \phi_T^{(i)} \phi_D^{(j)} \, dV.
+\end{equation}
+Though boundary conditions can be imposed on the system by fixing boundary
+values, this is equivalent to removing some of the basis functions which may
+in term make the projection non-conservative. This is because the removed
+basis functions may have been used in \(1 = \sum_j u_j \phi_{T}^{(j)}\).
+
+Computing \(M_T\) is fairly straightforward since the (bidirectional) mapping
+from elements \(\mathcal{T}\) to basis functions \(\phi_T^{(j)}\) supported
+on those elements is known. When using shape functions in the
+global coordinates basis (see Section~\ref{subsec:shape-functions}), the
+integrand \(F = \phi_T^{(i)} \phi_T^{(j)}\) will be a polynomial of degree
+\(2p\) on \(\reals^2\). The domain of integration \(\mathcal{T}
+= b\left(\utri\right)\) is the image of a (degree \(p\)) map \(b(s, t)\)
+from the unit triangle. Using substitution
+\begin{equation}
+\int_{b\left(\utri\right)} F(x, y) \, dx \, dy =
+  \int_{\utri} \det(Db) F\left(x(s, t), y(s, t)\right) \, ds \, dt
+\end{equation}
+(we know the map preserves orientation, i.e. \(\det(Db)\) is positive).
+Once transformed this way, a quadrature rule on the unit
+triangle (\cite{Dunavant1985}) can be used.
+
+On the other hand, computing \(M_{TD}\) is significantly more
+challenging. This requires solving both a geometric problem ---
+finding the region to integrate over --- and an analytic
+problem --- computing the integrals. The integration can be done with
+a quadrature rule, though finding this region is significantly
+more difficult.
+
+\section{Common Refinement}
+
+\begin{figure}
+  \includegraphics[width=0.8125\textwidth]
+                  {../images/curved-mesh/main_figure02.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{All donor elements that cover a target element}
+  \label{fig:target-elt-all-matching}
+\end{figure}
+
+Rather than computing \(M_{TD}\), the right-hand side
+of~\eqref{eq:weak-form-system} can be computed directly via
+\begin{equation}\label{eq:lumped-mixed-mass-matrix}
+\left(M_{TD} \bm{d}\right)_j = \int_{\Omega} \phi_T^{(j)} \bm{q}_D \, dV.
+\end{equation}
+Any given \(\phi\) is supported on an element \(\mathcal{T}\) in the
+target mesh. Since \(\bm{q}_D\) is piecewise defined over each element
+\(\mathcal{T}'\) in the donor mesh, the
+integral~\eqref{eq:lumped-mixed-mass-matrix} may be problematic.
+In the continuous Galerkin case, \(\bm{q}_D\) need not be differentiable
+across \(\mathcal{T}\) and in the discontinuous Galerkin case,
+\(\bm{q}_D\) need not even be continuous. This necessitates a
+partitioning of the domain:
+\begin{equation}
+\int_{\Omega} \phi \, \bm{q}_D \, dV =
+  \int_{\mathcal{T}} \phi \, \bm{q}_D \, dV =
+  \sum_{\mathcal{T}' \in \mathcal{M}_D} \int_{\mathcal{T} \cap \mathcal{T}'}
+    \phi \left.\bm{q}_D\right|_{\mathcal{T}'} \, dV.
+\end{equation}
+In other words, the integral over \(\mathcal{T}\) splits into integrals
+over intersections \(\mathcal{T} \cap \mathcal{T}'\) for all
+\(\mathcal{T}'\) in the donor mesh that intersect \(\mathcal{T}\)
+(Figure~\ref{fig:target-elt-all-matching}).
+
+\subsection{Curved versus Polygonal Computing}
 
 \begin{figure}
   \includegraphics[width=0.9375\textwidth]
