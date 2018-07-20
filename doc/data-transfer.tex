@@ -178,30 +178,6 @@ solution, the edges can instead curve so that the midpoint nodes remain
 halfway between (i.e. half of the parameter space) the vertex nodes along
 an edge.
 
-%% However, the basis functions of the donor mesh
-%% are (in general) discontinuous piecewise polynomials over any given
-%% element of the target mesh, which are very difficult to integrate
-%% by numerical quadrature schemes.
-
-%% B\'{e}zier curves and triangles were selected for defining
-%% mesh elements for two main reasons...
-%% Secondly, B\'{e}zier curves and triangles have a
-%% number of mathematical properties leading to elegant
-%% algorithms.
-
-%% Since adapting the mesh changes the domain for \(\bm{f}\), we
-%% must project \(\bm{f}\) onto the new mesh domain. This is
-%% accomplished by making local projections of \(\bm{f}\) whenever
-%% local mesh modifications are made, and then computing
-%% the local reinterpolation error. The choice of a
-%% relevant error norm and projection is problem dependent,
-%% but the computations are generally easy, since
-%% they are done in a local setting with few degrees of
-%% freedom. If the calculated re-interpolation error due
-%% to a mesh modification is too great, then the modification
-%% can be aborted and can be replaced with a mesh
-%% refinement.
-
 \subsection{Multiphysics and Comparing Methods}
 
 In multiphysics simulations, a problem is partitioned into physical components.
@@ -230,7 +206,7 @@ diagonal is switched in a pair of elements) or elements are subdivided
 or combined. These operations are inherently local, hence the data
 transfer can be done locally across known neighbors. Typically, this
 locality is crucial to data transfer methods. In \cite{Margolin2003},
-the transfer is based on partitioning cells of the updated mesh into
+the transfer is based on partitioning elements of the updated mesh into
 components of elements from the old mesh and ``swept regions'' from
 neighbouring elements. In \cite{Kucharik2008}, the (locally) changing
 connectivity of the mesh is addressed. In \cite{Garimella2007}, the
@@ -300,7 +276,11 @@ solve the PDE to determine the values on the uncovered elements.
 \end{figure}
 
 Consider a donor mesh \(\mathcal{M}_D\) with shape function basis
-\(\phi_D^{(j)}\) and a known field \(\bm{q}_D = \sum_j d_j \phi_D^{(j)}\) and a
+\(\phi_D^{(j)}\) and a known field \(\bm{q}_D = \sum_j d_j \phi_D^{(j)}\)
+\footnote{This is somewhat a simplification. In the CG case,
+some coefficients will be paired with multiple shape functions, such
+as the coefficient at a vertex node.}
+and a
 target mesh \(\mathcal{M}_T\) with shape function basis \(\phi_T^{(j)}\)
 (Figure~\ref{fig:donor-target-pair}).
 Each shape function \(\phi\) corresponds to a
@@ -356,8 +336,8 @@ between the target and donor meshes:
 \begin{equation}
 \left(M_{TD}\right)_{ij} = \int_{\Omega} \phi_T^{(i)} \phi_D^{(j)} \, dV.
 \end{equation}
-Though boundary conditions can be imposed on the system by fixing boundary
-values, this is equivalent to removing some of the basis functions which may
+Boundary conditions can be imposed on the system by fixing some coefficients,
+but that is equivalent to removing some of the basis functions which may
 in term make the projection non-conservative. This is because the removed
 basis functions may have been used in \(1 = \sum_j u_j \phi_{T}^{(j)}\).
 
@@ -369,7 +349,7 @@ integrand \(F = \phi_T^{(i)} \phi_T^{(j)}\) will be a polynomial of degree
 \(2p\) on \(\reals^2\). The domain of integration \(\mathcal{T}
 = b\left(\utri\right)\) is the image of a (degree \(p\)) map \(b(s, t)\)
 from the unit triangle. Using substitution
-\begin{equation}
+\begin{equation}\label{eq:mass-mat-subst}
 \int_{b\left(\utri\right)} F(x, y) \, dx \, dy =
   \int_{\utri} \det(Db) F\left(x(s, t), y(s, t)\right) \, ds \, dt
 \end{equation}
@@ -444,7 +424,7 @@ The first subproblem has been addressed in Section~\ref{sec:intersect-bez-tri}
 and the curved polygon region(s) of intersection have been described
 in Section~\ref{subsec:curved-polygons}. The second will be considered
 in Section~\ref{subsec:advancing-front} and the third in
-in Section~\ref{subsec:tessellation-integration} below.
+Section~\ref{subsec:integration-on-curved} below.
 
 \subsection{Advancing Front}\label{subsec:advancing-front}
 
@@ -459,7 +439,8 @@ in Section~\ref{subsec:tessellation-integration} below.
 \end{figure}
 
 We seek to identify all pairs \(\mathcal{T}\) and \(\mathcal{T}'\) of
-target and donor elements. The na\"{i}ve approach just considers every pair
+intersecting target and donor elements. The na\"{i}ve approach just
+considers every pair
 of elements and takes \(\bigO{\left|\mathcal{M}_D\right|
 \left|\mathcal{M}_T\right|}\) to complete.\footnote{For a mesh \(\mathcal{M}\),
 the expression \(\left|\mathcal{M}\right|\) represents the number of elements
@@ -482,7 +463,7 @@ to find an intersecting element in the donor mesh
   \label{fig:target-elt-overlap-extra-layer}
 \end{figure}
 
-Once we have such a match, we use the connectivity of the
+Once we have such a match, we use the connectivity graph of the
 donor mesh to perform a breadth first search
 for neighbors that also intersect the target
 element \(\mathcal{T}\) (Figure~\ref{fig:target-elt-overlap-extra-layer}).
@@ -521,41 +502,230 @@ elements of the target mesh, or even across shape functions
   \label{fig:target-elt-neighbor}
 \end{figure}
 
-\subsection{Tessellation and Integration over Curved Polygons}
-\label{subsec:tessellation-integration}
+\subsection{Integration over Curved Polygons}
+\label{subsec:integration-on-curved}
 
-Integrate.
-
-\subsection{Curved versus Polygonal Computing}
+In order to numerically evaluate integrals of the form
+\begin{equation}
+\int_{\mathcal{T}_0 \cap \mathcal{T}_1} F(x, y) \, dV
+\end{equation}
+we must have a quadrature rule on these curved polygon
+(Section~\ref{subsec:curved-polygons}) intersections
+\(\mathcal{T}_0 \cap \mathcal{T}_1\).
+To do this, we transform the integral into several line integrals
+via Green's theorem and then use an exact Gaussian quadrature to
+evaluate them. Throughout this section we'll assume the integrand
+is of the form \(F = \phi_0 \phi_1\) where each \(\phi_j\) is a shape
+function on \(\mathcal{T}_j\). In addition, we'll refer to the two
+B\'{e}zier maps that define the elements being intersected:
+\(\mathcal{T}_0 = b_0\left(\utri\right)\) and
+\(\mathcal{T}_1 = b_1\left(\utri\right)\).
 
 \begin{figure}
-  \includegraphics[width=0.9375\textwidth]
-                  {../images/curved-mesh/polygon_vs_curved.pdf}
+  \includegraphics{../images/curved-mesh/polygon_vs_curved.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Comparing the relative error for the computed area of a quadratic
-    B\'{e}zier triangle. In one method, the curved boundary is used with
-    Green's method and it is correct to machine precision. In the other,
-    the curved edges are approximated by polygonal paths. These paths are
-    generated from equally spaced parameters, for example a B\'{e}zier curve
-    \(b(s)\) with \(N = 4\) would be approximated by a line connecting
-    \(b(0), b(1/4), b(1/2), b(3/4)\) and \(b(1)\).}
+    B\'{e}zier triangle. In one method, the curved boundary is used and the
+    result is correct to machine precision. In the other, the curved edges
+    are approximated by polygonal paths.}
   \label{fig:polygon-vs-curved}
 \end{figure}
 
 \begin{figure}
-  \includegraphics[width=0.9375\textwidth]
-                  {../images/curved-mesh/polygon_vs_curved_intersection.pdf}
+  \includegraphics{../images/curved-mesh/polygon_vs_curved_intersection.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Comparing the relative error for the computed area of the
     intersection of two quadratic B\'{e}zier triangles. In one method, the
     intersection boundary is fully specified as the union of B\'{e}zier curve
-    segments and the area is found via Green's method. This method is correct
-    to machine precision. In the other, the curved edges are approximated by
-    polygonal paths and the intersection of the resulting polygons is computed.
-    These paths are generated from equally spaced parameters, for example a
-    B\'{e}zier curve \(b(s)\) with \(N = 4\) would be approximated by a line
-    connecting \(b(0), b(1/4), b(1/2), b(3/4)\) and \(b(1)\).}
+    segments and the area is computed correctly to machine precision. In the
+    other, the curved edges are approximated by polygonal paths and the
+    intersection of the resulting polygons is computed.}
   \label{fig:polygon-vs-curved-intersection}
 \end{figure}
+
+First a discussion of a method not used. A somewhat simple approach would be
+be to use polygonal approximation. I.e. approximate the boundary of each
+B\'{e}zier triangle with line segments, intersect the resulting polygons,
+triangulate the intersection polygon(s) and then numerically integrate
+on each triangulated cell. However, this approach is prohibitively inefficient.
+For example, consider the curved polygon in
+Figure~\ref{fig:polygon-vs-curved}. Computing the area of \(\mathcal{P}\)
+can be done via an integral: \(\int_{\mathcal{P}} 1 \, dV\).
+By using the actual curved boundary, this integral can be computed with
+relative error (the dashed line in the bottom right subplot) on the order
+of machine precision \(\bigO{\mach}\). On the other hand, approximating
+each side of \(\mathcal{P}\) with \(N\) line segments, the relative error is
+\(\bigO{1/N^2}\). (For example, if \(N = 2\) an edge curve \(b(s, 0)\) would be
+replaced by segments connecting \(b(0, 0), b(1/2, 0)\) and \(b(1, 0)\), i.e.
+\(N + 1\) equally spaced parameters.) This means that in order to perform as
+well as an \textbf{exact} quadrature used in the curved case, we'd
+need \(N = \bigO{1/\sqrt{\mach}}\). Compute the area of \(\mathcal{P}\)
+in this way assumes that \(\mathcal{P}\) is already known.
+If instead only the B\'{e}zier triangles in the intersection are known, as
+in Figure~\ref{fig:polygon-vs-curved-intersection}, the polygonal approach
+suffers from the same inefficiency.
+
+Since polygonal approximation is prohibitively expensive,
+we work directly with curved edges and compute integrals on a regular
+domain via substitution.
+If two B\'{e}zier triangles intersect with positive measure, then
+the region of intersection is one or more disjoint curved polygons:
+\(\mathcal{T}_0 \cap \mathcal{T}_1 = \mathcal{P}\) or
+\(\mathcal{T}_0 \cap \mathcal{T}_1 = \mathcal{P} \cup
+\mathcal{P}' \cup \cdots\).
+The second case can be handled in the same way as the first by handling each
+disjoint region independently:
+\begin{equation}
+\int_{\mathcal{T}_0 \cap \mathcal{T}_1} F(x, y) \, dV =
+  \int_{\mathcal{P}} F(x, y) \, dV +
+  \int_{\mathcal{P}'} F(x, y) \, dV + \cdots.
+\end{equation}
+Each curved polygon \(\mathcal{P}\) is defined by its boundary, a
+piecewise smooth parametric curve:
+\begin{equation}
+\partial \mathcal{P} = C_1 \cup \cdots \cup C_n.
+\end{equation}
+This can be thought of as a polygon with \(n\)-sides that happens to
+have curved edges.
+
+Quadrature rules for straight sided polygons have been
+studied (\cite{Mousavi2009}) though they are not in wide use. Even
+if a polygonal quadrature rule was to be employed, a map would need to be
+established from a reference polygon onto the curved edges. This map
+could then be used with a change of coordinates to move the integral
+from the curved polygon to the reference polygon. The problem of extending
+a mapping from a boundary to an entire domain has been studied as
+transfinite interpolation
+(\cite{chenin:tel-00284680, Gordon1982, Perronnet1998}),
+barycentric coordinates (\cite{Wachspress1975}) or mean value coordinates
+(\cite{Floater2003}). However, these maps aren't typically suitable for
+numerical integration because they are either not bijective or increase the
+degree of the edges.
+
+\begin{figure}
+  \includegraphics{../images/curved-mesh/main_figure11.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Curved polygon tessellation, done by introducing diagonals
+    from a single vertex node.}
+  \label{fig:tessellated-curved-polygon}
+\end{figure}
+
+Since simple and well established quadrature rules do exist for triangles,
+a valid approach would be
+to tessellate a curved polygon into valid B\'{e}zier triangles
+(Figure~\ref{fig:tessellated-curved-polygon}) and then use substitution as
+in~\eqref{eq:mass-mat-subst}. However, tessellation is challenging for both
+theoretical and computational reasons.
+Theoretical: it's not even clear if an arbitrarily curved polygon \textbf{can}
+be tessellated into B\'{e}zier triangles. Computational: the placement
+of diagonals and potential introduction of interior nodes is very
+complex in cases where the curved polygon is nonconvex. What's more,
+the curved polygon is given only by the boundary, so higher degree triangles
+(i.e. cubic and above) introduced during tessellation would need to place
+interior control points without causing the triangle to invert. To get a
+sense for these challenges, note how the ``simple'' introduction of
+diagonals in Figure~\ref{fig:bad-tessellation-required} leads to one
+inverted element (the gray element) and another element with area outside
+of the curved polygon (the yellow element). Inverted B\'{e}zier triangles
+are problematic because the accompanying mapping leaves the boundary
+established by the edge curves. For example,
+if the tessellation of \(\mathcal{P}\) contains an inverted
+B\'{e}zier triangle \(\mathcal{T}_2 = b\left(\utri\right)\) then we'll
+need to numerically integrate
+\begin{equation}
+\int_{\mathcal{T}_2} \phi_0 \phi_1 \, dx \, dy =
+  \int_{\utri} \left|\det(Db)\right| \left(\phi_0 \circ b\right)
+  \left(\phi_1 \circ b\right) \, ds \, dt.
+\end{equation}
+If the shape functions are from the pre-image basis (see
+Section~\ref{subsec:shape-functions}), then \(\phi_0\)
+will not be defined at \(b(s, t) \not\in \mathcal{T}_0\) (similarly for
+\(\phi_1\)). Additionally, the absolute value in \(\left|\det(Db)\right|\)
+makes the integrand non-smooth since for inverted elements
+\(\det(Db)\) takes both signs. If the shape functions are from the
+global coordinates basis, then tessellation can be used via an
+application of Lemma~\ref{lemma:bad-triangle}, however this involves
+more computation than just applying Green's theorem along
+\(\partial \mathcal{P}\). By applying the lemma, inverted elements may
+be used in a tessellation, for example by introducing artificial
+diagonals from a vertex as in Figure~\ref{fig:tessellated-curved-polygon}.
+In the global coordinates basis, \(F = \phi_0 \phi_1\) \textit{can}
+be evaluated for points in an inverted element that leave
+\(\mathcal{T}_0\) or \(\mathcal{T}_1\).
+
+\begin{figure}
+  \includegraphics{../images/curved-mesh/main_figure16.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Curved polygon intersection that can't be tessellated
+    (with valid B\'{e}zier triangles) by introducing diagonals.}
+  \label{fig:bad-tessellation-required}
+\end{figure}
+
+Instead, we focus on a Green's theorem based approach.
+Define horizontal and vertical antiderivatives
+\(H, V\) of the integrand \(F\) such that \(H_x = V_y = F\).
+We make these \textit{unique} by imposing the
+extra condition that \(H(0, y) \equiv V(x, 0) \equiv 0\).
+This distinction is arbitrary, but in order to \textit{evaluate}
+\(H\) and \(V\), the univariate functions \(H(0, y)\) and \(V(x, 0)\)
+must be specified.
+Green's theorem tells us that
+\begin{equation}
+\int_{\mathcal{P}} 2 F \, dV =
+\int_{\mathcal{P}} H_x + V_y \, dV =
+\oint_{\partial \mathcal{P}} H \, dy - V \, dx =
+\sum_j \int_{C_j} H \, dy - V \, dx.
+\end{equation}
+For a given curve \(C\) with components \(x(r), y(r)\)
+defined on the unit interval, this amounts to having
+to integrate
+\begin{equation}
+G(r) = H(x(r), y(r)) y'(r) - V(x(r), y(r)) x'(r).
+\end{equation}
+To do this, we'll use Gaussian
+quadrature with degree of accuracy sufficient to cover the degree
+of \(G(r)\).
+
+If the shape functions are in the global coordinates basis
+(Section~\ref{subsec:shape-functions}), then \(G\) will also be a polynomial.
+This is because for these shape functions \(F = \phi_0 \phi_1\) will be
+polynomial on \(\reals^2\) and so will \(H\) and \(V\) and since each curve
+\(C\) is a B\'{e}zier curve segment, the components are also polynomials.
+If the shape functions are in the pre-image basis, then \(F\) won't in general
+be polynomial, hence the quadrature rules can only be approximate.
+
+To evaluate \(G\), we must also evaluate \(H\) and \(V\) numerically.
+For example, since \(H(0, y) \equiv 0\),
+the fundamental theorem of calculus tells us that
+\(H\left(\alpha, \beta\right) = \int_0^{\alpha} F\left(x, \beta\right) \, dx\).
+To compute this integral via Gaussian quadrature
+\begin{equation}
+H\left(\alpha, \beta\right) \approx \frac{\alpha}{2} \sum_j w_j
+  F\left(\frac{\alpha}{2} (x_j + 1), \beta\right)
+\end{equation}
+we must be able to evaluate \(F\) for
+points on the line \(y = \beta\) for \(x\) between \(0\) and \(\alpha\). If
+the shape functions are from the pre-image basis, it may not even be possible
+to evaluate \(F\) for such points. Since \(\left[\begin{array}{c c} \alpha &
+\beta \end{array}\right]^T\) is on the boundary of \(\mathcal{P}\), WLOG
+assume it is on the boundary of \(\mathcal{T}_0\). Thus, for some elements
+(e.g. if the point is on the bottom of the element), points
+\(\left[\begin{array}{c c} \nu & \beta \end{array}\right]^T\) may not be
+in \(\mathcal{T}_0\). Since \(\operatorname{supp}(\phi_0) = \mathcal{T}_0\),
+we could take \(\phi_0(\nu, \beta) = 0\), but this would make the integrand
+non-smooth and so the accuracy of the \textit{exact} quadrature would be
+lost. But extending \(\phi_0 = \widehat{\phi}_0 \circ b_0^{-1}\) outside
+of \(\mathcal{T}_0\) may be impossible: even though \(b_0\) is bijective on
+\(\utri\) it may be many-to-one elsewhere hence \(b_0^{-1}\) can't be
+reliably extended outside of \(\mathcal{T}_0\).
+
+Even if the shape functions are from the global coordinates basis,
+setting \(H(0, y) \equiv 0\) may introduce quadrature points that
+are very far from \(\mathcal{P}\). This can be somewhat addressed by using
+\(H(m, y) \equiv 0\) for a suitably chosen \(m\) (e.g. the minimum
+\(x\)-value in \(\mathcal{P}\)). Then we have
+\(H\left(\alpha, \beta\right) = \int_m^{\alpha} F\left(x, \beta\right) \, dx\).

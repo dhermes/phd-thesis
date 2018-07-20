@@ -74,7 +74,7 @@ def bezier_triangle_area():
     figure, all_axes = plt.subplots(2, 3)
     all_axes = all_axes.flatten()
     surface.plot(256, ax=all_axes[0])
-    all_axes[0].set_title("Curved")
+    all_axes[0].set_title("Curved", fontsize=plot_utils.TEXT_SIZE)
 
     error_vals = []
     for n in range(1, 20 + 1):
@@ -99,9 +99,9 @@ def bezier_triangle_area():
                 polygon_nodes[0, :],
                 polygon_nodes[1, :],
                 marker="o",
-                markersize=5,
+                markersize=4,
             )
-            ax.set_title("$N = {:d}$".format(N))
+            ax.set_title("$N = {:d}$".format(N), fontsize=plot_utils.TEXT_SIZE)
 
     for ax in all_axes[:5]:
         ax.axis("equal")
@@ -119,7 +119,7 @@ def bezier_triangle_area():
         error_vals[:, 1],
         basex=2,
         marker="o",
-        markersize=5,
+        markersize=4,
         label="Polygonal",
     )
     surface_area = F(compute_area(edge1, edge2, edge3))
@@ -132,16 +132,31 @@ def bezier_triangle_area():
         linestyle="dashed",
         label="Curved",
     )
-    ax.legend()
-    ax.set_title("Area Estimates")
-    ax.set_xlabel("Line Segments per Side ($N$)")
-    ax.set_ylabel("Relative Error")
+    ax.legend(loc="lower left", fontsize=plot_utils.TEXT_SIZE)
+    ax.set_title("Area Estimates", fontsize=plot_utils.TEXT_SIZE)
+    ax.set_xlabel(
+        "Line Segments per Side ($N$)", fontsize=plot_utils.TEXT_SIZE
+    )
+    ax.set_ylabel("Relative Error", fontsize=plot_utils.TEXT_SIZE)
     ax.yaxis.tick_right()
     ax.yaxis.set_label_position("right")
 
-    figure.set_size_inches(12.02, 5.6)
+    all_axes[0].yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[3].yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[5].yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[3].xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[4].xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[5].xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+
+    all_axes[3].set_xticks([0.1, 0.5, 0.9])
+    all_axes[4].set_xticks([0.1, 0.5, 0.9])
+    all_axes[5].set_xticks(
+        [2.0 ** 4, 2.0 ** 8, 2.0 ** 12, 2.0 ** 16, 2.0 ** 20]
+    )
+
+    figure.set_size_inches(6.0, 4.0)
     figure.subplots_adjust(
-        left=0.03, bottom=0.05, right=0.95, top=0.95, wspace=0.03, hspace=0.11
+        left=0.06, bottom=0.07, right=0.9, top=0.95, wspace=0.03, hspace=0.15
     )
     filename = "polygon_vs_curved.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
@@ -189,7 +204,7 @@ def intersection_area():
     surface1.plot(256, ax=ax, color=plot_utils.BLUE)
     surface2.plot(256, ax=ax, color=plot_utils.GREEN)
     intersection.plot(256, ax=ax, color=plot_utils.RED)
-    ax.set_title("Curved")
+    ax.set_title("Curved", fontsize=plot_utils.TEXT_SIZE)
 
     error_vals = []
     for n in range(1, 20 + 1):
@@ -230,7 +245,7 @@ def intersection_area():
                     polygon_nodes[1, :],
                     color=color,
                     marker="o",
-                    markersize=5,
+                    markersize=4,
                 )
             boundary_x, boundary_y = poly_intersect.exterior.coords.xy
             boundary = np.empty((len(boundary_x), 2))
@@ -255,7 +270,7 @@ def intersection_area():
                     boundary[new_nodes, 1],
                     color=plot_utils.RED,
                     marker="o",
-                    markersize=5,
+                    markersize=4,
                     linestyle="none",
                 )
             ax.plot(
@@ -263,13 +278,13 @@ def intersection_area():
                 boundary[:-1, 1],
                 color=plot_utils.RED,
                 marker="o",
-                markersize=5,
+                markersize=4,
                 markeredgewidth=1,
                 markerfacecolor="none",
                 linestyle="none",
             )
             ax.add_patch(patch)
-            ax.set_title("$N = {:d}$".format(N))
+            ax.set_title("$N = {:d}$".format(N), fontsize=plot_utils.TEXT_SIZE)
 
     for ax in all_axes[:5]:
         ax.axis("equal")
@@ -287,7 +302,7 @@ def intersection_area():
         error_vals[:, 1],
         basex=2,
         marker="o",
-        markersize=5,
+        markersize=4,
         label="Polygonal",
     )
     curved_poly_area = F(compute_area(*intersection._edges))
@@ -300,16 +315,31 @@ def intersection_area():
         linestyle="dashed",
         label="Curved",
     )
-    ax.legend()
-    ax.set_title("Intersection Area Estimates")
-    ax.set_xlabel("Line Segments per Side ($N$)")
-    ax.set_ylabel("Relative Error")
+    ax.legend(loc="lower left", fontsize=plot_utils.TEXT_SIZE)
+    ax.set_title("Intersection Area Estimates", fontsize=plot_utils.TEXT_SIZE)
+    ax.set_xlabel(
+        "Line Segments per Side ($N$)", fontsize=plot_utils.TEXT_SIZE
+    )
+    ax.set_ylabel("Relative Error", fontsize=plot_utils.TEXT_SIZE)
     ax.yaxis.tick_right()
     ax.yaxis.set_label_position("right")
 
-    figure.set_size_inches(12.02, 5.6)
+    all_axes[0].yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[3].yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[5].yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[3].xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[4].xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+    all_axes[5].xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
+
+    all_axes[3].set_xticks([-0.4, 0.1, 0.6, 1.1])
+    all_axes[4].set_xticks([-0.4, 0.1, 0.6, 1.1])
+    all_axes[5].set_xticks(
+        [2.0 ** 4, 2.0 ** 8, 2.0 ** 12, 2.0 ** 16, 2.0 ** 20]
+    )
+
+    figure.set_size_inches(6.0, 4.0)
     figure.subplots_adjust(
-        left=0.04, bottom=0.05, right=0.94, top=0.95, wspace=0.03, hspace=0.13
+        left=0.06, bottom=0.07, right=0.9, top=0.95, wspace=0.03, hspace=0.15
     )
     filename = "polygon_vs_curved_intersection.pdf"
     path = plot_utils.get_path("curved-mesh", filename)

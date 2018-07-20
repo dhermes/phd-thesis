@@ -249,7 +249,7 @@ a positive Jacobian and once with a negative Jacobian.
 We define a curved mesh element \(\mathcal{T}\) of degree \(p\)
 to be a B\'{e}zier triangle in \(\reals^2\) of the same degree.
 We refer to the component functions of \(b(s, t)\) (the map that
-defined \(\mathcal{T}\)) as \(x(s, t)\) and \(y(s, t)\).
+gives \(\mathcal{T} = b\left(\utri\right)\)) as \(x(s, t)\) and \(y(s, t)\).
 
 This fits a typical definition (\cite[Chapter~12]{FEM-ClaesJohnson})
 of a curved element, but gives a special meaning to the mapping from
@@ -259,6 +259,9 @@ mesh adaptivity is needed (e.g. ~\cite{CardozeMOP04}). Typically curved
 elements only have one curved side (\cite{McLeod1972}) since they are used
 to resolve geometric features of a boundary. See also
 \cite{Zlmal1973, Zlmal1974}.
+B\'{e}zier curves and triangles have a number of mathematical properties
+(e.g. the convex hull property) that lead to elegant geometric
+descriptions and algorithms.
 
 Note that a B\'{e}zier triangle can be
 determined from many different sources of data (for example the control net
@@ -286,17 +289,17 @@ themselves:
 \begin{itemize}
   \itemsep 0em
   \item \textbf{Pre-Image Basis}:
-    \(\varphi_{\bm{j}}\left(\bm{n}_{\bm{i}}\right) =
-      \widehat{\varphi}_{\bm{j}}\left(\bm{u}_{\bm{i}}\right) =
-      \widehat{\varphi}_{\bm{j}}\left(b^{-1}\left(
+    \(\phi_{\bm{j}}\left(\bm{n}_{\bm{i}}\right) =
+      \widehat{\phi}_{\bm{j}}\left(\bm{u}_{\bm{i}}\right) =
+      \widehat{\phi}_{\bm{j}}\left(b^{-1}\left(
       \bm{n}_{\bm{i}}\right)\right)\)
-    where \(\widehat{\varphi}_{\bm{j}}\) is a canonical basis function
+    where \(\widehat{\phi}_{\bm{j}}\) is a canonical basis function
     on \(\utri\), i.e.
-    \(\widehat{\varphi}_{\bm{j}}\) a degree \(p\) bivariate polynomial and
-    \(\widehat{\varphi}_{\bm{j}}\left(\bm{u}_{\bm{i}}\right) =
+    \(\widehat{\phi}_{\bm{j}}\) a degree \(p\) bivariate polynomial and
+    \(\widehat{\phi}_{\bm{j}}\left(\bm{u}_{\bm{i}}\right) =
     \delta_{\bm{i} \bm{j}}\)
   \item \textbf{Global Coordinates Basis}:
-    \(\varphi_{\bm{j}}\left(\bm{n}_{\bm{i}}\right) =
+    \(\phi_{\bm{j}}\left(\bm{n}_{\bm{i}}\right) =
     \delta_{\bm{i} \bm{j}}\), i.e. a canonical basis function
     on the standard nodes \(\left\{\bm{n}_{\bm{i}}\right\}\).
 \end{itemize}
@@ -321,7 +324,7 @@ b(s, t) = \left[ \begin{array}{c c}
 \end{gather}
 In the \textbf{Global Coordinates Basis}, we have
 \begin{equation}
-\varphi^{G}_{0, 1, 1}(x, y) = \frac{(y - 4) (x - y + 4)}{6}.
+\phi^{G}_{0, 1, 1}(x, y) = \frac{(y - 4) (x - y + 4)}{6}.
 \end{equation}
 For the \textbf{Pre-Image Basis}, we need the inverse
 and the canonical basis
@@ -329,13 +332,13 @@ and the canonical basis
 b^{-1}(x, y) = \left[ \begin{array}{c c}
     \frac{x - y + 4}{4} & \frac{y - 4}{x - y + 8}
   \end{array}\right] \quad \text{and} \quad
-\widehat{\varphi}_{0, 1, 1}(s, t) = 4 s t
+\widehat{\phi}_{0, 1, 1}(s, t) = 4 s t
 \end{equation}
 and together they give
 \begin{equation}
-\varphi^{P}_{0, 1, 1}(x, y) = \frac{(y - 4) (x - y + 4)}{x - y + 8}.
+\phi^{P}_{0, 1, 1}(x, y) = \frac{(y - 4) (x - y + 4)}{x - y + 8}.
 \end{equation}
-In general \(\varphi_{\bm{j}}^P\) may not even be a rational bivariate
+In general \(\phi_{\bm{j}}^P\) may not even be a rational bivariate
 function; due to composition with \(b^{-1}\) we can only guarantee that
 it is algebraic (i.e. it can be defined as the zero set of polynomials).
 
@@ -345,7 +348,7 @@ it is algebraic (i.e. it can be defined as the zero set of polynomials).
   \includegraphics[width=0.625\textwidth]{../images/curved-mesh/main_figure26.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
-  \caption{Intersection of B\'{e}zier triangles}
+  \caption{Intersection of B\'{e}zier triangles form a curved polygon.}
   \label{fig:bezier-triangle-intersect}
 \end{figure}
 
@@ -358,21 +361,23 @@ For example, in Figure~\ref{fig:bezier-triangle-intersect}, a
 
 A \textbf{curved polygon} is defined by a collection of B\'{e}zier curves
 in \(\reals^2\) that determine the boundary. In order to be
-a valid polygon, none of the boundary curves may cross and the
-ends of consecutive edge curves must meet. For our example in
+a valid polygon, none of the boundary curves may cross, the
+ends of consecutive edge curves must meet and the curves must be right-hand
+oriented. For our example in
 Figure~\ref{fig:bezier-triangle-intersect}, the triangles
 have boundaries formed by three B\'{e}zier curves:
 \(\partial \mathcal{T}_0 = b_{0, 0} \cup b_{0, 1} \cup b_{0, 2}\) and
 \(\partial \mathcal{T}_1 = b_{1, 0} \cup b_{1, 1} \cup b_{1, 2}\).
-The intersection \(\mathcal{I}\) is defined by its boundary\footnote{Each
-specialization of a B\'{e}zier curve \(b\left(\left[a_1, a_2\right]\right)\)
-is itself a B\'{e}zier curve.}:
-\begin{equation}
-\partial \mathcal{I} = b_{0, 0}\left(\left[0, 1/8\right]\right) \cup
-  b_{1, 2}\left(\left[7/8, 1\right]\right) \cup
-  b_{1, 0}\left(\left[0, 1/7\right]\right) \cup
-  b_{0, 2}\left(\left[6/7, 1\right]\right).
-\end{equation}
+The intersection \(\mathcal{P}\) is defined by four boundary
+curves: \(\partial \mathcal{P} =
+C_1 \cup C_2 \cup C_3 \cup C_4\). Each boundary
+curve is itself a B\'{e}zier curve\footnote{A specialization of a
+B\'{e}zier curve \(b\left(\left[a_1, a_2\right]\right)\)
+is also a B\'{e}zier curve.}:
+\(C_1 = b_{0, 0}\left(\left[0, 1/8\right]\right)\),
+\(C_2 = b_{1, 2}\left(\left[7/8, 1\right]\right)\),
+\(C_3 = b_{1, 0}\left(\left[0, 1/7\right]\right)\) and
+\(C_4 = b_{0, 2}\left(\left[6/7, 1\right]\right)\).
 
 Though an intersection can be described in terms of the B\'{e}zier triangles,
 the structure of the control net will be lost. The region will not in general
