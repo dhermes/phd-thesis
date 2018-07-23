@@ -1,6 +1,6 @@
 \chapter{Proof Details}\label{chap:appendix-proof-details}
 
-\begin{proof}[Proof of Lemma~\ref{lemma:ell-tilde}]
+\begin{proof}[Proof of Lemma~\ref{lemma:ell-tilde}]\label{proof:ell-tilde}
 We'll start with the \(F = 1\) case. Recall where the terms originate:
 \begin{align}
 \left[P_1, e_1\right] &= \mathtt{TwoProd}\left(\widehat{r},
@@ -215,6 +215,134 @@ q_{F + 1}(n) = \sum_{k = 1}^n r_{F + 1}(k)
 \end{equation}
 Swapping the order of summation and grouping like terms, we have our
 result.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lemma:k-order}]\label{proof:k-order}
+As in \eqref{eq:matrix-de-casteljau}, we can express the compensated
+de Casteljau algorithm as
+\begin{equation}
+\db{F}^{(k)} = U_{k + 1} \db{F}^{(k + 1)} + \ell_{F}^{(k)}
+\Longrightarrow \db{F}^{(0)} = \sum_{k = 0}^{n - 1}
+U_1 \cdots U_k \ell_F^{(k)} = \sum_{k = 0}^{n - 1}
+\left[\sum_{j = 0}^k \ell_{F, j}^{(k)} B_{j, k}(s)\right].
+\end{equation}
+For the inexact equivalent of these things, first note that
+\(\widehat{r} = (1 - s)(1 + \delta)\). Due to this,
+we put the \(\widehat{r}\) term at the end of each update step to reduce
+the amount of round-off:
+\begin{align}
+  \cdb{F}_j^{(k)} &=
+  \widehat{\ell}_{F, j}^{(k)} \oplus
+  \left(s \otimes \cdb{F}_{j + 1}^{(k + 1)}\right) \oplus
+  \left(\widehat{r} \otimes \cdb{F}_j^{(k + 1)}\right) \\
+&= (1 - s) \cdot \cdb{F}_j^{(k + 1)}(1 + \theta_3) +
+  s \cdot \cdb{F}_{j + 1}^{(k + 1)}(1 + \theta_3) +
+  \widehat{\ell}_{F, j}^{(k)} (1 + \theta_2) \\
+\Longrightarrow \cdb{F}^{(k)} &=
+  U_{k + 1} \cdb{F}^{(k + 1)}(1 + \theta_3) +
+  \widehat{\ell}_{F}^{(k)} (1 + \theta_2) \\
+\Longrightarrow \cdb{F}^{(0)} &=
+  \sum_{k = 0}^{n - 1}
+  U_1 \cdots U_k \widehat{\ell}_F^{(k)} (1 + \theta_{3k + 2})
+  = \sum_{k = 0}^{n - 1}
+  \left[\sum_{j = 0}^k \widehat{\ell}_{F, j}^{(k)} (1 + \theta_{3k + 2})
+    B_{j, k}(s)\right].
+\end{align}
+Since
+\begin{equation}
+\db{F + 1}_0^{(0)} = \db{F}_0^{(0)} - \cdb{F}_0^{(0)} = \sum_{k = 0}^{n - 1}
+\sum_{j = 0}^k \left(\ell_{F, j}^{(k)} -
+\widehat{\ell}_{F, j}^{(k)} (1 + \theta_{3k + 2})\right) B_{j, k}(s)
+\end{equation}
+it's useful to put a bound on \(\ell_{F, j}^{(k)} -
+\widehat{\ell}_{F, j}^{(k)} (1 + \theta_{3k + 2})\). Via
+\begin{align}
+\widehat{\ell}_{F, j}^{(k)} &= e_1 \oplus \cdots \oplus e_{5F - 2} \oplus
+\left(\rho \otimes \cdb{F - 1}_j^{(k + 1)}\right) \\
+&= e_1\left(1 + \theta_{5F - 2}\right) + \cdots +
+e_{5F - 2}\left(1 + \theta_2\right) +
+\rho \cdot \cdb{F - 1}_j^{(k + 1)} \left(1 + \theta_2\right)
+\end{align}
+we see that
+\begin{equation}
+\left|\ell_{F, j}^{(k)} -
+\widehat{\ell}_{F, j}^{(k)} (1 + \theta_{3k + 2})\right| \leq
+\gamma_{3k + 5F} \cdot \widetilde{\ell}_{F, j}^{(k)}
+\Longrightarrow
+\left|\db{F + 1}_0^{(0)}\right| \leq \sum_{k = 0}^{n - 1}
+\gamma_{3k + 5F} \sum_{j = 0}^k \widetilde{\ell}_{F, j}^{(k)} B_{j, k}(s).
+\end{equation}
+Applying \eqref{eq:L-sum-bound} directly gives
+\begin{equation}
+\left|\db{F + 1}_0^{(0)}\right| \leq
+  \left[\left(3^{F + 1} \binom{n}{F + 1} + \bigO{n^F}\right)
+  \mach^{F + 1} + \bigO{\mach^{F + 2}}\right] \cdot \widetilde{p}(s).
+\end{equation}
+Letting \(K = F + 1\) we have our result.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:k-comp-result}]\label{proof:k-comp-result}
+Since
+\begin{equation}
+\mathtt{CompDeCasteljau}(p, s, K) = \mathtt{SumK}\left(\left[
+  \widehat{b}_0^{(0)}, \ldots, \cdb{K - 1}_0^{(0)}\right], K\right),
+\end{equation}
+applying Theorem~\ref{thm:sum-k} tells us that
+\begin{multline}\label{eq:sum-k-applied}
+\left|\mathtt{CompDeCasteljau}(p, s, K) - \sum_{F = 0}^{K - 1}
+\cdb{F}_0^{(0)}\right| \leq \\
+\left(\mach + 3 \gamma_{n - 1}^2\right) \left|\sum_{F = 0}^{K - 1}
+\cdb{F}_0^{(0)}\right| +
+\gamma_{2n - 2}^K \sum_{F = 0}^{K - 1} \left|\cdb{F}_0^{(0)}\right|.
+\end{multline}
+Since
+\begin{equation}
+p(s) = b_0^{(0)} = \widehat{b}_0^{(0)} + \db{1}_0^{(0)}
+= \cdots
+= \widehat{b}_0^{(0)} + \cdb{1}_0^{(0)} + \cdots
++ \cdb{K - 1}_0^{(0)} + \db{K}_0^{(0)}
+\end{equation}
+we have
+\begin{gather}
+\left|\sum_{F = 0}^{K - 1} \cdb{F}_0^{(0)}\right|
+\leq \left|p(s)\right| + \left|\db{K}_0^{(0)}\right| \quad \text{and} \\
+\begin{multlined}
+\left|\mathtt{CompDeCasteljau}(p, s, K) - p(s)\right| \leq \\
+\left|\mathtt{CompDeCasteljau}(p, s, K) - \sum_{F = 0}^{K - 1}
+\cdb{F}_0^{(0)}\right| +
+\left|\db{K}_0^{(0)}\right| \label{eq:triangle-ps}.
+\end{multlined}
+\end{gather}
+Due to Lemma~\ref{lemma:k-order}, \(\db{F}_0^{(0)} =
+\bigO{\mach^F} \widetilde{p}(s)\), hence
+\begin{align}
+\left(\mach + 3 \gamma_{n - 1}^2\right) \left|\sum_{F = 0}^{K - 1}
+\cdb{F}_0^{(0)}\right| &\leq
+\left[\mach + \bigO{\mach^2}\right] \left|p(s)\right| +
+\bigO{\mach^{K + 1}} \widetilde{p}(s) \\
+\gamma_{2n - 2}^K \sum_{F = 0}^{K - 1} \left|\cdb{F}_0^{(0)}\right| &\leq
+\gamma_{2n - 2}^K \left|\widehat{b}_0^{(0)}\right| +
+\bigO{\mach^{K + 1}} \widetilde{p}(s) \\
+&\leq
+\gamma_{2n - 2}^K \left[\left|p(s)\right| +
+  \bigO{\mach} \widetilde{p}(s)\right] +
+\bigO{\mach^{K + 1}} \widetilde{p}(s).
+\end{align}
+Combining this with \eqref{eq:sum-k-applied} and \eqref{eq:triangle-ps}, we
+see
+\begin{align}
+& \left|\mathtt{CompDeCasteljau}(p, s, K) - p(s)\right| \\
+\leq &
+\left[\mach + \bigO{\mach^2}\right] \left|p(s)\right| +
+\left|\db{K}_0^{(0)}\right| +
+\bigO{\mach^{K + 1}} \widetilde{p}(s) \\
+\leq &
+\left[\mach + \bigO{\mach^2}\right] \left|p(s)\right| +
+\left[\left(3^{K} \binom{n}{K} + \bigO{n^{K - 1}}\right) \mach^K +
+\bigO{\mach^{K + 1}} \right]
+\widetilde{p}(s).
+\end{align}
+Dividing this by \(\left|p(s)\right|\), we have our result.
 \end{proof}
 
 \begin{lemma}\label{lemma:bad-triangle}
