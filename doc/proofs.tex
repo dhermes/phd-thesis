@@ -17,7 +17,8 @@ Hence Theorem~\ref{thm:eft} tells us that
 \left|e_1\right| &\leq \mach \left|\widehat{r} \cdot
   \widehat{b}_j^{(k + 1)}\right| \leq \mach(1 + \mach)(1 - s) \left|
   \widehat{b}_j^{(k + 1)}\right| \\
-\left|P_2\right| &\leq (1 + \mach) s \left|\widehat{b}_{j + 1}^{(k + 1)}\right| \\
+\left|P_2\right| &\leq (1 + \mach) s
+  \left|\widehat{b}_{j + 1}^{(k + 1)}\right| \\
 \left|e_2\right| &\leq \mach s \left|\widehat{b}_{j + 1}^{(k + 1)}\right| \\
 \left|e_3\right| &\leq \mach \left|P_1\right| + \mach\left|P_2\right| \\
 \left|\rho \cdot \widehat{b}_j^{(k + 1)}\right| &\leq
@@ -84,7 +85,8 @@ and build each bound recursively based on the previous, e.g.
 as desired.
 \end{proof}
 
-\begin{proof}[Proof of Lemma~\ref{lemma:L-and-D-bounds}]\label{proof:L-and-D-bounds}
+\begin{proof}[Proof of Lemma~\ref{lemma:L-and-D-bounds}]
+\label{proof:L-and-D-bounds}
 First, note that for \textbf{any} sequence \(v_0, \ldots, v_{k + 1}\) we
 must have
 \begin{equation}
@@ -281,7 +283,8 @@ Applying \eqref{eq:L-sum-bound} directly gives
 Letting \(K = F + 1\) we have our result.
 \end{proof}
 
-\begin{proof}[Proof of Theorem~\ref{thm:k-comp-result}]\label{proof:k-comp-result}
+\begin{proof}[Proof of Theorem~\ref{thm:k-comp-result}]
+\label{proof:k-comp-result}
 Since
 \begin{equation}
 \mathtt{CompDeCasteljau}(p, s, K) = \mathtt{SumK}\left(\left[

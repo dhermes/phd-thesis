@@ -28,7 +28,8 @@ on \(s\) and the Bernstein coefficients of \(p\) --- its expression will
 be given further.
 
 \begin{figure}
-  \includegraphics[width=0.9375\textwidth]{../images/k-compensated/horner_inferior.pdf}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/k-compensated/horner_inferior.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Comparing Horner's method to the de Casteljau method for
@@ -66,7 +67,8 @@ nearest floating point number. Figure~\ref{fig:jlcs-10} shows this shift
 in relative error from \texttt{DeCasteljau} to \texttt{CompDeCasteljau}.
 
 \begin{figure}
-  \includegraphics[width=0.8125\textwidth]{../images/k-compensated/jlcs10_plot.pdf}
+  \includegraphics[width=0.8125\textwidth]
+                  {../images/k-compensated/jlcs10_plot.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Evaluation of \(p(s) = (s - 1)\left(s - 3/4\right)^7\)
@@ -175,7 +177,8 @@ de Casteljau algorithm is to compute both the local error and the updates
 of the global error with floating point operations:
 
 \begin{breakablealgorithm}
-  \caption{\textit{Compensated de Casteljau algorithm for polynomial evaluation.}}
+  \caption{\textit{Compensated de Casteljau
+      algorithm for polynomial evaluation.}}
   \label{alg:comp-de-casteljau}
 
   \begin{algorithmic}
@@ -230,7 +233,8 @@ the working precision:
 \end{theorem}
 
 \begin{figure}
-  \includegraphics[width=0.9375\textwidth]{../images/k-compensated/compensated_insufficient.pdf}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/k-compensated/compensated_insufficient.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{The compensated de Casteljau method starts to lose accuracy
@@ -256,7 +260,8 @@ Table~\ref{tab:exact-computation}, the breakdown occurs because
   \begin{adjustbox}{max width=\textwidth}
   \begin{tabular}{>{$}c<{$} >{$}c<{$} >{$}c<{$} >{$}c<{$} >{$}c<{$} >{$}c<{$}}
     \toprule
-    k & j & \widehat{b}_j^{(k)} & \cdb{1}_j^{(k)} & \db{1}_j^{(k)} - \cdb{1}_j^{(k)} \\
+    k & j & \widehat{b}_j^{(k)} & \cdb{1}_j^{(k)} &
+        \db{1}_j^{(k)} - \cdb{1}_j^{(k)} \\
     \midrule
     3 & 0 & 0.125 - 1.75 (1001 \mach) - 0.25 \mach & 0.25\mach & 0 \\
     3 & 1 & -0.125 + 1.25(1001 \mach) + 0.25 \mach & -0.25\mach & 0 \\
@@ -264,13 +269,17 @@ Table~\ref{tab:exact-computation}, the breakdown occurs because
     3 & 3 & -0.125 + 0.25 (1001 \mach) & 0 & 0 \\
     \midrule
     2 & 0 & -0.5 (1001 \mach) & 3 (1001 \mach)^2 & 0 \\
-    2 & 1 & 0.5(1001 \mach) + 0.125 \mach & -0.125\mach - 2 (1001 \mach)^2 & 0 \\
+    2 & 1 & 0.5(1001 \mach) + 0.125 \mach & -0.125\mach - 2 (1001 \mach)^2 &
+        0 \\
     2 & 2 & -0.5 (1001 \mach) & (1001 \mach)^2 & 0 \\
     \midrule
-    1 & 0 & 0.0625\mach + (1001 \mach)^2 + 239\mach^2 & -0.0625\mach + 0.5  (1001 \mach)^2 - 239 \mach^2 & -5 (1001\mach)^3 \\
-    1 & 1 & 0.0625\mach - (1001 \mach)^2 - 239\mach^2 & -0.0625\mach - 0.5  (1001 \mach)^2 + 239 \mach^2 & 3 (1001\mach)^3 \\
+    1 & 0 & 0.0625\mach + (1001 \mach)^2 + 239\mach^2 &
+        -0.0625\mach + 0.5  (1001 \mach)^2 - 239 \mach^2 & -5 (1001\mach)^3 \\
+    1 & 1 & 0.0625\mach - (1001 \mach)^2 - 239\mach^2 &
+        -0.0625\mach - 0.5  (1001 \mach)^2 + 239 \mach^2 & 3 (1001\mach)^3 \\
     \midrule
-    0 & 0 & 0.0625 \mach & -0.0625 \mach & -4 (1001 \mach)^3 + 8 (1001 \mach)^4 \\
+    0 & 0 & 0.0625 \mach & -0.0625 \mach &
+        -4 (1001 \mach)^3 + 8 (1001 \mach)^4 \\
     \bottomrule
   \end{tabular}
   \end{adjustbox}
@@ -281,7 +290,8 @@ Table~\ref{tab:exact-computation}, the breakdown occurs because
   \label{tab:exact-computation}
 \end{table}
 
-\section{\texorpdfstring{\(K\)}{K}-Compensated de Casteljau}\label{sec:compensated-k}
+\section{\texorpdfstring{\(K\)}{K}-Compensated de Casteljau}
+\label{sec:compensated-k}
 
 \subsection{Algorithm Specified}
 
@@ -640,7 +650,8 @@ polynomials come from.
 \section{Numerical experiments}\label{sec:numerical}
 
 \begin{figure}
-  \includegraphics[width=0.9375\textwidth]{../images/k-compensated/de_casteljau_smooth_drawing.pdf}
+  \includegraphics[width=0.9375\textwidth]
+                  {../images/k-compensated/de_casteljau_smooth_drawing.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Evaluation of \(p(s) = (s - 1)\left(s - 3/4\right)^7\)
@@ -673,7 +684,8 @@ condition number goes up by \(\approx 10^{21}\) and \texttt{CompDeCasteljau}
 is no longer accurate.
 
 \begin{figure}
-  \includegraphics[width=0.8125\textwidth]{../images/k-compensated/de_casteljau_rel_error.pdf}
+  \includegraphics[width=0.8125\textwidth]
+                  {../images/k-compensated/de_casteljau_rel_error.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Accuracy of evaluation of \(p(s) = (s - 1)\left(s - 3/4\right)^7\)

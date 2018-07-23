@@ -45,9 +45,11 @@
     \path [line] (ddbn0) -- node[above] {\(\widehat{\ell}_3^{(n)}\)} (right0);
     %%
     \path [line] (bn1) -- node[above] {\(\widehat{\ell}_1^{(n - 1)}\)} (dbn1);
-    \path [line] (dbn1) -- node[above] {\(\widehat{\ell}_2^{(n - 1)}\)} (ddbn1);
+    \path [line] (dbn1) -- node[above]
+          {\(\widehat{\ell}_2^{(n - 1)}\)} (ddbn1);
     \node [empty-box, right of=ddbn1] (right1) {\(\cdots\)};
-    \path [line] (ddbn1) -- node[above] {\(\widehat{\ell}_3^{(n - 1)}\)} (right1);
+    \path [line] (ddbn1) -- node[above]
+          {\(\widehat{\ell}_3^{(n - 1)}\)} (right1);
     %%
     \path [line] (bj) -- (bn0);
     \path [line] (bn0) -- node[fill=white] {\(U_n(s)\)} (bn1);
