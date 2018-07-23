@@ -729,3 +729,87 @@ are very far from \(\mathcal{P}\). This can be somewhat addressed by using
 \(H(m, y) \equiv 0\) for a suitably chosen \(m\) (e.g. the minimum
 \(x\)-value in \(\mathcal{P}\)). Then we have
 \(H\left(\alpha, \beta\right) = \int_m^{\alpha} F\left(x, \beta\right) \, dx\).
+
+\section{Numerical Experiments}
+
+\begin{figure}
+  \includegraphics{../images/curved-mesh/main_figure30.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Some example meshes used during the numerical
+    experiments; the donor meshs is on the left / blue and the target
+    mesh is on the right / green. These meshes are the cubic approximations
+    of each domain and have been refined twice.}
+  \label{fig:meshes-used-refined}
+\end{figure}
+
+A numerical experiment was performed to investigate the observed order
+of convergence. Three pairs of random meshes were generated, the donor
+on a square of width \(17 / 8\) centered at the origin
+and the target on the unit disc. These domains were chosen intentionally so
+that the target mesh was completely covered by the donor mesh and the
+boundaries did not accidentally introduce ill-conditioned intersection between
+elements. The pairs were linear, quadratic and
+cubic approximations of the domains. The convergence test was done by
+refining each pair of meshes four times and performing data transfer
+at each level. Figure~\ref{fig:meshes-used-refined} shows the cubic
+pair of meshes after two refinements.
+
+\begin{figure}
+  \includegraphics{../images/curved-mesh/main_figure25.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Convergence results for scalar fields on three pairs of related
+    meshes: a linear, quadratic and cubic mesh of the same domain.}
+  \label{fig:composite-errors}
+\end{figure}
+
+Taking after \cite{Farrell2011}, we transfer three
+discrete fields in the discontinuous Galerkin (DG) basis.
+Each field is derived from one of the smooth scalar functions
+\begin{align}
+\zeta_1(x, y) &= 5 y^3 + x^2 + 2y + 3 \\
+\zeta_2(x, y) &= \exp\left(x^2\right) + 2y \\
+\zeta_3(x, y) &= \sin(x) + \cos(y).
+\end{align}
+For a given mesh size \(h\), we expect that on a degree \(p\) isoparametric
+mesh our data transfer will have \(\bigO{h^{p + 1}}\) errors. To measure
+the rate of convergence:
+\begin{itemize}
+\itemsep 0em
+\item Choose a mesh pair \(\mathcal{M}_D\), \(\mathcal{M}_T\) and
+a known function \(\zeta(x, y)\).
+\item Refine the meshes recursively, starting with
+  \(\mathcal{M}_D^{(0)} = \mathcal{M}_D\),
+  \(\mathcal{M}_T^{(0)} = \mathcal{M}_T\).
+\item Create meshes
+\(\mathcal{M}_D^{(j)}\) and \(\mathcal{M}_T^{(j)}\) from
+\(\mathcal{M}_D^{(j - 1)}\)
+and \(\mathcal{M}_T^{(j - 1)}\) by subdividing each curved
+element into four elements.
+\item Approximate \(\zeta\) by a discrete field: the nodal
+interpolant on the donor mesh \(\mathcal{M}_D^{(j)}\). The
+nodal interpolant is constructed by evaluating \(\zeta\) at the
+nodes \(\bm{n}_j\) corresponding to each shape function:
+\begin{equation}
+\bm{f}_j = \sum_j \zeta\left(\bm{n}_j\right) \phi_D^{(j)}.
+\end{equation}
+\item Transfer \(\bm{f}_j\) to the discrete field \(\bm{g}_j\) on
+the target mesh  \(\mathcal{M}_T^{(j)}\).
+\item Compute the relative error on \(\mathcal{M}_T^{(j)}\):
+\(E_j = \| \bm{g}_j - \zeta \|_2 / \| \zeta \|_2\) (here \(\| \cdot \|_2\)
+is the \(L_2\) norm on the target mesh).
+
+We should instead be measuring \(\| \bm{g}_j - \bm{f}_j \|_2 /
+\| \bm{f}_j \|_2\), but \(E_j\) is much easier to
+compute for \(\zeta(x, y)\) that are straightforward to evaluate.
+Due to the triangle inequality \(E_j\) can be a reliable proxy
+for the actual projection error, though when
+\(\| \bm{f}_j - \zeta \|_2\) becomes too large it will dominate
+the error and no convergence will be observed.
+\end{itemize}
+
+Convergence results are shown in Figure~\ref{fig:composite-errors}
+and confirm the expected orders. Since \(\zeta_1\) is a cubic polynomial,
+the data transfer on the cubic mesh should be \textbf{exact}, so there
+is a certain minimum threshold that can be reached.
