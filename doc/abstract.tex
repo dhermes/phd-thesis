@@ -1,13 +1,22 @@
 \begin{abstract}
-In computer aided geometric design a polynomial is usually represented in
-Bernstein form. This paper presents a family of compensated algorithms to
-accurately evaluate a polynomial in Bernstein form with floating point
-coefficients. The principle is to apply error-free transformations to
-improve the traditional de Casteljau algorithm. At each stage of computation,
-round-off error is passed on to first order errors, then to second order
-errors, and so on. After the computation has been ``filtered'' \((K - 1)\)
-times via this process, the resulting output is as accurate as the de Casteljau
-algorithm performed in \(K\) times the working precision. Forward error
-analysis and numerical experiments illustrate the accuracy of this family
-of algorithms.
+The problem of data transfer between meshes arises frequently in
+computational physics, e.g. in Lagrangian methods where remeshing
+occurs. The interpolation process must be conservative, i.e. it
+must conserve physical properties, such as mass. We extend previous
+works --- which described the data transfer process for straight sided
+unstructured meshes --- by considering high-order isoparametric meshes
+with curved elements. The implementation is highly reliant on accurate
+computational geometry routines for evaluating points on and
+intersecting B\'{e}zier curves and triangles.
+
+Two ill-conditioned problems that occur evaluating points on and
+intersecting B\'{e}zier curves are then explored. This work presents a
+family of compensated algorithms to accurately evaluate a polynomial in
+Bernstein form with floating point coefficients. The principle is to apply
+error-free transformations to improve the traditional de Casteljau
+algorithm. The resulting output is as accurate as the de Casteljau
+algorithm performed in \(K\) times the working precision. After
+compensated evaluation is considered, a compensated Newton's method is
+described, both for root-finding for polynomials in the Bernstein basis
+and for B\'{e}zier curve intersection.
 \end{abstract}
