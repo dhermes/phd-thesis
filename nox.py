@@ -159,12 +159,12 @@ def make_images(session):
     }
     script_paths = (
         ("compensated-newton", "jghplus13.py"),
-        ("curved-mesh", "distort.py"),
-        ("curved-mesh", "inverted_element.py"),
-        ("curved-mesh", "locate_in_triangle.py"),
-        ("curved-mesh", "polygon_vs_curved.py"),
-        ("curved-mesh", "simple_transport.py"),
-        ("curved-mesh", "subdivision.py"),
+        ("data-transfer", "distort.py"),
+        ("data-transfer", "inverted_element.py"),
+        ("data-transfer", "locate_in_triangle.py"),
+        ("data-transfer", "polygon_vs_curved.py"),
+        ("data-transfer", "simple_transport.py"),
+        ("data-transfer", "subdivision.py"),
         ("k-compensated", "compensated_insufficient.py"),
         ("k-compensated", "error_against_cond.py"),
         ("k-compensated", "horner_inferior.py"),

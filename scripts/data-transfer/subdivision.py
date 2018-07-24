@@ -70,7 +70,7 @@ def image1():
         left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.04, hspace=0.2
     )
     filename = "subdivide_curve.pdf"
-    path = plot_utils.get_path("curved-mesh", filename)
+    path = plot_utils.get_path("data-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
@@ -165,7 +165,7 @@ def image2():
         left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.04, hspace=0.04
     )
     filename = "subdivision_process.pdf"
-    path = plot_utils.get_path("curved-mesh", filename)
+    path = plot_utils.get_path("data-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
@@ -217,7 +217,7 @@ def image3():
         left=0.01, bottom=0.01, right=0.99, top=0.9, wspace=0.04, hspace=0.2
     )
     filename = "bbox_check.pdf"
-    path = plot_utils.get_path("curved-mesh", filename)
+    path = plot_utils.get_path("data-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
@@ -264,7 +264,7 @@ def image4():
         left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.06, hspace=0.04
     )
     filename = "subdivision_linearized.pdf"
-    path = plot_utils.get_path("curved-mesh", filename)
+    path = plot_utils.get_path("data-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)

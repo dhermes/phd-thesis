@@ -52,7 +52,7 @@ def main():
         left=0.12, bottom=0.1, right=0.99, top=1.04, wspace=0.2, hspace=0.2
     )
     filename = "simple_transport.pdf"
-    path = plot_utils.get_path("curved-mesh", filename)
+    path = plot_utils.get_path("data-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)

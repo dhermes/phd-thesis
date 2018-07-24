@@ -31,7 +31,7 @@ multiple disjoint regions.
 \subsection{Lagrangian Methods}
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/simple_transport.pdf}
+  \includegraphics{../images/data-transfer/simple_transport.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{The solution to \(u_t + u_x = 0, \; u(x, 0) = x^3\) plotted in
@@ -76,7 +76,7 @@ are treated like particles) and the mesh ``travels''.
 \subsection{Remeshing and Adaptivity}
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/mesh_distortion.pdf}
+  \includegraphics{../images/data-transfer/mesh_distortion.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Distortion of a regular mesh caused by particle motion along
@@ -100,7 +100,7 @@ The characteristics \(y(t) = y_0 + t, x(t) = x_0 +
 distort the mesh considerably after just one second.
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/distortion_remesh.pdf}
+  \includegraphics{../images/data-transfer/distortion_remesh.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Remeshing a domain after distortion caused by particle motion
@@ -132,7 +132,7 @@ mesh will distort.
 \subsection{High-order Meshes}
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure27.pdf}
+  \includegraphics{../images/data-transfer/main_figure27.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Comparing straight sided meshes to a curved mesh when approximating
@@ -151,7 +151,7 @@ The increase in accuracy also allows for the use of fewer elements, which
 in turn can also facilitate a reduction in the overall computation time.
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/element_distortion.pdf}
+  \includegraphics{../images/data-transfer/element_distortion.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Movement of nodes in a quadratic element under distortion caused
@@ -222,7 +222,7 @@ via the divergence theorem to reduce the complexity of the problem.
 \subsection{Limitations}
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure29.pdf}
+  \includegraphics{../images/data-transfer/main_figure29.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Partially overlapping meshes on a near identical domain. Both are
@@ -263,7 +263,7 @@ solve the PDE to determine the values on the uncovered elements.
 \section{Galerkin Projection}
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure00.pdf}
+  \includegraphics{../images/data-transfer/main_figure00.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Mesh pair: donor mesh \(\mathcal{M}_D\) and
@@ -363,7 +363,7 @@ more difficult.
 \section{Common Refinement}
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure02.pdf}
+  \includegraphics{../images/data-transfer/main_figure02.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{All donor elements that cover a target element}
@@ -424,7 +424,7 @@ Section~\ref{subsec:integration-on-curved} below.
 \subsection{Advancing Front}\label{subsec:advancing-front}
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure13.pdf}
+  \includegraphics{../images/data-transfer/main_figure13.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Brute force search for a donor element \(\mathcal{T}'\) that matches
@@ -447,7 +447,7 @@ to find an intersecting element in the donor mesh
 \(\bigO{\left|\mathcal{M}_D\right|}\).
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure14.pdf}
+  \includegraphics{../images/data-transfer/main_figure14.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{All donor elements \(\mathcal{T}'\) that cover a target element
@@ -485,7 +485,7 @@ elements of the target mesh, or even across shape functions
 \(\phi_T^{(j)}\).
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure15.pdf}
+  \includegraphics{../images/data-transfer/main_figure15.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{First match between a neighbor of the previously considered
@@ -514,7 +514,7 @@ B\'{e}zier maps that define the elements being intersected:
 \(\mathcal{T}_1 = b_1\left(\utri\right)\).
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/polygon_vs_curved.pdf}
+  \includegraphics{../images/data-transfer/polygon_vs_curved.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Comparing the relative error for the computed area of a quadratic
@@ -525,7 +525,7 @@ B\'{e}zier maps that define the elements being intersected:
 \end{figure}
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/polygon_vs_curved_intersection.pdf}
+  \includegraphics{../images/data-transfer/polygon_vs_curved_intersection.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Comparing the relative error for the computed area of the
@@ -597,7 +597,7 @@ numerical integration because they are either not bijective or increase the
 degree of the edges.
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure11.pdf}
+  \includegraphics{../images/data-transfer/main_figure11.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Curved polygon tessellation, done by introducing diagonals
@@ -649,7 +649,7 @@ be evaluated for points in an inverted element that leave
 \(\mathcal{T}_0\) or \(\mathcal{T}_1\).
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure16.pdf}
+  \includegraphics{../images/data-transfer/main_figure16.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Curved polygon intersection that can't be tessellated
@@ -725,7 +725,7 @@ are very far from \(\mathcal{P}\). This can be somewhat addressed by using
 \section{Numerical Experiments}
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure30.pdf}
+  \includegraphics{../images/data-transfer/main_figure30.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Some example meshes used during the numerical
@@ -748,7 +748,7 @@ at each level. Figure~\ref{fig:meshes-used-refined} shows the cubic
 pair of meshes after two refinements.
 
 \begin{figure}
-  \includegraphics{../images/curved-mesh/main_figure25.pdf}
+  \includegraphics{../images/data-transfer/main_figure25.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Convergence results for scalar fields on three pairs of related

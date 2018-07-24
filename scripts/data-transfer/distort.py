@@ -160,7 +160,7 @@ def plot_distorted():
         left=0.07, bottom=0.02, right=0.99, top=0.98, wspace=0.07, hspace=0.2
     )
     filename = "mesh_distortion.pdf"
-    path = plot_utils.get_path("curved-mesh", filename)
+    path = plot_utils.get_path("data-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
@@ -275,7 +275,7 @@ def distort_cubic_tri():
         left=0.07, bottom=0.05, right=0.99, top=0.97, wspace=0.04, hspace=-0.1
     )
     filename = "element_distortion.pdf"
-    path = plot_utils.get_path("curved-mesh", filename)
+    path = plot_utils.get_path("data-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
@@ -339,7 +339,7 @@ def remesh():
         left=0.06, bottom=0.01, right=0.99, top=1.0, wspace=0.04, hspace=0.2
     )
     filename = "distortion_remesh.pdf"
-    path = plot_utils.get_path("curved-mesh", filename)
+    path = plot_utils.get_path("data-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)

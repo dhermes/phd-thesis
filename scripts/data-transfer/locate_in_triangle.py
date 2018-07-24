@@ -79,7 +79,7 @@ def image1():
         left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.03, hspace=0.04
     )
     filename = "locate_in_triangle.pdf"
-    path = plot_utils.get_path("curved-mesh", filename)
+    path = plot_utils.get_path("data-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
