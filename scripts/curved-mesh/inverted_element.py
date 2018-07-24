@@ -169,13 +169,13 @@ def main():
             linewidth=1.0,
         )
     )
-    figure.set_size_inches(7.45, 5.19)
+    figure.set_size_inches(4.8, 3.3)
     figure.subplots_adjust(
-        left=0.03, bottom=0.07, right=1.0, top=0.98, wspace=0.0, hspace=0.06
+        left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.04, hspace=0.0
     )
     filename = "inverted_element.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
-    figure.savefig(path, bbox_inches="tight")
+    figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
 

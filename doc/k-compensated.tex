@@ -79,7 +79,7 @@ in relative error from \texttt{DeCasteljau} to \texttt{CompDeCasteljau}.
 In \cite{Graillat2009}, the authors generalized the compensated Horner's
 algorithm to produce a method for evaluating a polynomial as if
 the computations were done in \(K\) times the working precision for
-any \(K \geq 2\). This result motivates this paper, though the
+any \(K \geq 2\). This result motivates this chapter, though the
 approach there is somewhat different than ours. They perform each computation
 with error-free transformations and interpret the errors as coefficients of new
 polynomials. They then evaluate the error polynomials, which (recursively)
@@ -114,16 +114,16 @@ as accurate as the result of the de Casteljau algorithm performed in
 \(K\) times the working precision with a final rounding back to the
 working precision.
 
-The paper is organized as follows. Section~\ref{chap:preliminaries} establishes
-notation for error analysis with floating point operations, reviews
-results about error-free transformations and reviews the
-de Casteljau algorithm. In Section~\ref{sec:compensated-2},
+The chapter is organized as follows. In Section~\ref{sec:compensated-2},
 the compensated algorithm for polynomial evaluation from \cite{Jiang2010} is
 reviewed and notation is established for the expansion. In
 Section~\ref{sec:compensated-k}, the \(K\)-compensated algorithm is provided
 and a forward error analysis is performed. Finally, in
 Section~\ref{sec:numerical} we perform two numerical experiments to
 give practical examples of the theoretical error bounds.
+(See Chapter~\ref{chap:preliminaries} to review notation for error analysis
+with floating point operations, review results about error-free
+transformations or to review the de Casteljau algorithm.)
 
 \section{Compensated de Casteljau}\label{sec:compensated-2}
 

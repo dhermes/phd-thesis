@@ -50,7 +50,7 @@ def main():
     figure.set_size_inches(4.8, 3.6)
     filename = "simple_transport.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
-    figure.savefig(path, bbox_inches="tight")
+    figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
 

@@ -154,12 +154,12 @@ def image2():
         ax.set_xlim(-0.05, 1.05)
         ax.set_ylim(0.4, 1.15)
 
-    figure.set_size_inches(6.4, 4.8)
+    figure.set_size_inches(6.0, 2.8)
     figure.subplots_adjust(
-        left=0.12, bottom=0.11, right=0.90, top=0.88, wspace=0.05, hspace=-0.55
+        left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.04, hspace=0.04
     )
     path = plot_utils.get_path("curved-mesh", filename)
-    figure.savefig(path, bbox_inches="tight")
+    figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
 
@@ -254,7 +254,7 @@ def image4():
         left=0.01, bottom=0.02, right=0.99, top=0.98, wspace=0.06, hspace=0.06
     )
     path = plot_utils.get_path("curved-mesh", filename)
-    figure.savefig(path, bbox_inches="tight")
+    figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
 

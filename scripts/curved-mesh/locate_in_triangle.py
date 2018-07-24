@@ -73,7 +73,7 @@ def image1():
     )
     filename = "locate_in_triangle.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
-    figure.savefig(path, bbox_inches="tight")
+    figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
 

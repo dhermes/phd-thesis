@@ -76,7 +76,7 @@ def main(filename=None):
             hspace=0.20,
         )
         path = plot_utils.get_path("k-compensated", filename)
-        figure.savefig(path, bbox_inches="tight")
+        figure.savefig(path)
         print("Saved {}".format(filename))
         plt.close(figure)
 

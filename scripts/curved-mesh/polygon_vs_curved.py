@@ -154,13 +154,13 @@ def bezier_triangle_area():
         [2.0 ** 4, 2.0 ** 8, 2.0 ** 12, 2.0 ** 16, 2.0 ** 20]
     )
 
-    figure.set_size_inches(6.0, 4.0)
+    figure.set_size_inches(6.0, 4.2)
     figure.subplots_adjust(
-        left=0.06, bottom=0.07, right=0.9, top=0.95, wspace=0.03, hspace=0.15
+        left=0.06, bottom=0.11, right=0.9, top=0.95, wspace=0.03, hspace=0.15
     )
     filename = "polygon_vs_curved.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
-    figure.savefig(path, bbox_inches="tight")
+    figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
 
@@ -337,13 +337,13 @@ def intersection_area():
         [2.0 ** 4, 2.0 ** 8, 2.0 ** 12, 2.0 ** 16, 2.0 ** 20]
     )
 
-    figure.set_size_inches(6.0, 4.0)
+    figure.set_size_inches(6.0, 4.2)
     figure.subplots_adjust(
-        left=0.06, bottom=0.07, right=0.9, top=0.95, wspace=0.03, hspace=0.15
+        left=0.08, bottom=0.11, right=0.9, top=0.95, wspace=0.03, hspace=0.15
     )
     filename = "polygon_vs_curved_intersection.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
-    figure.savefig(path, bbox_inches="tight")
+    figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
 
