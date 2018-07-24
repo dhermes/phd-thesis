@@ -96,6 +96,14 @@ def build_tex(session):
         extensions=("aux", "bbl", "blg", "lof", "log", "lot", "out", "toc"),
         with_bibtex=True,
     )
+
+    build_tex_file(
+        session,
+        "approval_page",
+        "73E1E12D3FFF1C2BBD94B849733BF55A",
+        extensions=("aux", "log", "out"),
+    )
+
     extras = (
         "abstract",
         "algorithms",
@@ -104,6 +112,7 @@ def build_tex(session):
         "data-transfer",
         "introduction",
         "k-compensated",
+        "metadata",
         "preliminaries",
         "proofs",
     )
