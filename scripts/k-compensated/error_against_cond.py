@@ -45,7 +45,7 @@ POWER_VAL = 1.3
 ALPHA = 0.25
 
 
-def main(filename=None):
+def main():
     n = 8
     gamma2n = (2 * n * U) / (1 - 2 * n * U)
     bound_coeff1 = float(gamma2n)
@@ -200,7 +200,12 @@ def main(filename=None):
     ax.set_ylim(min_y, 1.0)
     ax.set_xlim(min_x, max_x)
     # Add the legend.
-    ax.legend(loc="lower right", framealpha=1.0, frameon=True)
+    ax.legend(
+        loc="lower right",
+        framealpha=1.0,
+        frameon=True,
+        fontsize=plot_utils.TEXT_SIZE,
+    )
     # Set "nice" ticks.
     ax.set_xticks([10.0 ** n for n in range(5, 65 + 10, 10)])
     ax.set_yticks([10.0 ** n for n in range(-18, 0 + 2, 2)])
@@ -238,19 +243,24 @@ def main(filename=None):
         labelright=1,
     )
     # Label the axes.
-    ax.set_xlabel("Condition Number")
-    ax.set_ylabel("Relative Forward Error")
+    ax.set_xlabel("Condition Number", fontsize=plot_utils.TEXT_SIZE)
+    ax.set_ylabel("Relative Forward Error", fontsize=plot_utils.TEXT_SIZE)
 
-    if filename is None:
-        plt.show()
-    else:
-        path = plot_utils.get_path("k-compensated", filename)
-        figure.savefig(path, bbox_inches="tight")
-        print("Saved {}".format(filename))
-        plt.close(figure)
+    ax.tick_params(labelsize=plot_utils.TICK_SIZE)
+    ax.tick_params(labelsize=plot_utils.TEXT_SIZE, which="minor")
+
+    figure.set_size_inches(5.2, 3.9)
+    figure.subplots_adjust(
+        left=0.12, bottom=0.11, right=0.95, top=0.92, wspace=0.2, hspace=0.2
+    )
+    filename = "de_casteljau_rel_error.pdf"
+    path = plot_utils.get_path("k-compensated", filename)
+    figure.savefig(path)
+    print("Saved {}".format(filename))
+    plt.close(figure)
 
 
-def main_jlcs10(filename=None):
+def main_jlcs10():
     """This recreates the plot from `JLCS10`_.
 
     .. _JLCS10: https://doi.org/10.1016/j.camwa.2010.05.021
@@ -373,7 +383,12 @@ def main_jlcs10(filename=None):
     ax.set_ylim(min_y, 10.0 ** 18)
     ax.set_xlim(min_x, max_x)
     # Add the legend.
-    ax.legend(loc="lower right", framealpha=1.0, frameon=True)
+    ax.legend(
+        loc="lower right",
+        framealpha=1.0,
+        frameon=True,
+        fontsize=plot_utils.TEXT_SIZE,
+    )
     # Set "nice" ticks.
     ax.set_xticks([10.0 ** n for n in range(5, 45 + 5, 5)])
     ax.set_yticks([10.0 ** n for n in range(-18, 14 + 4, 4)])
@@ -402,19 +417,24 @@ def main_jlcs10(filename=None):
         labelright=1,
     )
     # Label the axes.
-    ax.set_xlabel("Condition Number")
-    ax.set_ylabel("Relative Forward Error")
+    ax.set_xlabel("Condition Number", fontsize=plot_utils.TEXT_SIZE)
+    ax.set_ylabel("Relative Forward Error", fontsize=plot_utils.TEXT_SIZE)
 
-    if filename is None:
-        plt.show()
-    else:
-        path = plot_utils.get_path("k-compensated", filename)
-        figure.savefig(path, bbox_inches="tight")
-        print("Saved {}".format(filename))
-        plt.close(figure)
+    ax.tick_params(labelsize=plot_utils.TICK_SIZE)
+    ax.tick_params(labelsize=plot_utils.TEXT_SIZE, which="minor")
+
+    figure.set_size_inches(5.2, 3.9)
+    figure.subplots_adjust(
+        left=0.12, bottom=0.11, right=0.95, top=0.92, wspace=0.2, hspace=0.2
+    )
+    filename = "jlcs10_plot.pdf"
+    path = plot_utils.get_path("k-compensated", filename)
+    figure.savefig(path)
+    print("Saved {}".format(filename))
+    plt.close(figure)
 
 
 if __name__ == "__main__":
     plot_utils.set_styles()
-    main(filename="de_casteljau_rel_error.pdf")
-    main_jlcs10(filename="jlcs10_plot.pdf")
+    main()
+    main_jlcs10()

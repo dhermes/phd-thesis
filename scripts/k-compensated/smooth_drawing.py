@@ -40,7 +40,7 @@ DELTA_S = 1e-5
 NUM_POINTS = 401
 
 
-def main(filename=None):
+def _main():
     s_vals = np.linspace(ROOT - DELTA_S, ROOT + DELTA_S, NUM_POINTS)
 
     evaluated1 = []
@@ -61,38 +61,38 @@ def main(filename=None):
     ax3.plot(s_vals, evaluated3)
 
     # Since ``sharex=True``, ticks only need to be set once.
-    ax1.set_xticks(
-        [
-            ROOT - DELTA_S,
-            ROOT - 0.5 * DELTA_S,
-            ROOT,
-            ROOT + 0.5 * DELTA_S,
-            ROOT + DELTA_S,
-        ]
+    ax1.set_xticks([ROOT - 0.8 * DELTA_S, ROOT, ROOT + 0.8 * DELTA_S])
+
+    ax1.set_title(
+        r"$\mathtt{DeCasteljau}$", fontsize=plot_utils.TEXT_SIZE, pad=16.0
+    )
+    ax2.set_title(
+        r"$\mathtt{CompDeCasteljau}$", fontsize=plot_utils.TEXT_SIZE, pad=16.0
+    )
+    ax3.set_title(
+        r"$\mathtt{CompDeCasteljau3}$", fontsize=plot_utils.TEXT_SIZE, pad=16.0
     )
 
-    ax1.set_title(r"$\mathtt{DeCasteljau}$")
-    ax2.set_title(r"$\mathtt{CompDeCasteljau}$")
-    ax3.set_title(r"$\mathtt{CompDeCasteljau3}$")
+    filename = "de_casteljau_smooth_drawing.pdf"
+    figure.set_size_inches(6.0, 3.0)
+    figure.subplots_adjust(
+        left=0.07, bottom=0.13, right=0.98, top=0.87, wspace=0.21, hspace=0.2
+    )
+    path = plot_utils.get_path("k-compensated", filename)
+    figure.savefig(path)
+    print("Saved {}".format(filename))
+    plt.close(figure)
 
-    if filename is None:
-        plt.show()
-    else:
-        figure.set_size_inches(13.65, 6.41)
-        figure.subplots_adjust(
-            left=0.04,
-            bottom=0.10,
-            right=0.97,
-            top=0.95,
-            wspace=0.15,
-            hspace=0.19,
-        )
-        path = plot_utils.get_path("k-compensated", filename)
-        figure.savefig(path)
-        print("Saved {}".format(filename))
-        plt.close(figure)
+
+def main():
+    mapping = {
+        "xtick.labelsize": plot_utils.TICK_SIZE,
+        "ytick.labelsize": plot_utils.TICK_SIZE,
+    }
+    with plt.style.context(mapping):
+        _main()
 
 
 if __name__ == "__main__":
     plot_utils.set_styles()
-    main(filename="de_casteljau_smooth_drawing.pdf")
+    main()

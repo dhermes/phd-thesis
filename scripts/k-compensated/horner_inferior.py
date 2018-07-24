@@ -31,7 +31,7 @@ DELTA_S = 5e-6
 NUM_POINTS = 401
 
 
-def main(filename=None):
+def _main():
     s_vals = np.linspace(ROOT - DELTA_S, ROOT + DELTA_S, NUM_POINTS)
 
     horner1 = []
@@ -56,27 +56,35 @@ def main(filename=None):
         ]
     )
 
-    ax1.set_title(r"$\mathtt{Horner}$")
-    ax2.set_title(r"$\mathtt{DeCasteljau}$")
+    ax1.set_title(r"$\mathtt{Horner}$", fontsize=plot_utils.TEXT_SIZE)
+    ax2.set_title(r"$\mathtt{DeCasteljau}$", fontsize=plot_utils.TEXT_SIZE)
 
-    if filename is None:
-        plt.show()
-    else:
-        figure.set_size_inches(9.87, 4.8)
-        figure.subplots_adjust(
-            left=0.06,
-            bottom=0.12,
-            right=0.97,
-            top=0.92,
-            wspace=0.13,
-            hspace=0.20,
-        )
-        path = plot_utils.get_path("k-compensated", filename)
-        figure.savefig(path)
-        print("Saved {}".format(filename))
-        plt.close(figure)
+    ax1.tick_params(labelsize=plot_utils.TICK_SIZE, which="both")
+    ax2.tick_params(labelsize=plot_utils.TICK_SIZE, which="both")
+
+    filename = "horner_inferior.pdf"
+    # NOTE: These are (intended to be) the same settings used in
+    #       ``compensated_insufficient.py``, so they should probably be
+    #       kept in sync.
+    figure.set_size_inches(6.0, 2.9)
+    figure.subplots_adjust(
+        left=0.07, bottom=0.13, right=0.97, top=0.92, wspace=0.13, hspace=0.20
+    )
+    path = plot_utils.get_path("k-compensated", filename)
+    figure.savefig(path)
+    print("Saved {}".format(filename))
+    plt.close(figure)
+
+
+def main():
+    mapping = {
+        "xtick.labelsize": plot_utils.TICK_SIZE,
+        "ytick.labelsize": plot_utils.TICK_SIZE,
+    }
+    with plt.style.context(mapping):
+        _main()
 
 
 if __name__ == "__main__":
     plot_utils.set_styles()
-    main(filename="horner_inferior.pdf")
+    main()
