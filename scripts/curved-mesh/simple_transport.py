@@ -47,7 +47,10 @@ def main():
     ax.xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
     ax.yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
 
-    figure.set_size_inches(4.8, 3.6)
+    figure.set_size_inches(4.8, 2.4)
+    figure.subplots_adjust(
+        left=0.12, bottom=0.1, right=0.99, top=1.04, wspace=0.2, hspace=0.2
+    )
     filename = "simple_transport.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
     figure.savefig(path)
