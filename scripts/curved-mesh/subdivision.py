@@ -28,7 +28,6 @@ def simple_axis(ax):
 
 
 def image1():
-    filename = "subdivide_curve.pdf"
     figure, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True)
     nodes = np.asfortranarray([[0.0, 1.0, 2.0, 4.0], [0.0, 4.0, 0.0, 3.0]])
     curve = bezier.Curve(nodes, degree=2)
@@ -44,6 +43,7 @@ def image1():
         r"$\left[0, \frac{1}{2}\right]$",
         horizontalalignment="center",
         verticalalignment="center",
+        fontsize=plot_utils.TEXT_SIZE,
     )
     ax2.text(
         2.5,
@@ -51,6 +51,7 @@ def image1():
         r"$\left[0, 1\right]$",
         horizontalalignment="center",
         verticalalignment="center",
+        fontsize=plot_utils.TEXT_SIZE,
     )
     ax3.text(
         2.5,
@@ -58,13 +59,19 @@ def image1():
         r"$\left[\frac{1}{2}, 1\right]$",
         horizontalalignment="center",
         verticalalignment="center",
+        fontsize=plot_utils.TEXT_SIZE,
     )
 
     for ax in (ax1, ax2, ax3):
         simple_axis(ax)
 
+    figure.set_size_inches(6.0, 1.5)
+    figure.subplots_adjust(
+        left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.04, hspace=0.2
+    )
+    filename = "subdivide_curve.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
-    figure.savefig(path, bbox_inches="tight")
+    figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
 
@@ -120,7 +127,6 @@ def refine_candidates(left, right):
 
 
 def image2():
-    filename = "subdivision_process.pdf"
     nodes15 = np.asfortranarray([[0.25, 0.625, 1.0], [0.625, 0.25, 1.0]])
     curve15 = bezier.Curve(nodes15, degree=2)
     nodes25 = np.asfortranarray([[0.0, 0.25, 0.75, 1.0], [0.5, 1.0, 1.5, 0.5]])
@@ -158,6 +164,7 @@ def image2():
     figure.subplots_adjust(
         left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.04, hspace=0.04
     )
+    filename = "subdivision_process.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
@@ -165,7 +172,6 @@ def image2():
 
 
 def image3():
-    filename = "bbox_check.pdf"
     figure, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
     control_pts1a = np.asfortranarray([[0.0, 0.375, 1.0], [0.0, 0.5, 0.125]])
@@ -198,22 +204,26 @@ def image3():
 
     ax1.set_xlim(-0.2, 1.1)
     ax1.set_ylim(-0.2, 1.1)
-    ax1.set_title("MAYBE")
+    ax1.set_title("MAYBE", fontsize=plot_utils.TEXT_SIZE)
     ax2.set_xlim(-0.1, 1.5)
     ax2.set_ylim(-0.1, 1.5)
-    ax2.set_title("MAYBE")
+    ax2.set_title("MAYBE", fontsize=plot_utils.TEXT_SIZE)
     ax3.set_xlim(-0.1, 2.1)
     ax3.set_ylim(-1.7, 0.5)
-    ax3.set_title("NO")
+    ax3.set_title("NO", fontsize=plot_utils.TEXT_SIZE)
 
+    figure.set_size_inches(6.0, 2.2)
+    figure.subplots_adjust(
+        left=0.01, bottom=0.01, right=0.99, top=0.9, wspace=0.04, hspace=0.2
+    )
+    filename = "bbox_check.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
-    figure.savefig(path, bbox_inches="tight")
+    figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
 
 
 def image4():
-    filename = "subdivision_linearized.pdf"
     figure, all_axes = plt.subplots(2, 7)
     all_axes = all_axes.flatten()
 
@@ -249,10 +259,11 @@ def image4():
         ax.set_xticklabels([])
         ax.set_yticklabels([])
 
-    figure.set_size_inches(15.29, 4.8)
+    figure.set_size_inches(6.4, 2.4)
     figure.subplots_adjust(
-        left=0.01, bottom=0.02, right=0.99, top=0.98, wspace=0.06, hspace=0.06
+        left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.06, hspace=0.04
     )
+    filename = "subdivision_linearized.pdf"
     path = plot_utils.get_path("curved-mesh", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))

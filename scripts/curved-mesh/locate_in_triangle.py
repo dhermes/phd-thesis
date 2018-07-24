@@ -59,7 +59,14 @@ def image1():
         # Add the sub triangle.
         sub_triangle.plot(256, ax=ax, color=plot_utils.BLUE)
         # Add the point to be found.
-        ax.plot([xv], [yv], color="black", marker="o", linestyle="none")
+        ax.plot(
+            [xv],
+            [yv],
+            color="black",
+            marker="o",
+            markersize=3,
+            linestyle="none",
+        )
 
     for ax in all_axes:
         ax.set_aspect("equal")
@@ -67,7 +74,7 @@ def image1():
     all_axes[0].set_xticklabels([])
     all_axes[0].set_yticklabels([])
 
-    figure.set_size_inches(6.4, 4.8)
+    figure.set_size_inches(4.0, 3.0)
     figure.subplots_adjust(
         left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.03, hspace=0.04
     )
