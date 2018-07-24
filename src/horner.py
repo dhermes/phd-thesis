@@ -110,3 +110,116 @@ def compensated_k(x, coeffs, k):
     # order).
     to_sum = [h[i] for i in range(1, 2 ** k)]
     return eft.sum_k(to_sum, k)
+
+
+def basic_newton_update(x, coeffs):
+    numerator = basic(x, coeffs)
+    denominator = hd1(x, coeffs)
+    return x - numerator / denominator
+
+
+def hd1(x, coeffs):
+    """Performs the ``HD`` algorithm when ``k = 1``.
+
+    .. _JGH+13: https://dx.doi.org/10.1016/j.cam.2012.11.008
+
+    See the `JGH+13`_ paper for more details on the ``HD`` algorithm and the
+    ``CompHD`` algorithm.
+
+    Here ``HD`` stands for "Horner derivative".
+    """
+    y1 = 0.0
+    y2 = coeffs[0]
+
+    for coeff in coeffs[1:-1]:
+        # Update ``y1``.
+        y1 = x * y1 + y2
+        # Update ``y2``.
+        y2 = x * y2 + coeff
+
+    # Perform one last update of ``y1``.
+    return x * y1 + y2
+
+
+def compensated_hd1(x, coeffs):
+    """Performs the compensated ``HD`` algorithm when ``k = 1``.
+
+    .. _JGH+13: https://dx.doi.org/10.1016/j.cam.2012.11.008
+
+    See the `JGH+13`_ paper for more details on the ``HD`` algorithm and the
+    ``CompHD`` algorithm.
+
+    Here ``HD`` stands for "Horner derivative".
+    """
+    y1 = 0.0
+    y2 = coeffs[0]
+    e1 = 0.0  # y1_hat = y1 + e1
+    e2 = 0.0  # y2_hat = y2 + e2
+
+    for coeff in coeffs[1:-1]:
+        # Update ``y1`` and ``e1``.
+        prod, pi = eft.multiply_eft(x, y1)
+        y1, sigma = eft.add_eft(prod, y2)
+        e1 = x * e1 + e2 + (pi + sigma)
+        # Update ``y2`` and ``e2``.
+        prod, pi = eft.multiply_eft(x, y2)
+        y2, sigma = eft.add_eft(prod, coeff)
+        e2 = x * e2 + (pi + sigma)
+
+    # Perform one last update of ``y1`` and ``e1``.
+    prod, pi = eft.multiply_eft(x, y1)
+    y1, sigma = eft.add_eft(prod, y2)
+    e1 = x * e1 + e2 + (pi + sigma)
+
+    # Return the compensated form of ``y1``.
+    return y1 + e1
+
+
+def basic_newton(x0, coeffs, max_iter=100, tol=1e-15):
+    """Perform Newton's method to find a root of a polynomial.
+
+    This assumes ``coeffs`` are the coefficients of :math:`p(s)` in the
+    monomial basis.
+    """
+    curr_x = x0
+    for _ in range(max_iter):
+        next_x = basic_newton_update(curr_x, coeffs)
+        if abs(next_x - curr_x) < tol:
+            return next_x
+        curr_x = next_x
+
+    return curr_x
+
+
+def accurate_newton_update(x, coeffs):
+    numerator = compensated(x, coeffs)
+    denominator = hd1(x, coeffs)
+    return x - numerator / denominator
+
+
+def accurate_newton(x0, coeffs, max_iter=100, tol=1e-15):
+    curr_x = x0
+    for _ in range(max_iter):
+        next_x = accurate_newton_update(curr_x, coeffs)
+        if abs(next_x - curr_x) < tol:
+            return next_x
+        curr_x = next_x
+
+    return curr_x
+
+
+def full_newton_update(x, coeffs):
+    numerator = compensated(x, coeffs)
+    denominator = compensated_hd1(x, coeffs)
+    return x - numerator / denominator
+
+
+def full_newton(x0, coeffs, max_iter=100, tol=1e-15):
+    curr_x = x0
+    for _ in range(max_iter):
+        next_x = full_newton_update(curr_x, coeffs)
+        if abs(next_x - curr_x) < tol:
+            return next_x
+        curr_x = next_x
+
+    return curr_x

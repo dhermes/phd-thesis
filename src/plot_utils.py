@@ -13,6 +13,8 @@
 """Shared utilities and settings for plotting."""
 
 
+import fractions
+import math
 import os
 
 import seaborn
@@ -44,3 +46,49 @@ def get_path(*parts):
     root_dir = os.path.dirname(curr_dir)
     images_dir = os.path.join(root_dir, "images")
     return os.path.join(images_dir, *parts)
+
+
+def binomial(n, k):
+    numerator = math.factorial(n)
+    denominator = math.factorial(k) * math.factorial(n - k)
+    result = fractions.Fraction(numerator, denominator)
+    if float(result) != result:
+        raise ValueError("Cannot be represented exactly")
+    return float(result)
+
+
+def next_float(value, greater=True):
+    """Gets the next (or previous) floating point value."""
+    frac, exponent = math.frexp(value)
+    if greater:
+        if frac == -0.5:
+            ulp = 0.5 ** 54
+        else:
+            ulp = 0.5 ** 53
+    else:
+        if frac == 0.5:
+            ulp = -0.5 ** 54
+        else:
+            ulp = -0.5 ** 53
+
+    return (frac + ulp) * 2.0 ** exponent
+
+
+def to_float(v):
+    """Converts an MPF (``mpmath`` float) to a ``float``."""
+    f = float(v)
+    if f == v:
+        return f
+    if f < v:
+        low = f
+        high = next_float(f, greater=True)
+    else:
+        low = next_float(f, greater=False)
+        high = f
+
+    d_low = v - low
+    d_high = high - v
+    if d_low < d_high:
+        return low
+    else:
+        return high

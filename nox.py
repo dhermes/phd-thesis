@@ -162,6 +162,7 @@ def make_images(session):
         ("k-compensated", "smooth_drawing.py"),
         ("k-compensated", "horner_inferior.py"),
         ("k-compensated", "compensated_insufficient.py"),
+        ("compensated-newton", "jghplus13.py"),
         ("curved-mesh", "distort.py"),
         ("curved-mesh", "inverted_element.py"),
         ("curved-mesh", "locate_in_triangle.py"),
