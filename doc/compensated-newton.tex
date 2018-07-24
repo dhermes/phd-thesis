@@ -27,26 +27,50 @@ used for evaluation of the residual. When evaluating a polynomial
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Comparing relative error to condition number when using Newton's
-    method to find a root of \(p(x) = (x - 1)^n - 2^{-31}\), where polynomial
+    method to find a root of \(p(s) = (s - 1)^n - 2^{-31}\), where polynomial
     evaluation occurs via Horner's method.}
   \label{fig:jgh+13}
 \end{figure}
 
-In \cite{Graillat2008}, the problem of finding simple polynomial roots for
-polynomials expressed in the monomial basis is considered. There the author
-showed that using a compensated Horner's method to evaluate the residual
-(\texttt{NewtonAccurate}) approximates roots with \(\bigO{\mach}\) relative
-error. This gain in accuracy holds until the condition number of evaluation
-reaches \(1/\mach\), at which point the relative error jumps to \(\bigO{1}\)
-as can be seen in Figure~\ref{fig:jgh+13}. This abrupt change in error is not
-unexpected given what is shown in \cite{Tisseur2001}, though it starkly
-differs from the way the error gradually increases with the condition
-number with standard non-compensated Newton's method (\texttt{NewtonBasic}).
-In \cite[Section~8]{Jiang2013}, the author follows up by showing that a
-compensated evaluation of the Jacobian\footnote{In the one dimensional case,
-it's just the derivative of the polynomial.} (\texttt{NewtonFull}) enables
-such a gradual descrease in error as the condition number grows from
-\(1/\mach\) to \(1/\mach^2\). We'll proceed similarly for polynomials in
+In \cite{Graillat2008}, the problem of finding simple roots \(\alpha\) of
+polynomials \(p(s)\) expressed in the monomial basis is considered.
+A standard Newton's method (\texttt{HNewtonBasic}) that evaluates \(p(s)\)
+and \(p'(s)\) using Horner's method is compared to a modified Newton's method
+(\texttt{HNewtonAccurate}) that evaluates \(p(s)\) with a compensated
+Horner's method. This proceeds as in \cite{Tisseur2001}: the evaluation of
+the residual is done with greater accuracy but the rest of the process
+is the same. When computing a root \(\alpha\), the standard Newton's method
+has a relative error that grows linearly with the condition number of the
+root (which will be defined in Section~\ref{sec:conditioning}). The
+modified Newton's method is fully accurate to machine precision (i.e.
+the relative error is \(\bigO{\mach}\)) until \(\cond{\alpha}\) reaches
+\(1/\mach\), as seen in Figure~\ref{fig:jgh+13}.
+
+After the point where \texttt{HNewtonAccurate} loses accuracy, we'd
+expect a linear increase in relative error based on a compensated
+rule of thumb:
+\begin{equation}
+\frac{\left|\widehat{\alpha} - \alpha\right|}{\left|\alpha\right|} \leq
+  c_1 \mach + c_2 \cond{\alpha} \mach^2
+\end{equation}
+where \(c_1 \mach\) corresponds to rounding into the given
+precision and \(c_2 \cond{\alpha} \mach^2\) reflects the
+typical error but from computations done with working precision
+\(\overline{\mach} = \mach^2\). The point
+where the condition number exceeds \(1/\mach\) should correspond to
+the point where the second term is larger that the
+first term. However, this is not possible unless the
+Jacobian (i.e. \(p'(s)\)) is also evaluated with a compensated
+method. A second modified Newton's method (\texttt{HNewtonFull}) is
+introduced in \cite[Section~8]{Jiang2013} and the author shows that
+this second modified Newton's method does indeed follow a compensated
+rule of thumb under appropriate conditions. We see in
+Figure~\ref{fig:jgh+13} that \texttt{HNewtonFull} enables
+\(\bigO{\mach}\) relative errors until the condition number reaches
+\(1/\mach\) and then a linear increase in error as the condition number
+grows from \(1/\mach\) to \(1/\mach^2\).
+
+We'll proceed similarly for polynomials in
 Bernstein form. Since this is a one dimensional Newton's method, improving
 the evaluation of the Jacobian is straightforward. The results agree with
 what has been observed when using Horner's method for evaluation.

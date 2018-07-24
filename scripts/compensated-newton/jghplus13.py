@@ -132,7 +132,7 @@ def main(filename=None):
         markersize=7,
         color=plot_utils.BLUE,
         zorder=2,
-        label=r"$\mathtt{NewtonBasic}$",
+        label=r"$\mathtt{HNewtonBasic}$",
     )
     ax.loglog(
         cond_nums,
@@ -142,7 +142,7 @@ def main(filename=None):
         markersize=3,
         color="black",
         zorder=2,
-        label=r"$\mathtt{NewtonAccurate}$",
+        label=r"$\mathtt{HNewtonAccurate}$",
     )
     # H/T: (http://widu.tumblr.com/post/43624348228/
     #       making-unfilled-hollow-markers-in-matplotlib)
@@ -156,7 +156,7 @@ def main(filename=None):
         markerfacecolor="none",
         color=plot_utils.GREEN,
         zorder=2,
-        label=r"$\mathtt{NewtonFull}$",
+        label=r"$\mathtt{HNewtonFull}$",
     )
     # Add the error lines.
     ax.loglog(
