@@ -174,7 +174,7 @@ def main():
         left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.04, hspace=0.0
     )
     filename = "inverted_element.pdf"
-    path = plot_utils.get_path("data-transfer", filename)
+    path = plot_utils.get_path("preliminaries", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)

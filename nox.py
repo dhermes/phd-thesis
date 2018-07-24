@@ -160,7 +160,6 @@ def make_images(session):
     script_paths = (
         ("compensated-newton", "jghplus13.py"),
         ("data-transfer", "distort.py"),
-        ("data-transfer", "inverted_element.py"),
         ("data-transfer", "locate_in_triangle.py"),
         ("data-transfer", "polygon_vs_curved.py"),
         ("data-transfer", "simple_transport.py"),
@@ -169,6 +168,7 @@ def make_images(session):
         ("k-compensated", "error_against_cond.py"),
         ("k-compensated", "horner_inferior.py"),
         ("k-compensated", "smooth_drawing.py"),
+        ("preliminaries", "inverted_element.py"),
     )
     for segments in script_paths:
         script = get_path("scripts", *segments)
