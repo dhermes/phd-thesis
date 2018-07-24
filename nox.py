@@ -158,10 +158,6 @@ def make_images(session):
         "SOURCE_DATE_EPOCH": "0",
     }
     script_paths = (
-        ("k-compensated", "error_against_cond.py"),
-        ("k-compensated", "smooth_drawing.py"),
-        ("k-compensated", "horner_inferior.py"),
-        ("k-compensated", "compensated_insufficient.py"),
         ("compensated-newton", "jghplus13.py"),
         ("curved-mesh", "distort.py"),
         ("curved-mesh", "inverted_element.py"),
@@ -169,6 +165,10 @@ def make_images(session):
         ("curved-mesh", "polygon_vs_curved.py"),
         ("curved-mesh", "simple_transport.py"),
         ("curved-mesh", "subdivision.py"),
+        ("k-compensated", "compensated_insufficient.py"),
+        ("k-compensated", "error_against_cond.py"),
+        ("k-compensated", "horner_inferior.py"),
+        ("k-compensated", "smooth_drawing.py"),
     )
     for segments in script_paths:
         script = get_path("scripts", *segments)
