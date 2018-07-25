@@ -112,7 +112,165 @@ when written in the Bernstein basis.
 
 \section{Problem conditioning}\label{sec:conditioning}
 
-Placeholder.
+Consider a smooth function \(F: \reals^n \longrightarrow \reals^n\)
+with Jacobian \(F_{\bm{x}} = J\). We want to consider a special class of
+functions of the form \(F\left(\bm{x}\right) = \sum_j c_j
+\phi_j\left(\bm{x}\right)\) where the basis
+functions \(\phi_j\) are also smooth functions on \(\reals^n\)
+and each \(c_j \in \reals\). We want to consider the effects on a root
+\(\bm{\alpha} \in \reals^n\) of a perturbation in one of the
+coefficients \(c_j\). We examine the perturbed functions
+\begin{equation}
+G(x, \delta) = F\left(\bm{x}\right) + \delta \phi_j\left(\bm{x}\right).
+\end{equation}
+Since \(G\left(\bm{\alpha}, 0\right) = \bm{0}\), if \(J^{-1}\) exists at
+\(\bm{x} = \bm{\alpha}\) then
+the implicit function theorem tells us that we can define
+\(\bm{x}\) via
+\begin{equation}
+G\left(\bm{x}\left(\delta\right), \delta\right) = \bm{0}.
+\end{equation}
+Taking the derivative with respect to \(\delta\) we find that
+\(\bm{0} = G_{\bm{x}} \bm{x}_{\delta} + G_{\delta}\). Plugging in
+\(\delta = 0\) we find that \(0 = J\left(\bm{\alpha}\right) \bm{x}_{\delta} +
+\phi_j\left(\bm{\alpha}\right)\), hence we
+conclude that
+\begin{equation}
+\bm{x}\left(\delta\right) = \bm{\alpha} - J\left(\bm{\alpha}\right)^{-1}
+  \phi_j\left(\bm{\alpha}\right) \delta + \bigO{\delta^2}.
+\end{equation}
+This gives a relative condition number (for the root) of
+\begin{equation}
+\frac{\left \lVert J\left(\bm{\alpha}\right)^{-1}
+  \phi_j\left(\bm{\alpha}\right) \right \rVert}{
+  \left \lVert \bm{\alpha} \right \rVert}.
+\end{equation}
+
+By considering perturbations in \textbf{all} of the coefficients:
+\(\left|\delta_j\right| \leq \eps \left|c_j\right|\), a similar analysis
+gives a root function
+\begin{equation}
+\bm{x}\left(\delta_0, \ldots, \delta_n\right) = \bm{\alpha} -
+  J\left(\bm{\alpha}\right)^{-1} \sum_{j = 0}^n \delta_j
+  \phi_j\left(\bm{\alpha}\right) + \bigO{\eps^2}.
+\end{equation}
+With this, we can define a root condition number
+\begin{equation}
+\kappa_{\bm{\alpha}} =
+  \lim_{\eps \to 0} \left(\sup \frac{\left \lVert\delta \bm{\alpha}
+  \right \rVert / \eps}{\left \lVert\bm{\alpha}\right \rVert}\right) =
+  \lim_{\eps \to 0} \left(\sup \frac{\left \lVert
+  J\left(\bm{\alpha}\right)^{-1} \sum_j \delta_j
+  \phi_j\left(\bm{\alpha}\right) \right \rVert / \eps}{
+  \left \lVert\bm{\alpha}\right \rVert}\right).
+\end{equation}
+
+When \(n = 1\), \(J^{-1}\) is simply \(1 / F'\) and we find
+\begin{equation}
+\kappa_{\alpha} =
+  \frac{1}{\left|\alpha F'(\alpha)\right|} \sum_{j = 0}^n \left|
+  c_j \phi_j(\alpha)\right|.
+\end{equation}
+This value is given by the triangle inequality applied to
+\(\delta \alpha\)  and equality can be attained since the sign
+of each \(\delta_j = \pm c_j \eps\) can be modified at will to make
+\(\phi_j(\alpha) \delta_j = \left|\phi_j(\alpha) c_j\right| \eps\).
+
+When \(n > 1\), the triangle inequality tells us that
+\begin{equation}
+\kappa_{\bm{\alpha}} =
+  \lim_{\eps \to 0} \left(\sup \frac{\left \lVert\delta \bm{\alpha} /
+  \eps\right \rVert}{\left \lVert\bm{\alpha}\right \rVert}\right) \leq
+  \frac{1}{\left \lVert\bm{\alpha}\right \rVert} \sum_{j = 0}^n
+  \left|c_j\right| \left \lVert J\left(\bm{\alpha}\right)^{-1}
+  \phi_j(\bm{\alpha})\right \rVert.
+\end{equation}
+However, this bound is only attainable if all
+\(\phi_j(\bm{\alpha})\) are parallel. However, we'll seldom need to
+compute the exact condition number and are instead typically
+interested in the order of magnitude. In this case a lower
+bound
+\begin{equation}
+\frac{1}{\left \lVert\bm{\alpha}\right \rVert}
+\max_j \left|c_j\right| \left \lVert J\left(\bm{\alpha}\right)^{-1}
+\phi_j(\bm{\alpha})\right \rVert
+\end{equation}
+for \(\kappa_{\bm{\alpha}}\)
+will suffice as an approximate condition number.
+
+For an example, consider
+\begin{equation}
+\phi_0 = \left[ \begin{array}{c} x_0 \\ 2 \\ 0 \end{array}\right],
+\phi_1 = \left[ \begin{array}{c} 0 \\ x_1 \\ 3 \end{array}\right],
+\phi_2 = \left[ \begin{array}{c} 2 \\ 0 \\ x_2 \end{array}\right],
+F = \phi_0 + 2 \phi_1 + 3 \phi_2,
+\bm{\alpha} = \left[ \begin{array}{c} -6 \\ -1 \\ -2 \end{array}\right].
+\end{equation}
+For a given \(\eps\), the maximum root perturbation occurs when
+\(\delta_0 = \eps, \delta_1 = 2 \eps, \delta_2 = -3 \eps\) and
+gives
+\(\left \lVert J\left(\bm{\alpha}\right)^{-1} \sum_j
+\delta_j \phi_j\left(\bm{\alpha}\right) \right \rVert
+= 4 \sqrt{10} \eps \approx 12.65 \eps\).
+The pessimistic triangle inequality bound gives
+\(\sum_j \left|c_j\right| \left \lVert J\left(\bm{\alpha}\right)^{-1}
+\phi_j(\bm{\alpha})\right \rVert \approx 14.64 \eps\) and the
+maximum individual perturbation is \(2 \sqrt{10} \eps \approx 6.325 \eps\)
+(this occurs when \(\delta_0 = \delta_1 = 0, \delta_2 = \pm 3 \eps\)).
+
+In this general framework, we can define a condition number both
+for a simple root of a polynomial in Bernstein form and for the
+intersection of two planar B\'{e}zier curves. For the first,
+\(\phi_j(s) = \binom{n}{j} (1 - s)^{n - j} s^j\) the Bernstein basis
+functions, a polynomial \(p(s) = \sum_j b_j \phi_j(s)\) with
+a simple root \(\alpha \in \left(0, 1\right]\) has root condition number
+\begin{equation}
+\kappa_{\alpha} =
+  \frac{1}{\alpha \left|p'(\alpha)\right|} \sum_{j = 0}^n \left|
+  b_j \phi_j(\alpha)\right| = \frac{\widetilde{p}(\alpha)}{
+  \alpha \left|p'(\alpha)\right|}.
+\end{equation}
+For the intersection of a degree \(m\) curve \(b_1(s)\) and
+a degree \(n\) curve \(b_2(t)\), we have basis functions
+\begin{multline}
+\phi_{0, -1, 0} = \left[ \begin{array}{c} B_{0, m}(s) \\ 0 \end{array}\right],
+\phi_{0, -1, 1} = \left[ \begin{array}{c} 0 \\ B_{0, m}(s) \end{array}\right],
+\cdots, \\
+\phi_{m, -1, 0} = \left[ \begin{array}{c} B_{m, m}(s) \\ 0 \end{array}\right],
+\phi_{m, -1, 1} = \left[ \begin{array}{c} 0 \\
+  B_{m, m}(s) \end{array}\right], \\
+\phi_{-1, 0, 0} = \left[ \begin{array}{c} -B_{0, n}(t) \\
+  0 \end{array}\right],
+\phi_{-1, 0, 1} = \left[ \begin{array}{c} 0 \\
+  -B_{0, n}(t) \end{array}\right], \cdots, \\
+\phi_{-1, n, 0} = \left[ \begin{array}{c} -B_{n, n}(t) \\
+  0 \end{array}\right], \phi_{-1, n, 1} = \left[ \begin{array}{c} 0 \\
+  -B_{n, n}(t) \end{array}\right].
+\end{multline}
+Since \(F(s, t) = b_1(s) - b_2(t)\) we have Jacobian \(J(s, t) =
+\left[ \begin{array}{c c} b_1'(s) & -b_2'(t) \end{array}\right]\). For
+a transversal intersection \(F(\alpha, \beta) = \bm{0}\) with
+\(\det J(\alpha, \beta) \neq 0\), we use the lower bound
+\begin{equation}
+\kappa_{\alpha, \beta} = \frac{1}{\left|\alpha\right| + \left|\beta\right|}
+  \max_{\bm{j}} \left|c_{\bm{j}}\right| \left \lVert
+  J\left(\alpha, \beta\right)^{-1}
+  \phi_{\bm{j}}(\alpha, \beta)\right \rVert_1
+\end{equation}
+as a proxy for the condition number. Since each of the
+\(\phi_j\) is just a scalar multiple of
+\(\left[ \begin{array}{c c} 1 & 0 \end{array}\right]^T\) or
+\(\left[ \begin{array}{c c} 0 & 1 \end{array}\right]^T\), we need only
+compute the one norm of each column of \(J^{-1}\) and then combine
+with the largest among \(\left|c_{j, -1, k} B_{j, m}(s)\right|\) and
+\(\left|c_{-1, j, k} B_{j, n}(t)\right|\).
+
+As far as the author can tell,
+a condition number for the intersection of two planar B\'{e}zier curves
+has not been described in the Computer Aided Geometric Design (CAGD)
+literature. In \cite[Chapter~25, Equation 25.11]{Higham2002}
+a more generic condition number is defined for the root of a nonlinear
+algebraic system that is similar to the definition above.
 
 \section{Numerical experiments}\label{sec:compensated-numerical}
 
