@@ -158,12 +158,12 @@ def make_images(session):
         "SOURCE_DATE_EPOCH": "0",
     }
     script_paths = (
+        ("bezier-intersection", "locate_in_triangle.py"),
+        ("bezier-intersection", "subdivision.py"),
         ("compensated-newton", "jghplus13.py"),
         ("data-transfer", "distort.py"),
-        ("data-transfer", "locate_in_triangle.py"),
         ("data-transfer", "polygon_vs_curved.py"),
         ("data-transfer", "simple_transport.py"),
-        ("data-transfer", "subdivision.py"),
         ("k-compensated", "compensated_insufficient.py"),
         ("k-compensated", "error_against_cond.py"),
         ("k-compensated", "horner_inferior.py"),
