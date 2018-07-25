@@ -161,6 +161,8 @@ def make_images(session):
         ("bezier-intersection", "locate_in_triangle.py"),
         ("bezier-intersection", "subdivision.py"),
         ("compensated-newton", "jghplus13.py"),
+        ("compensated-newton", "newton_de_casteljau.py"),
+        ("compensated-newton", "root_plots.py"),
         ("data-transfer", "distort.py"),
         ("data-transfer", "polygon_vs_curved.py"),
         ("data-transfer", "simple_transport.py"),

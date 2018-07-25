@@ -49,7 +49,7 @@ the relative error is \(\bigO{\mach}\)) until \(\cond{\alpha}\) reaches
 After the point where \texttt{HNewtonAccurate} loses accuracy, we'd
 expect a linear increase in relative error based on a compensated
 rule of thumb:
-\begin{equation}
+\begin{equation}\label{eq:comp-rule-thumb}
 \frac{\left|\widehat{\alpha} - \alpha\right|}{\left|\alpha\right|} \leq
   c_1 \mach + c_2 \cond{\alpha} \mach^2
 \end{equation}
@@ -342,7 +342,158 @@ Following~\eqref{eq:intersect-cond-num-too}, this gives
 
 \section{Simple polynomial roots}\label{sec:compensated-simple-roots}
 
-Placeholder.
+Similar to \cite{Graillat2008} we define an algorithm to perform
+standard Newton's method \\ (\texttt{DNewtonBasic}) for polynomials in
+Bernstein form as well as a modified Newton's \\
+(\texttt{DNewtonAccurate}) that
+uses compensated de Casteljau (Algorithm~\ref{alg:comp-de-casteljau}) to
+evaluate the residual. Via
+the \texttt{NewtonGeneric} helper (Algorithm~\ref{alg:generic-newton}), we
+need only define the callable that computes \(p(s) / p'(s)\). (Such callables
+will have a single input \(s\) but will also be parameterized by the
+coefficients of \(p\). This is often referred to as a closure in programming
+languages.)
+
+\begin{breakablealgorithm}
+  \caption{\textit{Newton's method for polynomial in Bernstein form.}}
+  \label{alg:d-newton-basic}
+
+  \begin{algorithmic}
+    \Function{\(s_{\ast} = \mathtt{DNewtonBasic}\)}
+             {$b, s_0, \mathtt{tol}, \mathtt{max\_iter}$}
+      \State \(n = \texttt{length}(b) - 1\)
+      \For{\(j = 0, \ldots, n - 1\)}
+        \State \(\Delta b_j = b_{j + 1} - b_j\)
+      \EndFor
+      \\
+      \Function{\(\mathtt{update} = \mathtt{update\_fn}\)}{$s$}
+        \State \(\widehat{b} = \mathtt{DeCasteljau}(b, s)\)
+        \State \(\widehat{b'} = n \otimes \mathtt{DeCasteljau}(\Delta b, s)\)
+        \State \(\mathtt{update} = \widehat{b} \oslash \widehat{b'}\)
+      \EndFunction
+      \\
+      \State \(s_{\ast} = \mathtt{NewtonGeneric}\left(
+        \mathtt{update\_fn}, s_0, \mathtt{tol}, \mathtt{max\_iter}\right)\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+\begin{breakablealgorithm}
+  \caption{\textit{Modified Newton's method for polynomial in Bernstein form.}}
+  \label{alg:d-newton-accurate}
+
+  \begin{algorithmic}
+    \Function{\(s_{\ast} = \mathtt{DNewtonAccurate}\)}
+             {$b, s_0, \mathtt{tol}, \mathtt{max\_iter}$}
+      \State \(n = \texttt{length}(b) - 1\)
+      \For{\(j = 0, \ldots, n - 1\)}
+        \State \(\Delta b_j = b_{j + 1} - b_j\)
+      \EndFor
+      \\
+      \Function{\(\mathtt{update} = \mathtt{update\_fn}\)}{$s$}
+        \State \(\widehat{b} = \mathtt{CompDeCasteljau}(b, s)\)
+        \State \(\widehat{b'} = n \otimes \mathtt{DeCasteljau}(\Delta b, s)\)
+        \State \(\mathtt{update} = \widehat{b} \oslash \widehat{b'}\)
+      \EndFunction
+      \\
+      \State \(s_{\ast} = \mathtt{NewtonGeneric}\left(
+        \mathtt{update\_fn}, s_0, \mathtt{tol}, \mathtt{max\_iter}\right)\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+As seen in \cite[Section~8]{Jiang2013}, by using greater accuracy
+when computing the Jacobian \(p'(s)\), we can mitigate
+the drastic increase in error as the condition number rises.
+By using \texttt{CompDeCasteljauDer}
+(Algorithm~\ref{alg:comp-de-casteljau-derivative}) to compute
+\(p'(s)\) we define a ``fully accurate'' modified Newton's method
+(\texttt{DNewtonFull}).
+
+\begin{breakablealgorithm}
+  \caption{\textit{Fully Accurate modified Newton's method for
+      polynomial in Bernstein form.}}
+  \label{alg:d-newton-full}
+
+  \begin{algorithmic}
+    \Function{\(s_{\ast} = \mathtt{DNewtonFull}\)}
+             {$b, s_0, \mathtt{tol}, \mathtt{max\_iter}$}
+      \Function{\(\mathtt{update} = \mathtt{update\_fn}\)}{$s$}
+        \State \(\widehat{b} = \mathtt{CompDeCasteljau}(b, s)\)
+        \State \(\widehat{b'} = \mathtt{CompDeCasteljauDer}(b, s)\)
+        \State \(\mathtt{update} = \widehat{b} \oslash \widehat{b'}\)
+      \EndFunction
+      \\
+      \State \(s_{\ast} = \mathtt{NewtonGeneric}\left(
+        \mathtt{update\_fn}, s_0, \mathtt{tol}, \mathtt{max\_iter}\right)\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+\begin{figure}
+  \includegraphics{../images/compensated-newton/root_plots.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Roots of \(p(s) = (1 - 5s)^n + 2^{30} (1 - 3s)^n\) for
+    \(n = 5, 15\) and \(25\).}
+  \label{fig:root-plots}
+\end{figure}
+
+In order to verify the accuracy of the three proposed methods, we
+consider the family of polynomials
+\begin{equation}
+p(s) = (1 - 5s)^n + 2^{d} (1 - 3s)^n = \sum_{j = 0}^n \left[(-4)^j +
+  2^{d} (-2)^j\right] B_{j, n}(s).
+\end{equation}
+The coefficients can be represented exactly when \(\left|(2j) -
+(j + d)\right| \leq 52\), so we specialize to \(d = 30\) to get a
+suitable upper bound for \(n\). We restrict to \(n\) odd so that
+\((1 - 5s)^n = 2^{d} (3s - 1)^n\) has \(n\) distinct roots, only one of
+which is real. The distribution of the roots can be seen in
+Figure~\ref{fig:root-plots} for \(n = 5, 15\) and \(25\).
+
+To discuss the lone real root, we define \(\omega \in \reals\) such that
+\((1 + \omega)^n = 2^{30}\) and \(\omega \to 0^+\). Solving
+\((1 - 5s) = (1 + \omega)(3s - 1)\) gives the root
+\begin{equation}
+\alpha = \frac{2 + \omega}{8 + 3 \omega} \in \left[\frac{1}{4},
+  \frac{1}{3}\right].
+\end{equation}
+with condition number
+\begin{equation}
+\kappa_{\alpha} = \frac{\widetilde{p}(\alpha)}{\alpha \left|p'(\alpha)\right|}
+  \sim \frac{7^n}{2^{20} \sqrt[7]{2} \; n}.
+\end{equation}
+
+\begin{figure}
+  \includegraphics{../images/compensated-newton/newton_de_casteljau.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Comparing relative error to condition number when using Newton's
+    method to find a root of \(p(s) = (1 - 5s)^n + 2^{30} (1 - 3s)^n\) for
+    \(n\) odd.}
+  \label{fig:newton-de-casteljau-1d}
+\end{figure}
+
+We use Newton's method with an absolute error tolerance of \(10^{-15}\)
+and a maximum of 100 iterations. Since we know
+\(\alpha \in \left[1/4, 1/3\right]\) we use \(s_0 = 1/2\) as a starting
+point. Figure~\ref{fig:newton-de-casteljau-1d} plots the relative error
+\(\left|\alpha - \widehat{\alpha}\right| / \alpha\) against the condition
+number \(\kappa_{\alpha}\). Both the root \(\alpha\) and the relative error
+are computed using a 500-bit extended precision arithmetic. As can be
+seen in the Figure, the standard Newton's method (\texttt{DNewtonBasic})
+has relative error that is linear in \(\kappa_{\alpha}\). Both
+the first modified Newton's (\texttt{DNewtonAccurate}) and the
+the ``fully accurate'' modified Newton's (\texttt{DNewtonFull}) have
+\(\bigO{\mach}\) errors until \(\kappa_{\alpha}\) reaches
+\(1 / \mach\). At this point, the accuracy in \texttt{DNewtonAccurate}
+totally collapses to \(\bigO{1}\) while \texttt{DNewtonFull} follows
+a compensated rule of thumb~\eqref{eq:comp-rule-thumb}. As expected, the
+relative error for \texttt{DNewtonFull} linearly increases from
+\(\bigO{\mach}\) to \(\bigO{1}\) as \(\kappa_{\alpha}\) increases from
+\(1 / \mach\) to \(1 / \mach^2\), at which point the condition number
+overwhelms.
 
 \section{B\'{e}zier curve intersection}\label{sec:compensated-curve-intersect}
 

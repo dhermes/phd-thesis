@@ -128,3 +128,81 @@ Algorithm~\ref{alg:local-error-eft}:
     \EndFunction
   \end{algorithmic}
 \end{breakablealgorithm}
+
+In order to discuss varied implementations of Newton's method in
+Chapter~\ref{chap:compensated-newton}, we define a generic algorithm
+that takes an ``update function'' (\(\mathtt{update\_fn}\)), i.e.
+a callable that will produce the next Newton update \(p(s) / p'(s)\)
+computed in a problem-specific way.
+
+\begin{breakablealgorithm}
+  \caption{\textit{Generic Newton's method for scalar functions.}}
+  \label{alg:generic-newton}
+
+  \begin{algorithmic}
+    \Function{\(x_{\ast} = \mathtt{NewtonGeneric}\)}
+             {$\mathtt{update\_fn}, x_0, \mathtt{tol}, \mathtt{max\_iter}$}
+      \State \(x = x_0\)
+      \\
+      \For{\(j = 1, \ldots, \mathtt{max\_iter}\)}
+        \State \(\mathtt{update} = \mathtt{update\_fn}(x)\)
+        \State \(x = x \ominus \mathtt{update}\)
+        \If{\(\left|\mathtt{update}\right| < \mathtt{tol}\)}
+          \State \textbf{break}
+        \EndIf
+      \EndFor
+      \\
+      \State \(x_{\ast} = x\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
+
+In \cite[Algorithm~3]{Jiang2010}, the \texttt{CompDeCasteljau} (
+Algorithm~\ref{alg:comp-de-casteljau}) is modified for the computation
+of the derivative \(p'(s)\). Since \(p'(s)\) has coefficients
+\(n \Delta b_j\) where \(c_j = \Delta b_j = b_{j + 1} - b_j\),
+we can begin the computation with nonzero
+\(\widehat{\partial c}_j\) (as opposed to
+\(\cdb{1}_j^{(n)} = 0\) in \texttt{CompDeCasteljau}).
+
+\begin{breakablealgorithm}
+  \caption{\textit{Compensated de Casteljau
+      algorithm for polynomial first derivative evaluation.}}
+  \label{alg:comp-de-casteljau-derivative}
+
+  \begin{algorithmic}
+    \Function{\(\mathtt{result} = \mathtt{CompDeCasteljauDer}\)}{$b, s$}
+      \State \(n = \texttt{length}(b) - 1\)
+      \State \(\left[\widehat{r}, \rho\right] = \mathtt{TwoSum}(1, -s)\)
+      \\
+      \For{\(j = 0, \ldots, n - 1\)}
+        \State \(\left[\widehat{c}_j^{(n - 1)},
+          \widehat{\partial c}_j^{(n - 1)}\right] =
+          \mathtt{TwoSum}(b_{j + 1}, -b_j)\)
+      \EndFor
+      \\
+      \For{\(k = n - 2, \ldots, 0\)}
+        \For{\(j = 0, \ldots, k\)}
+          \State \(\left[P_1, \pi_1\right] = \mathtt{TwoProd}\left(
+              \widehat{r}, \widehat{c}_j^{(k + 1)}\right)\)
+          \State \(\left[P_2, \pi_2\right] = \mathtt{TwoProd}\left(
+              s, \widehat{c}_{j + 1}^{(k + 1)}\right)\)
+          \State \(\left[\widehat{c}_j^{(k)}, \sigma_3\right] =
+              \mathtt{TwoSum}(P_1, P_2)\)
+          \State \(\widehat{\ell}_{1, j}^{(k)} = \pi_1 \oplus \pi_2 \oplus
+              \sigma_3 \oplus \left(\rho \otimes
+              \widehat{c}_j^{(k + 1)}\right)\)
+          \State \(\widehat{\partial c}_j^{(k)} =
+              \widehat{\ell}_{1, j}^{(k)} \oplus
+              \left(s \otimes \widehat{\partial c}_{j + 1}^{(k + 1)}
+              \right) \oplus
+              \left(\widehat{r} \otimes
+              \widehat{\partial c}_j^{(k + 1)}\right)\)
+        \EndFor
+      \EndFor
+      \\
+      \State \(\mathtt{result} = n \otimes \left[\widehat{c}_0^{(0)} \oplus
+          \widehat{\partial c}_0^{(0)}\right]\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}

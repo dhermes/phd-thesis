@@ -43,7 +43,7 @@ import eft
 
 def basic(s, coeffs):
     """Performs the "standard" de Casteljau algorithm."""
-    r = 1.0 - s
+    r = 1 - s
 
     degree = len(coeffs) - 1
     pk = list(coeffs)
@@ -55,6 +55,25 @@ def basic(s, coeffs):
         pk = new_pk
 
     return pk[0]
+
+
+def derivative(s, coeffs):
+    """Performs the "standard" de Casteljau algorithm."""
+    r = 1 - s
+
+    degree = len(coeffs) - 1
+    pk = []
+    for k in range(degree):
+        pk.append(coeffs[k + 1] - coeffs[k])
+
+    for k in range(degree - 1):
+        new_pk = []
+        for j in range(degree - 1 - k):
+            new_pk.append(r * pk[j] + s * pk[j + 1])
+        # Update the "current" values.
+        pk = new_pk
+
+    return degree * pk[0]
 
 
 def local_error(errors, rho, delta_b):
@@ -188,3 +207,125 @@ def compensated4(s, coeffs):
 def compensated5(s, coeffs):
     b, db, d2b, d3b, d4b = _compensated_k(s, coeffs, 5)
     return eft.sum_k((b, db, d2b, d3b, d4b), 5)
+
+
+def pre_compensated_derivative(coeffs):
+    degree = len(coeffs) - 1
+    pk = []
+    err_k = []
+    for k in range(degree):
+        delta_b, sigma = eft.add_eft(coeffs[k + 1], -coeffs[k])
+        pk.append(delta_b)
+        err_k.append(sigma)
+
+    return pk, err_k
+
+
+def _compensated_derivative(s, pk, err_k):
+    r, rho = eft.add_eft(1.0, -s)
+    degree = len(pk)
+    for k in range(1, degree):
+        new_pk = []
+        new_err_k = []
+        for j in range(degree - k):
+            # new_pk.append(r * pk[j] + s * pk[j + 1])
+            prod1, d_pi1 = eft.multiply_eft(pk[j], r)
+            prod2, d_pi2 = eft.multiply_eft(pk[j + 1], s)
+            new_dp, d_sigma = eft.add_eft(prod1, prod2)
+            new_pk.append(new_dp)
+            d_ell = d_pi1 + d_pi2 + d_sigma + pk[j] * rho
+            new_err = d_ell + s * err_k[j + 1] + r * err_k[j]
+            new_err_k.append(new_err)
+
+        # Update the "current" values.
+        pk = new_pk
+        err_k = new_err_k
+
+    return degree, pk[0], err_k[0]
+
+
+def compensated_derivative(s, pk, err_k):
+    """Compute :math:`p'(s)` with compensation.
+
+    This assumes ``pk`` and ``err_k`` have been computed by
+    :func:`pre_compensated_derivative`.
+    """
+    degree, p, e = _compensated_derivative(s, pk, err_k)
+    return degree * (p + e)
+
+
+def basic_newton_update(s, coeffs, d_coeffs):
+    numerator = basic(s, coeffs)
+    n = len(coeffs) - 1
+    denominator = n * basic(s, d_coeffs)
+    return s - numerator / denominator
+
+
+def basic_newton(s0, coeffs, max_iter=100, tol=1e-15):
+    r"""Perform Newton's method to find a root of a polynomial.
+
+    When taking the derivative of :math:`p(s) = \sum_j b_j B_{j, n}(s)`,
+    we have :math:`p'(s) = n \sum_j \Delta b_j B_{j, n - 1}(s)` where
+    :math:`\Delta b_j = b_{j + 1} - b_j` is the first forward difference.
+
+    Args:
+        s0 (float): The starting value for the iteration.
+        coeffs (Tuple[float, ...]): The coefficients of :math:`p(s)` in the
+            Bernstein basis. Will be of the form :math:`(b_0, b_1, \ldots,
+            b_n)`.
+        max_iter (int): The maximum number of iterations.
+        tol (float): The absolute error tolerance to converge.
+
+    Returns:
+        float: The value that Newton's method converged to.
+    """
+    curr_s = s0
+    d_coeffs = tuple(val2 - val1 for val1, val2 in zip(coeffs, coeffs[1:]))
+    for _ in range(max_iter):
+        next_s = basic_newton_update(curr_s, coeffs, d_coeffs)
+        if abs(next_s - curr_s) < tol:
+            return next_s
+        curr_s = next_s
+
+    return curr_s
+
+
+def accurate_newton_update(s, coeffs, d_coeffs):
+    numerator = compensated(s, coeffs)
+    n = len(coeffs) - 1
+    denominator = n * basic(s, d_coeffs)
+    return s - numerator / denominator
+
+
+def accurate_newton(s0, coeffs, max_iter=100, tol=1e-15):
+    curr_s = s0
+    d_coeffs = tuple(val2 - val1 for val1, val2 in zip(coeffs, coeffs[1:]))
+    for _ in range(max_iter):
+        next_s = accurate_newton_update(curr_s, coeffs, d_coeffs)
+        if abs(next_s - curr_s) < tol:
+            return next_s
+        curr_s = next_s
+
+    return curr_s
+
+
+def full_newton_update(s, coeffs, pk, err_k):
+    numerator = compensated(s, coeffs)
+    denominator = compensated_derivative(s, pk, err_k)
+    if denominator == 0.0:
+        # If there is a division-by-zero, just give up.
+        return s
+
+    return s - numerator / denominator
+
+
+def full_newton(s0, coeffs, max_iter=100, tol=1e-15):
+    curr_s = s0
+    pk, err_k = pre_compensated_derivative(coeffs)
+    for _ in range(max_iter):
+        next_s = full_newton_update(curr_s, coeffs, pk, err_k)
+        if abs(next_s - curr_s) < tol:
+            return next_s
+        curr_s = next_s
+
+    return curr_s

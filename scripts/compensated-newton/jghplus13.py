@@ -245,10 +245,8 @@ def main(filename=None):
         fontsize=plot_utils.TEXT_SIZE,
     )
 
-    ax.xaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
-    ax.xaxis.set_tick_params(labelsize=plot_utils.TEXT_SIZE, which="minor")
-    ax.yaxis.set_tick_params(labelsize=plot_utils.TICK_SIZE)
-    ax.yaxis.set_tick_params(labelsize=plot_utils.TEXT_SIZE, which="minor")
+    ax.tick_params(labelsize=plot_utils.TICK_SIZE)
+    ax.tick_params(labelsize=plot_utils.TEXT_SIZE, which="minor")
 
     figure.set_size_inches(5.4, 4.0)
     figure.subplots_adjust(
