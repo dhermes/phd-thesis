@@ -274,23 +274,38 @@ where
 \begin{equation}\label{eq:nu-bounds}
 \left|\nu_k\right| / \eps \leq \sum_{i = 0}^m
   \left|c_{i, -1, k}\right| B_{i, m}\left(\alpha\right) + \sum_{j = 0}^n
-  \left|c_{-1, j, k}\right| B_{j, n}\left(\beta\right)
+  \left|c_{-1, j, k}\right| B_{j, n}\left(\beta\right) = \mu_k
 \end{equation}
 and the bound can be attained for both \(k = 1, 2\) by making the
 signs of the \(\delta_{\bm{j}}\) agree. Thus we have condition
 number
-\begin{equation}\label{eq:intersect-cond-num}
-\kappa_{\alpha, \beta} = \frac{1}{\sqrt{\alpha^2 + \beta^2}}
-  \max_{\nu_1, \nu_2} \left \lVert \nu_1 \bm{v}_1 +
-  \nu_2 \bm{v}_2 \right \rVert_2
+\begin{align}
+\kappa_{\alpha, \beta} &= \frac{1}{\sqrt{\alpha^2 + \beta^2}}
+  \max_{\left|\nu_k\right| \leq \mu_k} \left \lVert \nu_1 \bm{v}_1 +
+  \nu_2 \bm{v}_2 \right \rVert_2 \\
+  &=
+  \sqrt{\frac{\max_{\left|\nu_k\right| \leq \mu_k}
+  \nu_1^2 \left(\bm{v}_1 \cdot \bm{v}_1\right) +
+  2 \nu_1 \nu_2 \left(\bm{v}_1 \cdot \bm{v}_2\right) +
+  \nu_2^2 \left(\bm{v}_2 \cdot \bm{v}_2\right)}{\alpha^2 + \beta^2}}
+  \label{eq:intersect-cond-num}.
+\end{align}
+Since \(J^{-1}\) is invertible, we know \(\bm{v}_1\) and \(\bm{v}_2\) are
+not parallel which can be used to show that the only internal critical
+point of the function to be maximimized in~\eqref{eq:intersect-cond-num}
+is \(\nu_1 = \nu_2 = 0\), which is the global minimum. Along the boundary of
+the rectangle
+\(\left[-\mu_1, \mu_1\right] \times \left[-\mu_2, \mu_2\right]\),
+we fix one of \(\nu_1\) or \(\nu_2\) and the resulting univariate function is
+an up-opening parabola, hence any critical point must be a local
+minimum. Thus we know the maximum occurs at two of the four corners of the
+rectangle:
+\begin{equation}\label{eq:intersect-cond-num-too}
+\kappa_{\alpha, \beta} = \sqrt{\frac{\mu_1^2
+  \left(\bm{v}_1 \cdot \bm{v}_1\right) +
+  2 \mu_1 \mu_2 \left|\bm{v}_1 \cdot \bm{v}_2\right| +
+  \mu_2^2 \left(\bm{v}_2 \cdot \bm{v}_2\right)}{\alpha^2 + \beta^2}}.
 \end{equation}
-where the domain is restricted to the rectangle defined
-by~\eqref{eq:nu-bounds} (and setting \(\eps = 1\) in that bound
-due to cancellation in~\eqref{eq:abstract-cond-num}). Since
-\(J^{-1}\) is invertible, we know \(\bm{v}_1\) and \(\bm{v}_2\) are
-not parallel hence we know the maximum in~\eqref{eq:intersect-cond-num}
-occurs at one of the four corners of the rectangle or at one of at
-most four critical points along the boundary.
 
 As far as the author can tell,
 a condition number for the intersection of two planar B\'{e}zier curves
@@ -298,6 +313,27 @@ has not been described in the Computer Aided Geometric Design (CAGD)
 literature. In \cite[Chapter~25, Equation 25.11]{Higham2002}
 a more generic condition number is defined for the root of a nonlinear
 algebraic system that is similar to the definition above.
+
+For an example, consider the line
+\(b_1(s) = \left[ \begin{array}{c c} 2s & 2s \end{array}\right]^T\)
+and improperly parameterized line
+\(b_2(t) = \left[ \begin{array}{c c} 4t^2 & 2 - 4t^2
+\end{array}\right]^T\) which intersect at \(\alpha = \beta = 1/2\).
+At the intersection we have \(J^{-1} = \frac{1}{8}
+\left[ \begin{array}{c c} 2 & 2 \\ -1 & 1 \end{array}\right]\),
+so that \(\bm{v}_1 \cdot \bm{v}_1 = \bm{v}_2 \cdot \bm{v}_2 =
+5/64\) and \(\bm{v}_1 \cdot \bm{v}_2 = 3/64\). Since the
+\(x\)-component of \(F(s, t)\) can be written as
+\(2s - 4t^2 = 2 B_{1, 1}(s) - 4 B_{2, 2}(t)\) and the
+\(y\)-component as \(2s + 4t^2 - 2 = 2 B_{1, 1}(s) - 2 B_{0, 2}(t)
+- 2 B_{1, 2}(t) + 2 B_{2, 2}(t)\) we have
+\begin{alignat}{2}
+\mu_1 &= 2 B_{1, 1}(\alpha) &&+ 4 B_{2, 2}(\beta) = 2 \\
+\mu_2 &= 2 B_{1, 1}(\alpha) + 2 B_{0, 2}(\beta) +
+  2 B_{1, 2}(\beta) &&+ 2 B_{2, 2}(\beta) = 3.
+\end{alignat}
+Following~\eqref{eq:intersect-cond-num-too}, this gives
+\(\kappa_{\alpha, \beta} = \sqrt{202}/8 \approx 1.78\).
 
 \section{Simple polynomial roots}\label{sec:compensated-simple-roots}
 
