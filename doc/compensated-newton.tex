@@ -102,9 +102,15 @@ very high condition numbers.
 
 The chapter is organized as follows. In Section~\ref{sec:conditioning}
 we define and discuss the conditioning of both a simple root and
-a transversal intersection. In Section~\ref{sec:compensated-numerical}
-we perform two numerical experiments to give practical examples of the
-theoretical error bounds. Section~\ref{sec:false-starts} acts as a
+a transversal intersection. In Section~\ref{sec:compensated-simple-roots}
+we describe two compensated Newton's methods for finding simple roots
+and perform a numerical experiment verifying the expected behavior.
+In Section~\ref{sec:compensated-curve-intersect} we describe a
+compensated Newton's method for B\'{e}zier curve intersection and
+perform sever numerical experiements to verify the expected behavior
+on both transversal intersections and tangent intersections (i.e.
+intersections with infinite condition number).
+Section~\ref{sec:false-starts} acts as a
 coda: it describes some failed attempts at constructing numerical
 examples. This section provides an in-depth discussion of a particular
 family of polynomials that has much better than expected conditioning
@@ -155,7 +161,7 @@ gives a root function
   \phi_j\left(\bm{\alpha}\right) + \bigO{\eps^2}.
 \end{equation}
 With this, we can define a root condition number
-\begin{equation}
+\begin{equation}\label{eq:abstract-cond-num}
 \kappa_{\bm{\alpha}} =
   \lim_{\eps \to 0} \left(\sup \frac{\left \lVert\delta \bm{\alpha}
   \right \rVert / \eps}{\left \lVert\bm{\alpha}\right \rVert}\right) =
@@ -233,37 +239,58 @@ a simple root \(\alpha \in \left(0, 1\right]\) has root condition number
 For the intersection of a degree \(m\) curve \(b_1(s)\) and
 a degree \(n\) curve \(b_2(t)\), we have basis functions
 \begin{multline}
-\phi_{0, -1, 0} = \left[ \begin{array}{c} B_{0, m}(s) \\ 0 \end{array}\right],
-\phi_{0, -1, 1} = \left[ \begin{array}{c} 0 \\ B_{0, m}(s) \end{array}\right],
+\phi_{0, -1, 1} = \left[ \begin{array}{c} B_{0, m}(s) \\ 0 \end{array}\right],
+\phi_{0, -1, 2} = \left[ \begin{array}{c} 0 \\ B_{0, m}(s) \end{array}\right],
 \cdots, \\
-\phi_{m, -1, 0} = \left[ \begin{array}{c} B_{m, m}(s) \\ 0 \end{array}\right],
-\phi_{m, -1, 1} = \left[ \begin{array}{c} 0 \\
+\phi_{m, -1, 1} = \left[ \begin{array}{c} B_{m, m}(s) \\ 0 \end{array}\right],
+\phi_{m, -1, 2} = \left[ \begin{array}{c} 0 \\
   B_{m, m}(s) \end{array}\right], \\
-\phi_{-1, 0, 0} = \left[ \begin{array}{c} -B_{0, n}(t) \\
+\phi_{-1, 0, 1} = \left[ \begin{array}{c} -B_{0, n}(t) \\
   0 \end{array}\right],
-\phi_{-1, 0, 1} = \left[ \begin{array}{c} 0 \\
+\phi_{-1, 0, 2} = \left[ \begin{array}{c} 0 \\
   -B_{0, n}(t) \end{array}\right], \cdots, \\
-\phi_{-1, n, 0} = \left[ \begin{array}{c} -B_{n, n}(t) \\
-  0 \end{array}\right], \phi_{-1, n, 1} = \left[ \begin{array}{c} 0 \\
+\phi_{-1, n, 1} = \left[ \begin{array}{c} -B_{n, n}(t) \\
+  0 \end{array}\right], \phi_{-1, n, 2} = \left[ \begin{array}{c} 0 \\
   -B_{n, n}(t) \end{array}\right].
 \end{multline}
 Since \(F(s, t) = b_1(s) - b_2(t)\) we have Jacobian \(J(s, t) =
-\left[ \begin{array}{c c} b_1'(s) & -b_2'(t) \end{array}\right]\). For
-a transversal intersection \(F(\alpha, \beta) = \bm{0}\) with
-\(\det J(\alpha, \beta) \neq 0\), we use the lower bound
-\begin{equation}
-\kappa_{\alpha, \beta} = \frac{1}{\left|\alpha\right| + \left|\beta\right|}
-  \max_{\bm{j}} \left|c_{\bm{j}}\right| \left \lVert
-  J\left(\alpha, \beta\right)^{-1}
-  \phi_{\bm{j}}(\alpha, \beta)\right \rVert_1
+\left[ \begin{array}{c c} b_1'(s) & -b_2'(t) \end{array}\right]\). We'll
+consider a transversal intersection \(F(\alpha, \beta) = \bm{0}\) with
+\(\det J(\alpha, \beta) \neq 0\). Since each of the
+\(\phi_j\) is just a scalar multiple of the standard basis
+vectors, writing \(J^{-1} = \left[ \begin{array}{c c}
+\bm{v}_1 & \bm{v}_2 \end{array}\right]\), we have
+\begin{multline}
+J\left(\alpha, \beta\right)^{-1} \sum_{\bm{j}} \delta_{\bm{j}}
+  \phi_{\bm{j}}\left(\alpha, \beta\right) = \left[\sum_{i = 0}^m
+  \delta_{i, -1, 1} B_{i, m}\left(\alpha\right) + \sum_{j = 0}^n
+  \delta_{-1, j, 1} B_{j, n}\left(\beta\right)\right] \bm{v}_1 \\
++ \left[\sum_{i = 0}^m
+  \delta_{i, -1, 2} B_{i, m}\left(\alpha\right) + \sum_{j = 0}^n
+  \delta_{-1, j, 2} B_{j, n}\left(\beta\right)\right] \bm{v}_2 =
+  \nu_1 \bm{v}_1 + \nu_2 \bm{v}_2.
+\end{multline}
+where
+\begin{equation}\label{eq:nu-bounds}
+\left|\nu_k\right| / \eps \leq \sum_{i = 0}^m
+  \left|c_{i, -1, k}\right| B_{i, m}\left(\alpha\right) + \sum_{j = 0}^n
+  \left|c_{-1, j, k}\right| B_{j, n}\left(\beta\right)
 \end{equation}
-as a proxy for the condition number. Since each of the
-\(\phi_j\) is just a scalar multiple of
-\(\left[ \begin{array}{c c} 1 & 0 \end{array}\right]^T\) or
-\(\left[ \begin{array}{c c} 0 & 1 \end{array}\right]^T\), we need only
-compute the one norm of each column of \(J^{-1}\) and then combine
-with the largest among \(\left|c_{j, -1, k} B_{j, m}(s)\right|\) and
-\(\left|c_{-1, j, k} B_{j, n}(t)\right|\).
+and the bound can be attained for both \(k = 1, 2\) by making the
+signs of the \(\delta_{\bm{j}}\) agree. Thus we have condition
+number
+\begin{equation}\label{eq:intersect-cond-num}
+\kappa_{\alpha, \beta} = \frac{1}{\sqrt{\alpha^2 + \beta^2}}
+  \max_{\nu_1, \nu_2} \left \lVert \nu_1 \bm{v}_1 +
+  \nu_2 \bm{v}_2 \right \rVert_2
+\end{equation}
+where the domain is restricted to the rectangle defined
+by~\eqref{eq:nu-bounds} (and setting \(\eps = 1\) in that bound
+due to cancellation in~\eqref{eq:abstract-cond-num}). Since
+\(J^{-1}\) is invertible, we know \(\bm{v}_1\) and \(\bm{v}_2\) are
+not parallel hence we know the maximum in~\eqref{eq:intersect-cond-num}
+occurs at one of the four corners of the rectangle or at one of at
+most four critical points along the boundary.
 
 As far as the author can tell,
 a condition number for the intersection of two planar B\'{e}zier curves
@@ -272,7 +299,11 @@ literature. In \cite[Chapter~25, Equation 25.11]{Higham2002}
 a more generic condition number is defined for the root of a nonlinear
 algebraic system that is similar to the definition above.
 
-\section{Numerical experiments}\label{sec:compensated-numerical}
+\section{Simple polynomial roots}\label{sec:compensated-simple-roots}
+
+Placeholder.
+
+\section{B\'{e}zier curve intersection}\label{sec:compensated-curve-intersect}
 
 Placeholder.
 
