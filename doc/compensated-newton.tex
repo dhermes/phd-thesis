@@ -350,4 +350,77 @@ Placeholder.
 
 \section{False starts}\label{sec:false-starts}
 
-Placeholder.
+It was quite challenging to generate families of polynomials with known
+ill-conditioned simple roots and families of B\'{e}zier curve pairs with known
+ill-conditioned transversal intersections. The issue was not in finding a
+family with moderately high condition number, but in finding one where the
+condition number would grow past \(1 / \mach\) and even as far as
+\(1 / \mach^2\). In many failed attempts, as the condition increased
+in a given family, it became impossible to represent the
+coefficients exactly in \(\floats\). Once the coefficients are rounded,
+the roots or intertesections themselves will likely move erratically.
+This erratic behavior is the goal when generating ill-conditioned problems,
+but makes the values themselves less useful.
+
+To give a sense of the nontrivial effort involved in finding a
+family, consider the following families of polynomials that
+\textbf{failed}:
+\begin{itemize}
+  \itemsep 0em
+  \item \(p(s) = (1 - s)^n - 2^{-d}\) at the simple root
+    \(s_{\ast} = 1 - 2^{-d/n}\). In the monomial basis, the
+    condition number of \(s_{\ast}\) grows exponentially and was used
+    as the example in \cite{Graillat2008} and \cite[Section~8]{Jiang2013}.
+    However in the Bernstein basis, the root condition
+    number is always less than \(1\).
+  \item \(p(s) = (as - 1)^n - 2^{-d} (1 - s)^n\) at the simple root
+    \(s_{\ast} = \frac{1 + 2^{-d/n}}{a + 2^{-d/n}}\). This is problematic
+    because when \(a - 1\) is not a power of \(2\), the coefficients
+    in \((as - 1)^n = \left[-(1 - s) + (a - 1)s\right]^n\) cannot be
+    represented exactly in \(\floats\) for high enough degree. The rounded
+    coefficients result in sporadic behavior for the resulting polynomials.
+    When \(a - 1 = 2^d\), Newton's method converges with much better than
+    expected accuracy due to a unique quirk of the de Casteljau algorithm.
+    This case is interesting enough to consider in greater detail
+    in \cite{Hermes2018}.
+  \item \(p(s) = (2s - 1)^n - 2^{-52}\) at the simple root
+    \(s_{\ast} = \frac{1 + 2^{-52/n}}{2}\). The coefficients \(b_j =
+    (-1)^{n - j} - 2^{-52}\) can always be represented in \(\floats\),
+    but as \(n \to \infty\) we have \(s_{\ast} \to 1\).
+    A root exactly equal to \(1\) is perfectly conditioned, so
+    unsurprisingly \(\kappa \to 0\) after reaching a maximum
+    value of \(\approx 3 \cdot 10^{13}\) when \(n = 28\).
+  \item \(p(s) = (3s - 1)^n - 2^{-d}\) at the simple root \(s_{\ast} = \frac{
+    1 + 2^{-d/n}}{3}\). The coefficients \(b_j = (-1)^{n - j} 2^j - 2^{-d}\)
+    can be represented exactly in \(\floats\) for \(\left|j + d\right|
+    \leq 52\) (or \(53\), depending on \(n\)). This limitation stops the
+    condition number from growing large enough. For example, when \(d = 10\),
+    the largest term that can be represented exactly is \(\kappa_{43}
+    \approx 1.03 \cdot 10^{10}\),
+    when \(d = 20\), the largest term that
+    can be represented exactly is \(\kappa_{33} \approx 2.53 \cdot 10^{10}\)
+    and when \(d = 30\), the largest term that
+    can be represented exactly is \(\kappa_{23} \approx 9.24 \cdot 10^{10}\).
+\end{itemize}
+
+In addition, several false starts were made when generating a family of
+B\'{e}zier curve pairs with ill-conditioned intersection. In the
+case of polynomials we increased the condition number via the degree,
+but in the case of curve pairs it was increased by reducing a continuous
+parameter towards zero at which point the pair becomes tangent. The
+most problematic case came from
+\begin{equation}
+F(s, t; r) = \left[ \begin{array}{c} 2(4s^2 - 1) + r \\ (2s - 1)^2
+\end{array}\right] - \left[ \begin{array}{c} 4(4t^2 - 1) \\ 4(2t - 1)^2
+\end{array}\right].
+\end{equation}
+In this case, the polynomials \((2s - 1)^2\) and \(4(2t - 1)^2\) come
+from a very special class of polynomials described in \cite{Hermes2018}
+where the de Casteljau algorithm is very accurate (much better than
+the a priori upper bound). As a result, the \(y\)-contributions to the
+relative error were essentially zero. This can be thought of as setting
+\(\mu_2 = 0\) when computing the condition number. However, for this family
+of curves the \(x\)-components contribute \(\bigO{1}\) to the condition
+number while the \(y\)-components \textit{should} contribute \(\bigO{1/r}\)
+but instead contribution nothing. Hence the solution can always be computed
+by Newton's method with \(\bigO{\mach}\) relative error.
