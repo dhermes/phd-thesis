@@ -159,7 +159,7 @@ def bezier_triangle_area():
         left=0.06, bottom=0.11, right=0.9, top=0.95, wspace=0.03, hspace=0.15
     )
     filename = "polygon_vs_curved.pdf"
-    path = plot_utils.get_path("data-transfer", filename)
+    path = plot_utils.get_path("solution-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)
@@ -342,7 +342,7 @@ def intersection_area():
         left=0.08, bottom=0.11, right=0.9, top=0.95, wspace=0.03, hspace=0.15
     )
     filename = "polygon_vs_curved_intersection.pdf"
-    path = plot_utils.get_path("data-transfer", filename)
+    path = plot_utils.get_path("solution-transfer", filename)
     figure.savefig(path)
     print("Saved {}".format(filename))
     plt.close(figure)

@@ -2,7 +2,7 @@
 
 This is a work in two parts, each in a different subfield of mathematics.
 The first part is a general-purpose tool for computational physics problems.
-The tool enables data transfer across two curved meshes.
+The tool enables solution transfer across two curved meshes.
 Since the tool requires a significant amount of computational geometry, the
 second half focuses on computational geometry. In particular, it considers
 cases where the geometric methods used have seriously degraded accuracy due to
@@ -10,16 +10,16 @@ ill-conditioning.
 
 \section{Computational Physics}
 
-In computational physics, the problem of data transfer between meshes
+In computational physics, the problem of solution transfer between meshes
 occurs in several applications. For example, by allowing the underyling
 computational domain to change during a simulation, computational
 effort can be focused dynamically to resolve sensitive features
 of a numerical solution. Mesh adaptivity (see, for example,
 \cite{Babuska1978, Peraire1987, Pain2001}), this in-flight change in the mesh,
 requires translating the numerical solution from the old mesh to the new,
-i.e. data transfer. As another example, Lagrangian or particle-based methods
-treat each node in mesh as a particle and so with each timestep the mesh
-travels \textbf{with} the fluid (see, for example, \cite{Hirt1974}).
+i.e. solution transfer. As another example, Lagrangian or particle-based
+methods treat each node in mesh as a particle and so with each timestep the
+mesh travels \textbf{with} the fluid (see, for example, \cite{Hirt1974}).
 However, over (typically limited) time the mesh
 becomes distorted and suffers a loss in element quality which causes
 catastrophic loss in the accuracy of computation. To overcome this, the
@@ -32,11 +32,11 @@ To address this, there have been many explorations (for example,
 \cite{Jiao2004, Farrell2009, Farrell2011}) of
 \textbf{conservative interpolation} (typically using Galerkin or
 \(L_2\)-minimizing methods). In this work, the author introduces a
-conservative interpolation method for data transfer between high-order
+conservative interpolation method for solution transfer between high-order
 meshes. These high-order meshes are typically curved, but not necessarily
 all elements or at all timesteps.
 
-The existing work on data transfer has considered straight-sided meshes,
+The existing work on solution transfer has considered straight-sided meshes,
 which use shape functions that have degree \(p = 1\) to represent solutions
 on each element. However, both to allow for greater geometric flexibility
 and for high order of convergence, this work will consider the case
@@ -56,7 +56,7 @@ as a (transversal) intersection of two B\'{e}zier curves approaches a
 point of tangency, the condition number of intersection becomes
 infinite. These breakdowns in accuracy cause problems when evaluating
 integrals on elements of a curved mesh or on the intersections of two
-elements. For example, consider the problem of data transfer from
+elements. For example, consider the problem of solution transfer from
 one mesh to another. As both meshes are refined simultaneously, the
 probability of an ``almost tangent'' pair of curved edges increases
 towards unity. Tangent curves correspond to the case of a double root
@@ -84,8 +84,8 @@ This work is organized as follows. Chapter~\ref{chap:preliminaries}
 establishes common notation and reviews basic results relevant to the
 topics at hand. Chapter~\ref{chap:bezier-intersection} is an
 in-depth discussion of the computational geometry methods needed
-to implement to enable data transfer. Chapter~\ref{chap:data-transfer}
-describes the data transfer process and gives results of some
+to implement to enable solution transfer. Chapter~\ref{chap:solution-transfer}
+describes the solution transfer process and gives results of some
 numerical experiments confirming the rate of convergence.
 Chapter~\ref{chap:k-compensated} describes a compensated algorithm for
 evaluating functions in Bernstein form (such as B\'{e}zier curves);

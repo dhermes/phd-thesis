@@ -1,26 +1,26 @@
-\chapter{Data Transfer}\label{chap:data-transfer}
+\chapter{Solution Transfer}\label{chap:solution-transfer}
 
 \section{Introduction}
 
-In this chapter, an algorithm for conservative data transfer between curved
+In this chapter, an algorithm for conservative solution transfer between curved
 meshes will be described. This has practical applications to many methods in
-computational physics. Data transfer is needed when a solution (approximated
-by a discrete field) is known on a \textbf{donor} mesh and must be transferred
-to a \textbf{target} mesh. In many applications, the field must be conserved
-for physical reasons, e.g. mass or energy cannot leave or enter the system,
-hence the focus on \textbf{conservative} data transfer. A few
-scenarios where data transfer is necessary will be considered below to
-motivate the ``black box'' data transfer algorithm.
+computational physics. Solution transfer is needed when a solution
+(approximated by a discrete field) is known on a \textbf{donor} mesh and must
+be transferred to a \textbf{target} mesh. In many applications, the field
+must be conserved for physical reasons, e.g. mass or energy cannot leave or
+enter the system, hence the focus on \textbf{conservative} solution transfer.
+A few scenarios where solution transfer is necessary will be considered below
+to motivate the ``black box'' solution transfer algorithm.
 
-Since data transfer is so commonly needed in physical applications, this
+Since solution transfer is so commonly needed in physical applications, this
 problem of conservative interpolation has been considered already for
 straight sided meshes. The \textbf{common refinement} approach in
-\cite{Jiao2004} is used to compare several methods for data transfer across two
-meshes. However, the problem of constructing a common refinement is
+\cite{Jiao2004} is used to compare several methods for solution transfer across
+two meshes. However, the problem of constructing a common refinement is
 not discussed there. The problem of constructing such a refinement is
 considered in \cite{Farrell2009, Farrell2011} (called a supermesh by
 the authors).
-However, the data transfer becomes considerably more challenging for curved
+However, the solution transfer becomes considerably more challenging for curved
 meshes. For a sense of the difference between the straight sided and curved
 cases, consider the problem of intersecting an element from the donor mesh
 with an element from the target mesh. If the elements are triangles, the
@@ -31,7 +31,7 @@ multiple disjoint regions.
 \subsection{Lagrangian Methods}
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/simple_transport.pdf}
+  \includegraphics{../images/solution-transfer/simple_transport.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{The solution to \(u_t + u_x = 0, \; u(x, 0) = x^3\) plotted in
@@ -76,7 +76,7 @@ are treated like particles) and the mesh ``travels''.
 \subsection{Remeshing and Adaptivity}
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/mesh_distortion.pdf}
+  \includegraphics{../images/solution-transfer/mesh_distortion.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Distortion of a regular mesh caused by particle motion along
@@ -100,7 +100,7 @@ The characteristics \(y(t) = y_0 + t, x(t) = x_0 +
 distort the mesh considerably after just one second.
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/distortion_remesh.pdf}
+  \includegraphics{../images/solution-transfer/distortion_remesh.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Remeshing a domain after distortion caused by particle motion
@@ -132,7 +132,7 @@ mesh will distort.
 \subsection{High-order Meshes}
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure27.pdf}
+  \includegraphics{../images/solution-transfer/main_figure27.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Comparing straight sided meshes to a curved mesh when approximating
@@ -151,7 +151,7 @@ The increase in accuracy also allows for the use of fewer elements, which
 in turn can also facilitate a reduction in the overall computation time.
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/element_distortion.pdf}
+  \includegraphics{../images/solution-transfer/element_distortion.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Movement of nodes in a quadratic element under distortion caused
@@ -180,37 +180,37 @@ an edge.
 
 In multiphysics simulations, a problem is partitioned into physical components.
 This partitioning can apply to both the physical domain (e.g. separating a
-solid and fluid at an interface) and the simulation data itself (e.g. solving
-for pressure on one mesh and velocity on another). Each (multi-)physics
+solid and fluid at an interface) and the simulation solution itself (e.g.
+solving for pressure on one mesh and velocity on another). Each (multi-)physics
 component is solved for on its own mesh. When the components interact, the
-simulation data must be transferred between those meshes.
+simulation solution must be transferred between those meshes.
 
-In a similar category of application, data transfer enables the comparison
+In a similar category of application, solution transfer enables the comparison
 of solutions defined on different meshes. For example, if a reference
 solution is known on a very fine special-purpose mesh, the error can be
 computed for a coarse mesh by transferring the solution from the fine
 mesh and taking the difference. Or, if the same method is used on
 different meshes of the same domain, the resulting computed solutions can
-be compared via data transfer. Or, if two different methods use two
+be compared via solution transfer. Or, if two different methods use two
 different meshes of the same domain.
 
 \subsection{Local versus Global Transfer}
 
-Conservative data transfer has been around since the advent of ALE,
+Conservative solution transfer has been around since the advent of ALE,
 and as a result much of the existing literature focuses on mesh-mesh
 pairs that will occur during an ALE-based simulation. When flow-based
 mesh distortion occurs, elements are typically ``flipped'' (e.g. a
 diagonal is switched in a pair of elements) or elements are subdivided
-or combined. These operations are inherently local, hence the data
+or combined. These operations are inherently local, hence the solution
 transfer can be done locally across known neighbors. Typically, this
-locality is crucial to data transfer methods. In \cite{Margolin2003},
+locality is crucial to solution transfer methods. In \cite{Margolin2003},
 the transfer is based on partitioning elements of the updated mesh into
 components of elements from the old mesh and ``swept regions'' from
 neighbouring elements. In \cite{Kucharik2008}, the (locally) changing
 connectivity of the mesh is addressed. In \cite{Garimella2007}, the
 local transfer is done on polyhedral meshes.
 
-Global data transfer instead seeks to conserve the solution across
+Global solution transfer instead seeks to conserve the solution across
 the whole mesh. It makes no assumptions about the relationship between
 the donor and target meshes. The loss in local information makes
 the mesh intersection problem more computationally expensive, but the
@@ -222,7 +222,7 @@ via the divergence theorem to reduce the complexity of the problem.
 \subsection{Limitations}
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure29.pdf}
+  \includegraphics{../images/solution-transfer/main_figure29.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Partially overlapping meshes on a near identical domain. Both are
@@ -236,7 +236,7 @@ Application to meshes in \(\reals^3\) is a direction for future research,
 though the geometric kernels (see Chapter~\ref{chap:bezier-intersection})
 become significantly more challenging to describe and implement. In
 addition, the method will assume that every element in the
-target mesh is contained in the donor mesh. This ensures that the data
+target mesh is contained in the donor mesh. This ensures that the solution
 transfer is \textit{interpolation}. In the case where all target elements are
 partially covered, \textit{extrapolation} could be used to extend a solution
 outside the domain, but for totally uncovered elements there is no clear
@@ -248,7 +248,7 @@ defined on \(\Omega = \reals^2\) and solution
 that tends towards zero as points tend to infinity. A typical approach
 may be to compute the solution on a circle of large enough radius and
 consider the numerical solution to be zero outside the circle.
-Figure~\ref{fig:partially-overlapping} shows how data transfer could be
+Figure~\ref{fig:partially-overlapping} shows how solution transfer could be
 performed in such cases when the meshes partially overlap: construct a
 simple region containing both computational domains and then mesh the
 newly introduced area. However, the assumption that the numerical solution
@@ -263,7 +263,7 @@ solve the PDE to determine the values on the uncovered elements.
 \section{Galerkin Projection}
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure00.pdf}
+  \includegraphics{../images/solution-transfer/main_figure00.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Mesh pair: donor mesh \(\mathcal{M}_D\) and
@@ -363,7 +363,7 @@ more difficult.
 \section{Common Refinement}
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure02.pdf}
+  \includegraphics{../images/solution-transfer/main_figure02.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{All donor elements that cover a target element}
@@ -424,7 +424,7 @@ Section~\ref{subsec:integration-on-curved} below.
 \subsection{Advancing Front}\label{subsec:advancing-front}
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure13.pdf}
+  \includegraphics{../images/solution-transfer/main_figure13.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Brute force search for a donor element \(\mathcal{T}'\) that matches
@@ -447,7 +447,7 @@ to find an intersecting element in the donor mesh
 \(\bigO{\left|\mathcal{M}_D\right|}\).
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure14.pdf}
+  \includegraphics{../images/solution-transfer/main_figure14.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{All donor elements \(\mathcal{T}'\) that cover a target element
@@ -485,7 +485,7 @@ elements of the target mesh, or even across shape functions
 \(\phi_T^{(j)}\).
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure15.pdf}
+  \includegraphics{../images/solution-transfer/main_figure15.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{First match between a neighbor of the previously considered
@@ -514,7 +514,7 @@ B\'{e}zier maps that define the elements being intersected:
 \(\mathcal{T}_1 = b_1\left(\utri\right)\).
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/polygon_vs_curved.pdf}
+  \includegraphics{../images/solution-transfer/polygon_vs_curved.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Comparing the relative error for the computed area of a quadratic
@@ -525,7 +525,7 @@ B\'{e}zier maps that define the elements being intersected:
 \end{figure}
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/polygon_vs_curved_intersection.pdf}
+  \includegraphics{../images/solution-transfer/polygon_vs_curved_intersection.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Comparing the relative error for the computed area of the
@@ -597,7 +597,7 @@ numerical integration because they are either not bijective or increase the
 degree of the edges.
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure11.pdf}
+  \includegraphics{../images/solution-transfer/main_figure11.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Curved polygon tessellation, done by introducing diagonals
@@ -649,7 +649,7 @@ be evaluated for points in an inverted element that leave
 \(\mathcal{T}_0\) or \(\mathcal{T}_1\).
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure16.pdf}
+  \includegraphics{../images/solution-transfer/main_figure16.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Curved polygon intersection that can't be tessellated
@@ -725,7 +725,7 @@ are very far from \(\mathcal{P}\). This can be somewhat addressed by using
 \section{Numerical Experiments}
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure30.pdf}
+  \includegraphics{../images/solution-transfer/main_figure30.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Some example meshes used during the numerical
@@ -743,12 +743,12 @@ that the target mesh was completely covered by the donor mesh and the
 boundaries did not accidentally introduce ill-conditioned intersection between
 elements. The pairs were linear, quadratic and
 cubic approximations of the domains. The convergence test was done by
-refining each pair of meshes four times and performing data transfer
+refining each pair of meshes four times and performing solution transfer
 at each level. Figure~\ref{fig:meshes-used-refined} shows the cubic
 pair of meshes after two refinements.
 
 \begin{figure}
-  \includegraphics{../images/data-transfer/main_figure25.pdf}
+  \includegraphics{../images/solution-transfer/main_figure25.pdf}
   \centering
   \captionsetup{width=.75\linewidth}
   \caption{Convergence results for scalar fields on three pairs of related
@@ -765,7 +765,7 @@ Each field is derived from one of the smooth scalar functions
 \zeta_3(x, y) &= \sin(x) + \cos(y).
 \end{align}
 For a given mesh size \(h\), we expect that on a degree \(p\) isoparametric
-mesh our data transfer will have \(\bigO{h^{p + 1}}\) errors. To measure
+mesh our solution transfer will have \(\bigO{h^{p + 1}}\) errors. To measure
 the rate of convergence:
 \begin{itemize}
 \itemsep 0em
@@ -803,5 +803,5 @@ the error and no convergence will be observed.
 
 Convergence results are shown in Figure~\ref{fig:composite-errors}
 and confirm the expected orders. Since \(\zeta_1\) is a cubic polynomial,
-the data transfer on the cubic mesh should be \textbf{exact}, so there
+the solution transfer on the cubic mesh should be \textbf{exact}, so there
 is a certain minimum threshold that can be reached.

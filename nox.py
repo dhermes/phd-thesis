@@ -109,7 +109,7 @@ def build_tex(session):
         "algorithms",
         "bezier-intersection",
         "compensated-newton",
-        "data-transfer",
+        "solution-transfer",
         "introduction",
         "k-compensated",
         "metadata",
@@ -165,14 +165,14 @@ def make_images(session):
         ("compensated-newton", "newton_de_casteljau.py"),
         ("compensated-newton", "root_plots.py"),
         ("compensated-newton", "tangent_intersection.py"),
-        ("data-transfer", "distort.py"),
-        ("data-transfer", "polygon_vs_curved.py"),
-        ("data-transfer", "simple_transport.py"),
         ("k-compensated", "compensated_insufficient.py"),
         ("k-compensated", "error_against_cond.py"),
         ("k-compensated", "horner_inferior.py"),
         ("k-compensated", "smooth_drawing.py"),
         ("preliminaries", "inverted_element.py"),
+        ("solution-transfer", "distort.py"),
+        ("solution-transfer", "polygon_vs_curved.py"),
+        ("solution-transfer", "simple_transport.py"),
     )
     for segments in script_paths:
         script = get_path("scripts", *segments)
