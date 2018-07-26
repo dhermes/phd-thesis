@@ -517,8 +517,8 @@ as the non-compensated value. For example, consider the equation
 \begin{equation}
 1088 = s^2 + 60 s + 1076 = 1076 (1 - s)^2 + 1106 \cdot 2(1 - s)s + 1137s^2.
 \end{equation}
-This has one root \(\alpha = 4 \sqrt{57} - 30 \approx 0.1993\) in the unit
-interval. For a nearby value like \(s = \frac{51}{256} + \frac{1}{2^{22}}
+This has one root in the unit interval \(\alpha = 4 \sqrt{57} - 30 \approx
+0.1993\). For a nearby value like \(s = \frac{51}{256} + \frac{1}{2^{22}}
 \approx 0.1992\) we compute \(\widehat{\partial b} = 512 \mach\), but this
 value is too small relative to \(1088\) so
 \(\widehat{b} \oplus \widehat{\partial b} = \widehat{b}\).
@@ -529,21 +529,21 @@ the \(y\)-component). Hence we use \texttt{DeCasteljauEFT}
 (Algorithm~\ref{alg:eft-de-casteljau}, the EFT associated with
 \texttt{CompDeCasteljau}) to separate the ``large part'' (computed value)
 from the ``small part'' (compensation term).
-When subtracting \(x_2(t) \approx \widehat{x_2} +
-\widehat{\partial x_2}\) from \(x_1(s) \approx \widehat{x_1} +
-\widehat{\partial x_1}\) at an intersection, the values \(\widehat{x_j}\) may
+When subtracting \(x_2(t) = \widehat{x_2} +
+\partial x_2\) from \(x_1(s) = \widehat{x_1} +
+\partial x_1\) at an intersection, the values \(\widehat{x_j}\) may
 be large but their difference should be small and only that difference
 is suited to interact with the compensation terms:
 \(\left[D, \sigma\right] =
 \mathtt{TwoSum}(\widehat{x_1}, -\widehat{x_2})\). Then the
 computation becomes
 \begin{equation}
-\left[\widehat{x_1} + \widehat{\partial x_1}\right] -
-\left[\widehat{x_2} + \widehat{\partial x_2}\right] =
-D + \left(\widehat{\partial x_1} - \widehat{\partial x_2} + \sigma\right).
+\left[\widehat{x_1} + \partial x_1\right] -
+\left[\widehat{x_2} + \partial x_2\right] =
+D + \left(\partial x_1 - \partial x_2 + \sigma\right).
 \end{equation}
-Unfortunately the compensation term \(\tau = \widehat{\partial x_1} -
-\widehat{\partial x_2} + \sigma\) can't be computed without rounding,
+Unfortunately the compensation term \(\tau = \partial x_1 -
+\partial x_2 + \sigma\) can't be computed without rounding,
 but \(\widehat{\tau} = \left[\widehat{\partial x_1} \ominus
 \widehat{\partial x_2}\right] \oplus \sigma\) can be used instead.
 
@@ -579,6 +579,55 @@ for evaluating the residual \(F(s, t)\):
     \EndFunction
   \end{algorithmic}
 \end{breakablealgorithm}
+
+\begin{figure}
+  \includegraphics{../images/compensated-newton/tangent_intersection.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Intersection of two B\'{e}zier curves that are tangent and have
+    the same curvature at the point of tangency.}
+  \label{fig:tangent-intersection}
+\end{figure}
+
+In order to compare Newton's method with the compensated residual to
+standard Newton's, we consider a few examples. The first is on an
+intersection (Figure~\ref{fig:tangent-intersection}) with infinite
+condition number:
+\begin{equation}
+F(s, t) = \left[ \begin{array}{c} 2(4s^2 - 1) \\ (2s - 1)^2 + 1
+\end{array}\right] - \left[ \begin{array}{c} 4(4t^2 - 1) \\ 4(2t - 1)^2 + 1
+\end{array}\right].
+\end{equation}
+These curves are tangent and have the same curvature when \(\alpha = \beta =
+1/2\); this is equivalent to a polynomial with a triple root.
+
+\begin{figure}
+  \includegraphics{../images/compensated-newton/newton_linear_converge.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Relative error plots for the computed intersection
+    \(\alpha = \beta = 1/2\)
+    when using standard Newton's method and a modified Newton's method that
+    uses a compensated residual.}
+  \label{fig:newton-linear-converge}
+\end{figure}
+
+When using Newton's method to find non-transveral intersections (i.e. roots
+where the Jacobian is singular), it is well-known that convergence will
+be linear rather than quadratic. However, it is less well known that
+convergence will typically stop prematurely due to loss of accuracy when
+computing the residual. For our example, we start with \(s_0 = 1 - 2^{-40}\)
+and \(t = 3/4 + 2^{-20}\); these slight perturbations are to avoid a
+``direct'' path to the intersection. We stop converging once the length
+of the update vector is below \(10^{-15}\) or after 50 iterations,
+whichever comes first. In Figure~\ref{fig:newton-linear-converge}
+we see that the standard Newton's method stops converging when the relative
+error is around \(\sqrt[3]{\mach}\), both for the \(s\) and \(t\) component
+of the intersection. This is because the cubic-like behavior of the
+intersection makes \(\left(\sqrt[3]{\mach}\right)^3\) resemble zero and
+falsely produces a zero residual (which results in a zero Newton update).
+The modified Newton's continues for much longer, until the relative error
+reaches \(\sqrt[3]{\mach^2}\).
 
 \section{False starts}\label{sec:false-starts}
 

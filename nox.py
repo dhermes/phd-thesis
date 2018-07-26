@@ -163,6 +163,7 @@ def make_images(session):
         ("compensated-newton", "jghplus13.py"),
         ("compensated-newton", "newton_de_casteljau.py"),
         ("compensated-newton", "root_plots.py"),
+        ("compensated-newton", "tangent_intersection.py"),
         ("data-transfer", "distort.py"),
         ("data-transfer", "polygon_vs_curved.py"),
         ("data-transfer", "simple_transport.py"),
