@@ -206,3 +206,51 @@ we can begin the computation with nonzero
     \EndFunction
   \end{algorithmic}
 \end{breakablealgorithm}
+
+For an applied usage of \texttt{CompDeCasteljau}
+(Algorithm~\ref{alg:comp-de-casteljau}) in
+Chapter~\ref{chap:compensated-newton}, both the non-compensated
+value \(\widehat{b}\) and the compensation term \(\widehat{\partial b}\) are
+needed. So we define a partial EFT. We say \textbf{partial} because
+the compensation term is rounded.
+
+\begin{breakablealgorithm}
+  \caption{\textit{EFT for de Casteljau algorithm for polynomial evaluation.}}
+  \label{alg:eft-de-casteljau}
+
+  \begin{algorithmic}
+    \Function{\(\left[\widehat{b}, \widehat{\partial b}\right] =
+      \mathtt{DeCasteljauEFT}\)}{$b, s$}
+      \State \(n = \texttt{length}(b) - 1\)
+      \State \(\left[\widehat{r}, \rho\right] = \mathtt{TwoSum}(1, -s)\)
+      \\
+      \For{\(j = 0, \ldots, n\)}
+        \State \(\widehat{b}_j^{(n)} = b_j\)
+        \State \(\cdb{1}_j^{(n)} = 0\)
+      \EndFor
+      \\
+      \For{\(k = n - 1, \ldots, 0\)}
+        \For{\(j = 0, \ldots, k\)}
+          \State \(\left[P_1, \pi_1\right] = \mathtt{TwoProd}\left(
+              \widehat{r}, \widehat{b}_j^{(k + 1)}\right)\)
+          \State \(\left[P_2, \pi_2\right] = \mathtt{TwoProd}\left(
+              s, \widehat{b}_{j + 1}^{(k + 1)}\right)\)
+          \State \(\left[\widehat{b}_j^{(k)}, \sigma_3\right] =
+              \mathtt{TwoSum}(P_1, P_2)\)
+          \State \(\widehat{\ell}_{1, j}^{(k)} = \pi_1 \oplus \pi_2 \oplus
+              \sigma_3 \oplus \left(\rho \otimes
+              \widehat{b}_j^{(k + 1)}\right)\)
+          \State \(\cdb{1}_j^{(k)} =
+              \widehat{\ell}_{1, j}^{(k)} \oplus
+              \left(s \otimes \cdb{1}_{j + 1}^{(k + 1)}
+              \right) \oplus
+              \left(\widehat{r} \otimes
+              \cdb{1}_j^{(k + 1)}\right)\)
+        \EndFor
+      \EndFor
+      \\
+      \State \(\widehat{b} = \widehat{b}_0^{(0)}\)
+      \State \(\widehat{\partial b} = \cdb{1}_0^{(0)}\)
+    \EndFunction
+  \end{algorithmic}
+\end{breakablealgorithm}
