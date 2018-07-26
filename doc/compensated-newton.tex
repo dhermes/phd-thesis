@@ -629,6 +629,66 @@ falsely produces a zero residual (which results in a zero Newton update).
 The modified Newton's continues for much longer, until the relative error
 reaches \(\sqrt[3]{\mach^2}\).
 
+It is from this example that we base our next numerical experiment. By
+introducing a small perturbation \(r\) to the \(x\)-component of
+one of the curves, we can make the tangent intersection split into three
+distinct intersections. Similarly, a large perturbation \(1/r\) added to
+both \(y\)-components will leave the solution intact but will make the
+condition number increase. This gives a family (parameterized by \(r\)):
+\begin{equation}
+F(s, t) = \left[ \begin{array}{c} 2(4s^2 - 1) - r \\ (2s - 1)^2 + 1 + 1/r
+\end{array}\right] - \left[ \begin{array}{c} 4(4t^2 - 1) \\
+4(2t - 1)^2 + 1 + 1/r \end{array}\right].
+\end{equation}
+We'll focus on \(r = 2^{-n}\) for \(2 \leq n \leq 50\), since for these
+values the coefficients of \(F\) can be represented exactly in
+\(\floats\). These curves intersect at
+\begin{align}
+(\alpha_1, \beta_1) &= \left(\frac{1 + \sqrt{r}}{2},
+  \frac{2 + \sqrt{r}}{4}\right), \\
+(\alpha_2, \beta_2) &= \left(\frac{1 - \sqrt{r}}{2},
+  \frac{2 - \sqrt{r}}{4}\right), \\
+(\alpha_3, \beta_3) &= \left(\frac{-3 + \sqrt{16 + r}}{2},
+  \frac{6 - \sqrt{16 + r}}{4}\right).
+\end{align}
+When starting Newton's method from the \(s_0 = t_0 = 1\) (the ``top-right''
+of the unit square), we'll converge to the first intersection
+\((\alpha_1, \beta_1)\). For our chosen values of \(r\) (which will
+determine which coefficients are positive, e.g. in \(\widetilde{y}_2\)),
+one can show that
+\begin{equation}
+\kappa_{\alpha_1, \beta_1} = \frac{\sqrt{10}}{2r^2} -
+  \frac{3 \sqrt{10}}{40 r \sqrt{r}} + \bigO{\frac{1}{r}}.
+\end{equation}
+
+\begin{figure}
+  \includegraphics{../images/compensated-newton/almost_tangent.pdf}
+  \centering
+  \captionsetup{width=.75\linewidth}
+  \caption{Relative error plots for the computed intersection
+    \(\alpha = \beta = 1/2\)
+    when using standard Newton's method and a modified Newton's method that
+    uses a compensated residual.}
+  \label{fig:almost-tangent}
+\end{figure}
+
+We compare the standard Newton's to the modified Newton's with a compensated
+residual as \(r \to 0^+\). We use \(s_0 = t_0 = 1\) as mentioned above
+and the same stopping criterion from the first example: stop once the length
+of the update vector is below \(10^{-15}\) or after 50 iterations, whichever
+comes first. As seen in Figure~\ref{fig:almost-tangent}, the standard
+Newton's method has relative error that increases linearly with
+the condition number, i.e. \(\bigO{\mach} \kappa_{\alpha_1, \beta_1}\),
+until it reaches \(\bigO{1}\). The
+modified Newton's method satisfies a compensated rule of
+thumb~\eqref{eq:comp-rule-thumb}: the relative error is \(\bigO{\mach}\)
+(i.e. fully accurate up to rounding) until \(\kappa_{\alpha_1, \beta_1}\)
+reaches \(1 / \mach\) at which point the relative error resembles
+\(\bigO{\mach^2} \kappa_{\alpha_1, \beta_1}\). What's more, when
+\(r = 2^{-2m}\) has a rational square root, the intersection
+can be represented exactly in \(\floats\) and the compensated method
+computes this intersection without any error.
+
 \section{False starts}\label{sec:false-starts}
 
 It was quite challenging to generate families of polynomials with known

@@ -160,6 +160,7 @@ def make_images(session):
     script_paths = (
         ("bezier-intersection", "locate_in_triangle.py"),
         ("bezier-intersection", "subdivision.py"),
+        ("compensated-newton", "almost_tangent.py"),
         ("compensated-newton", "jghplus13.py"),
         ("compensated-newton", "newton_de_casteljau.py"),
         ("compensated-newton", "root_plots.py"),

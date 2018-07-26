@@ -419,7 +419,7 @@ def main_jlcs10():
     # Label the axes.
     ax.set_xlabel("Condition Number", fontsize=plot_utils.TEXT_SIZE)
     ax.set_ylabel("Relative Forward Error", fontsize=plot_utils.TEXT_SIZE)
-
+    # Make sure the ticks are sized appropriately.
     ax.tick_params(labelsize=plot_utils.TICK_SIZE)
     ax.tick_params(labelsize=plot_utils.TEXT_SIZE, which="minor")
 
