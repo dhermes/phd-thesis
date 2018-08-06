@@ -51,9 +51,7 @@ def build_tex_file(
     if use_xelatex:
         session.run("xelatex", base)
         session.run("xelatex", base)
-        return
-
-    if with_bibtex:
+    elif with_bibtex:
         session.run("pdflatex", base)
         session.run("bibtex", base)
         session.run("pdflatex", base)
@@ -68,7 +66,9 @@ def build_tex_file(
     path = get_path("doc", base)
     remove = Remove(path, extensions)
     session.run(remove)
-    session.run("python", modify_id, "--base", path, "--id", new_id)
+
+    if not use_xelatex:
+        session.run("python", modify_id, "--base", path, "--id", new_id)
 
 
 @nox.session

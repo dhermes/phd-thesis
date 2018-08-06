@@ -38,7 +38,9 @@ all elements or at all timesteps.
 
 The existing work on solution transfer has considered straight-sided meshes,
 which use shape functions that have degree \(p = 1\) to represent solutions
-on each element. However, both to allow for greater geometric flexibility
+on each element or so-called superparametric elements (i.e. a linear mesh
+with degree \(p > 1\) shape functions on a regular grid of points).
+However, both to allow for greater geometric flexibility
 and for high order of convergence, this work will consider the case
 of curved isoparametric\footnote{I.e. the degree of the discrete field on the
 mesh is same as the degree of the shape functions that determine the

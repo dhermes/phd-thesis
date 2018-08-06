@@ -58,17 +58,90 @@
 
 \maketitle
 
-\section{My section}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%   OUTLINE   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\centering
+{\Large\bf Outline} \\
+\rule{0.82\textwidth}{1pt} \\[20pt]
+\begin{minipage}{0.78\textwidth}\raggedright
+\begin{enumerate}
+\item Introduction and motivation
+\item Solution Transfer
+\item Compensated Evaluation
+\item Modified Newton's for Intersection
+\end{enumerate}
+\end{minipage}
+\end{frame}
+
+%%%%%%%%%%%%%
+%%% INTRO %%%
+%%%%%%%%%%%%%
 
 \begin{frame}
-  \frametitle{This is the first slide}
-  Ooga
+\centering
+{\Large \bf Introduction and motivation}
+\rule{0.82\textwidth}{1pt}
 \end{frame}
 
 \begin{frame}
-  \frametitle{This is the second slide}
-  \framesubtitle{A bit more information about this}
-  Chaka
+\frametitle{A Work in Two Parts: Solution Transfer}
+\begin{itemize}
+\item Lagrangian Methods
+\item Remeshing / rezoning
+\item Mesh adaptivity
+\item Multiphysics
+\item Conservation
+\item Curved and / or High-order
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Method of Characteristics}
+To solve the simple transport equation
+\begin{equation*}
+u_t + c u_x = 0, \quad u(x, 0) = u_0(x).
+\end{equation*}
+\pause
+Divide the physical domain via
+\begin{equation*}
+x(t) = x_0 + ct
+\end{equation*}
+\pause
+and the PDE becomes a (trivial) ODE
+\begin{equation*}
+\frac{d}{dt} u(x(t), t) = 0.
+\end{equation*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Method of Characteristics}
+\begin{center}
+\includegraphics[width=0.95\textwidth]
+                {../images/solution-transfer/simple_transport.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{A Work in Two Parts: Ill-conditioned B\'{e}zier}
+A
+\end{frame}
+
+%%%%%%%%%%%%%
+%%% Foo %%%
+%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Images Needed}
+Side-by-side of triangle vs. curved element that is visibly
+not convex.
+\end{frame}
+
+\begin{frame}
+\frametitle{Images Needed}
+Side-by-side of triangle intersection vs. curved element intersection
+that splits into two parts.
 \end{frame}
 
 \end{document}

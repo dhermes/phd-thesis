@@ -35,7 +35,7 @@ def main():
         "",
         xy=(2.875, 0.75),
         xytext=(1.0, 0.75),
-        arrowprops={"arrowstyle": "->", "linewidth": 2.0},
+        arrowprops={"arrowstyle": "->", "linewidth": 2.0, "color": "black"},
     )
 
     ax.legend(loc="upper left", fontsize=plot_utils.TEXT_SIZE)
