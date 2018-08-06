@@ -199,7 +199,88 @@ with cubic characteristics
 \end{frame}
 
 \begin{frame}
-\frametitle{High-order Meshes}
+\frametitle{Curved Meshes}
+\begin{itemize}
+\item Benefits
+\begin{itemize}
+\pause
+\item High-order shape functions, highly accurate solutions
+\pause
+\item Low dissipation and dispersion error
+\pause
+\item Greater geometric flexibility
+\pause
+\item Fewer elements
+\end{itemize}
+\invisible{\item Drawbacks
+\begin{itemize}
+\item Harder to implement
+\item Loss of accuracy in high degree (e.g. Runge's phenomenon)
+\item More challenging geometry
+\end{itemize}}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Curved Meshes: Benefits}
+\begin{center}
+\includegraphics[width=0.95\textwidth]
+                {../images/solution-transfer/main_figure27.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Curved Meshes}
+\begin{itemize}
+\item Benefits
+\begin{itemize}
+\item High-order shape functions, highly accurate solutions
+\item Low dissipation and dispersion error
+\item Greater geometric flexibility
+\item Fewer elements
+\end{itemize}
+\item Drawbacks
+\begin{itemize}
+\pause
+\item Harder to implement
+\pause
+\item Loss of accuracy in high degree (e.g. Runge's phenomenon)
+\pause
+\item More challenging geometry
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Curved Meshes: Drawbacks}
+\begin{center}
+\includegraphics[width=0.95\textwidth]
+                {../images/slides/not_convex.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Curved Meshes: Drawbacks}
+\begin{center}
+\includegraphics[width=0.95\textwidth]
+                {../images/slides/split_intersection.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Curved Elements: Necessary for High-order}
+\begin{itemize}
+\pause
+\item With non-linear shape functions (i.e. not straight sided), non-vertex
+nodes are used.
+\pause
+\item A Lagrangian method must either curve the mesh or information about the
+flow of the geometry will be lost.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Curved Elements: Necessary for High-order}
 %% H/T: https://stackoverflow.com/a/4684091/1068170
 \begin{center}
 \includegraphics<1>[width=0.95\textwidth]
@@ -239,22 +320,6 @@ with cubic characteristics
 \centering
 {\Large \bf Modified Newton's for Intersection}
 \rule{0.82\textwidth}{1pt}
-\end{frame}
-
-\begin{frame}
-\frametitle{Difficulties with Curved Elements}
-\begin{center}
-\includegraphics[width=0.95\textwidth]
-                {../images/slides/not_convex.pdf}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Difficulties with Curved Elements}
-\begin{center}
-\includegraphics[width=0.95\textwidth]
-                {../images/slides/split_intersection.pdf}
-\end{center}
 \end{frame}
 
 \end{document}
