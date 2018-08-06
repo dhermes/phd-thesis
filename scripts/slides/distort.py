@@ -12,7 +12,6 @@
 
 """This is mostly copied from ``scripts/solution-transfer/distort.py``."""
 
-import bezier
 import matplotlib.pyplot as plt
 import numpy as np
 
