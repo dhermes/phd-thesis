@@ -170,6 +170,7 @@ def make_images(session):
         ("k-compensated", "horner_inferior.py"),
         ("k-compensated", "smooth_drawing.py"),
         ("preliminaries", "inverted_element.py"),
+        ("slides", "curved_vs_straight.py"),
         ("solution-transfer", "distort.py"),
         ("solution-transfer", "polygon_vs_curved.py"),
         ("solution-transfer", "simple_transport.py"),
