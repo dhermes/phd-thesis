@@ -188,6 +188,7 @@ def make_images(session):
         ("slides", "distort.py"),
         ("slides", "element_distortion.py"),
         ("slides", "inverted_element.py"),
+        ("slides", "polygon_vs_curved.py"),
         ("solution-transfer", "distort.py"),
         ("solution-transfer", "polygon_vs_curved.py"),
         ("solution-transfer", "simple_transport.py"),

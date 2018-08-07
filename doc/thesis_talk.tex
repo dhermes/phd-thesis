@@ -9,6 +9,9 @@
   },
 }
 
+\definecolor{seaborn-blue}{HTML}{4B72B0}
+\definecolor{seaborn-green}{HTML}{55A868}
+
 \AtBeginSection[]
 {
   \begin{frame}
@@ -44,6 +47,7 @@
 \newcommand{\lmss}{\fontfamily{lmtt}\selectfont}
 \newcommand{\eps}{\varepsilon}
 \newcommand{\utri}{\mathcal{U}}
+\newcommand{\bigO}[1]{\mathcal{O}\left(#1\right)}
 
 \title[Lagrange and B\'{e}zier]
   {High-order Solution Transfer between Curved Meshes and
@@ -426,6 +430,14 @@ b(s, t) = \lambda_1^2 \left[ \begin{array}{c} 1 \\ 0 \end{array}\right] +
 
 \begin{frame}
 \frametitle{Galerkin Projection}
+\begin{center}
+\includegraphics[width=0.95\textwidth]
+                {../images/solution-transfer/main_figure00.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Galerkin Projection}
 Differentiating w.r.t. each \(t_j\) in
 \(\bm{q}_T = \sum_j t_j \phi_T^{(j)}\) gives \textbf{weak form}
 \begin{equation*}
@@ -449,19 +461,200 @@ Weak form gives rise to a linear system in coefficients
 \begin{equation*}
 M_T \bm{t} = M_{TD} \bm{d}.
 \end{equation*}
-\pause
-\(M_T\) is (symmetric) mass matrix for target mesh
-\begin{equation*}
-\left(M_T\right)_{ij} = \int_{\Omega} \phi_T^{(i)} \phi_T^{(j)} \, dV.
-\end{equation*}
 \end{frame}
 
 \begin{frame}
 \frametitle{Linear System}
-Each shape function \(\phi\) has
-\(\operatorname{supp}(\phi) = \mathcal{T}\) for some (curved)
-element, hence \(M_T\) is block diagonal in DG,
-sparse but globally coupled in CG.
+\(M_T\) is (symmetric) mass matrix for target mesh
+\begin{equation*}
+\left(M_T\right)_{ij} = \int_{\Omega} \phi_T^{(i)} \phi_T^{(j)} \, dV.
+\end{equation*}
+\pause
+Since \(\operatorname{supp}(\phi) = \mathcal{T}\),
+\(M_T\) is block diagonal in DG, sparse but globally coupled in CG. \\
+\pause
+Integrate via substitution for \(F = \phi_T^{(i)} \phi_T^{(j)}\)
+\begin{equation*}
+\int_{b\left(\utri\right)} F(x, y) \, dx \, dy =
+  \int_{\utri} \det(Db) F\left(x(s, t), y(s, t)\right) \, ds \, dt
+\end{equation*}
+and then use quadrature rule on \(\utri\).
+\end{frame}
+
+\begin{frame}
+\frametitle{Linear System}
+Mixed mass matrix \(M_{TD}\)
+\begin{equation*}
+\left(M_{TD}\right)_{ij} = \int_{\Omega} \phi_T^{(i)} \phi_D^{(j)} \, dV.
+\end{equation*}
+\pause
+Not symmetric, nor even square; rows correspond to shape functions on target
+mesh and columns to donor mesh. \\
+\pause
+Instead, compute entire RHS
+\begin{equation*}
+\left(M_{TD} \bm{d}\right)_j = \int_{\Omega} \phi_T^{(j)} \bm{q}_D \, dV.
+\end{equation*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Common Refinement}
+Given \(\phi\) supported on \(\mathcal{T}\)
+\begin{equation*}
+\int_{\Omega} \phi \, \bm{q}_D \, dV
+  \onslide<2->{= \int_{\mathcal{T}} \phi \, \bm{q}_D \, dV}
+  \onslide<3->{= \sum_{\mathcal{T}' \in \mathcal{M}_D}
+    \int_{\mathcal{T} \cap \mathcal{T}'} \phi
+    \left.\bm{q}_D\right|_{\mathcal{T}'} \, dV}
+\end{equation*}
+\onslide<4->{\noindent
+In CG, \(\bm{q}_D\) need not be differentiable across elements and in
+DG \(\bm{q}_D\) need not even be continuous
+}
+\end{frame}
+
+\begin{frame}
+\frametitle{Common Refinement}
+\begin{center}
+\includegraphics[width=0.95\textwidth]
+                {../images/solution-transfer/main_figure02.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Common Refinement}
+\begin{itemize}
+\item Three subproblems:
+\begin{itemize}
+\pause
+\item Intersecting Curved Elements: \(\mathcal{T} \cap \mathcal{T}'\)
+\pause
+\item Advancing Front: \(\left(\mathcal{T}, \mathcal{T}'\right) \in
+  \mathcal{M}_T \times \mathcal{M}_D\)
+\pause
+\item Integration over Curved Polygons:
+  \(\displaystyle \int_{\mathcal{T} \cap \mathcal{T}'} F \, dV\)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Intersecting Curved Elements}
+\begin{itemize}
+\pause
+\item Find all points where edges intersect
+\pause
+\item \(\textcolor{seaborn-blue}{\mathcal{T}_0} =
+  \textcolor{seaborn-blue}{b_0}\left(\utri\right)\),
+  \(\partial \textcolor{seaborn-blue}{\mathcal{T}_0} =
+  \textcolor{seaborn-blue}{E_0} \cup \textcolor{seaborn-blue}{E_1} \cup
+  \textcolor{seaborn-blue}{E_2}\)
+\item \(\textcolor{seaborn-green}{\mathcal{T}_1} =
+  \textcolor{seaborn-green}{b_1}\left(\utri\right)\),
+  \(\partial \textcolor{seaborn-green}{\mathcal{T}_1} =
+  \textcolor{seaborn-green}{E_3} \cup \textcolor{seaborn-green}{E_4} \cup
+  \textcolor{seaborn-green}{E_5}\)
+\pause
+\item Determine which curve is interior at each intersection
+\pause
+\item Track parameter values at each intersection and combine
+  into boundary of \textbf{curved polygon}
+\pause
+\item \(\mathcal{P} = \textcolor{seaborn-blue}{\mathcal{T}_0} \cap
+  \textcolor{seaborn-green}{\mathcal{T}_1}\), \(\partial \mathcal{P}\)
+  defined by segments of edges from \(\textcolor{seaborn-blue}{\mathcal{T}_0}\)
+  and \(\textcolor{seaborn-green}{\mathcal{T}_1}\)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Intersecting Curved Elements}
+\begin{center}
+\includegraphics<1>[width=0.95\textwidth]{../images/slides/main_figure32.pdf}
+\includegraphics<2>[width=0.95\textwidth]{../images/slides/main_figure33.pdf}
+\includegraphics<3>[width=0.95\textwidth]{../images/slides/main_figure34.pdf}
+\includegraphics<4>[width=0.95\textwidth]{../images/slides/main_figure35.pdf}
+\includegraphics<5>[width=0.95\textwidth]{../images/slides/main_figure36.pdf}
+\includegraphics<6>[width=0.95\textwidth]{../images/slides/main_figure37.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Intersecting Curved Elements}
+\begin{itemize}
+\item \(\mathcal{P} = \textcolor{seaborn-blue}{\mathcal{T}_0} \cap
+  \textcolor{seaborn-green}{\mathcal{T}_1}\)
+\item \(\partial \mathcal{P} = \textcolor{seaborn-green}{E_3\left(\left[
+  \frac{1}{6}, \frac{3}{4}\right]\right)} \cup
+  \textcolor{seaborn-blue}{E_1\left(\left[\frac{1}{8}, 1\right]\right)} \cup
+  \textcolor{seaborn-blue}{E_2\left(\left[0, \frac{7}{9}\right]\right)}\)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Advancing Front}
+\only<1-2,4-7,9-10,12->{
+\begin{itemize}
+\item<1-2,4-7,9-10,12-> Find all pairs \(\mathcal{T}\), \(\mathcal{T}'\) of
+  intersecting target and donor elements
+\item<2,4-7,9-10,12-> Fix target element \(\mathcal{T}\), perform brute-force search
+\begin{itemize}
+\item<5-7,9-10,12-> \(\bigO{\left|\mathcal{M}_D\right|}\)
+\item<6-7,9-10,12-> \(\bigO{1}\) in typical ALE, though acts as CFL
+\end{itemize}
+\item<7,9-10,12-> Use donor mesh connectivity to perform breadth first search
+  for neighbors \(\mathcal{N}_{\mathcal{T}}\) that intersect
+  \(\mathcal{T}\) (as well as a one element buffer)
+\item<10,12-> Neighbors of \(\mathcal{T}\) can find one matching donor element
+  among \(\mathcal{N}_{\mathcal{T}}\) in
+  \(\bigO{\left|\mathcal{N}_{\mathcal{T}}\right|} = \bigO{1}\)
+\item<13-> Total \(\bigO{\left|\mathcal{M}_D\right| +
+  \left|\mathcal{M}_T\right|}\)
+\end{itemize}
+}
+%%
+\begin{center}
+\includegraphics<3>[width=0.95\textwidth]
+                   {../images/solution-transfer/main_figure13.pdf}
+\includegraphics<8>[width=0.95\textwidth]
+                   {../images/solution-transfer/main_figure14.pdf}
+\includegraphics<11>[width=0.95\textwidth]
+                    {../images/solution-transfer/main_figure15.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Integration over Curved Polygons}
+\begin{equation*}
+\int_{\mathcal{T}_0 \cap \mathcal{T}_1} F(x, y) \, dV, \qquad
+F = \phi_0 \, \phi_1
+\end{equation*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Integration over Curved Polygons}
+\begin{center}
+\includegraphics<1>[width=0.95\textwidth]
+                   {../images/slides/polygon_vs_curved1.pdf}
+\includegraphics<2>[width=0.95\textwidth]
+                   {../images/slides/polygon_vs_curved2.pdf}
+\includegraphics<3>[width=0.95\textwidth]
+                   {../images/slides/polygon_vs_curved3.pdf}
+\includegraphics<4>[width=0.95\textwidth]
+                   {../images/slides/polygon_vs_curved4.pdf}
+\includegraphics<5>[width=0.95\textwidth]
+                   {../images/slides/polygon_vs_curved5.pdf}
+\includegraphics<6>[width=0.95\textwidth]
+                   {../images/slides/polygon_vs_curved6.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Integration over Curved Polygons}
+\begin{center}
+\includegraphics[width=0.95\textwidth]
+  {../images/solution-transfer/polygon_vs_curved_intersection.pdf}
+\end{center}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
