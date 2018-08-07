@@ -1,6 +1,7 @@
 \documentclass{beamer}
 
 \usepackage{hyperref}
+\usepackage{bm}
 \hypersetup{
   pdfinfo={
     CreationDate={D:20180702102722},
@@ -42,6 +43,7 @@
 % lmss uses the computer modern tt font, better for URLs, etc.
 \newcommand{\lmss}{\fontfamily{lmtt}\selectfont}
 \newcommand{\eps}{\varepsilon}
+\newcommand{\utri}{\mathcal{U}}
 
 \title[Lagrange and B\'{e}zier]
   {High-order Solution Transfer between Curved Meshes and
@@ -70,6 +72,7 @@
 \begin{minipage}{0.78\textwidth}\raggedright
 \begin{enumerate}
 \item Introduction and motivation
+\item Curved Elements
 \item Solution Transfer
 \item Compensated Evaluation
 \item Modified Newton's for Intersection
@@ -118,7 +121,7 @@ PDE becomes a (trivial) ODE
 \frametitle{Lagrangian Methods}
 \begin{itemize}
 \pause
-\item Each point in the physical domain is a \textbf{particle}
+\item Each point in physical domain is a \textbf{particle}
 \pause
 \item Carry value (e.g. heat, pressure, density) along characteristic curve
 \pause
@@ -128,7 +131,6 @@ PDE becomes a (trivial) ODE
 
 \begin{frame}
 \frametitle{Lagrangian Methods}
-\pause
 Add viscosity term to transport equation
 \begin{equation*}
 u_t + c u_x - \eps u_{xx} = 0.
@@ -200,82 +202,44 @@ with cubic characteristics
 
 \begin{frame}
 \frametitle{Curved Meshes}
+\only<1-5,7-11>{
 \begin{itemize}
-\item Benefits
+\item<1-5,7-11> Benefits
 \begin{itemize}
-\pause
-\item High-order shape functions, highly accurate solutions
-\pause
-\item Low dissipation and dispersion error
-\pause
-\item Greater geometric flexibility
-\pause
-\item Fewer elements
+\item<2-5,7-11> High-order shape functions, highly accurate solutions
+\item<3-5,7-11> Low dissipation and dispersion error
+\item<4-5,7-11> Greater geometric flexibility
+\item<5,7-11> Fewer elements
 \end{itemize}
-\invisible{\item Drawbacks
+\item<8-11> Drawbacks
 \begin{itemize}
-\item Harder to implement
-\item Loss of accuracy in high degree (e.g. Runge's phenomenon)
-\item More challenging geometry
-\end{itemize}}
+\item<9-11> Harder to implement
+\item<10-11> Loss of accuracy in high degree (e.g. Runge's phenomenon)
+\item<11> More challenging geometry
 \end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Curved Meshes: Benefits}
+\end{itemize}
+}
+%%
 \begin{center}
-\includegraphics[width=0.95\textwidth]
-                {../images/solution-transfer/main_figure27.pdf}
+\includegraphics<6>[width=0.95\textwidth]
+                   {../images/solution-transfer/main_figure27.pdf}
+\includegraphics<12>[width=0.95\textwidth]
+                    {../images/slides/not_convex.pdf}
+\includegraphics<13>[width=0.95\textwidth]
+                    {../images/slides/split_intersection.pdf}
 \end{center}
 \end{frame}
 
 \begin{frame}
-\frametitle{Curved Meshes}
+\frametitle{Curved Elements}
 \begin{itemize}
-\item Benefits
-\begin{itemize}
-\item High-order shape functions, highly accurate solutions
-\item Low dissipation and dispersion error
-\item Greater geometric flexibility
-\item Fewer elements
-\end{itemize}
-\item Drawbacks
-\begin{itemize}
-\pause
-\item Harder to implement
-\pause
-\item Loss of accuracy in high degree (e.g. Runge's phenomenon)
-\pause
-\item More challenging geometry
-\end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Curved Meshes: Drawbacks}
-\begin{center}
-\includegraphics[width=0.95\textwidth]
-                {../images/slides/not_convex.pdf}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Curved Meshes: Drawbacks}
-\begin{center}
-\includegraphics[width=0.95\textwidth]
-                {../images/slides/split_intersection.pdf}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Curved Elements: Necessary for High-order}
-\begin{itemize}
+\item Necessary for High-order
 \pause
 \item With non-linear shape functions (i.e. not straight sided), non-vertex
-nodes are used.
+nodes used
 \pause
-\item A Lagrangian method must either curve the mesh or information about the
-flow of the geometry will be lost.
+\item Lagrangian method must either curve mesh or information about
+flow of geometry will be lost
 \end{itemize}
 \end{frame}
 
@@ -292,6 +256,141 @@ flow of the geometry will be lost.
 \end{center}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%
+%%% CURVED ELEMENTS %%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\centering
+{\Large \bf Curved Elements}
+\rule{0.82\textwidth}{1pt}
+\end{frame}
+
+\begin{frame}
+\frametitle{B\'{e}zier Triangles}
+\begin{itemize}
+\item Image \(\mathcal{T} = b\left(\utri\right)\) of reference triangle
+  under polynomial map \(b(s, t)\)
+\pause
+\item Barycentric
+  coordinates \(\lambda_1 = 1 - s - t, \lambda_2 = s, \lambda_3 = t\)
+\pause
+\item Bernstein basis via trinomial expansion:
+\begin{equation*}
+1 = \left(\lambda_1 + \lambda_2 + \lambda_3\right)^n
+\end{equation*}
+\pause
+\vspace*{-0.9cm}
+\item Convex combination of control points
+\begin{equation*}
+b(s, t) = \sum_{\substack{i + j + k = n \\ i, j, k \geq 0}}
+  \binom{n}{i, j, k} \lambda_1^i \lambda_2^j \lambda_3^k \;
+  \bm{p}_{i, j, k}
+\end{equation*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{B\'{e}zier Triangles}
+\begin{center}
+\includegraphics[width=0.95\textwidth]
+                {../images/slides/main_figure31.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{B\'{e}zier Triangles}
+\only<1-3,5-7>{
+\begin{itemize}
+\item<1-3,5-7> \(b(s, t)\) can be defined by data other than control net
+\item<2-3,5-7> Regular grid in \(\utri\), \(\bm{u}_{i, j, k} =
+  \left(\frac{j}{n}, \frac{k}{n}\right)\)
+\item<3,5-7> \(b\left(\bm{u}_{i, j, k}\right) = \bm{n}_{i, j, k}\); refer to
+  \(\bm{n}_{i, j, k}\) as \textbf{standard nodes}
+\item<6-7> For example, taking \(\bm{n}_{i, j, k} = \delta_{(i, j, k) \;
+  (i_0, j_0, k_0)}\) gives degree \(n\) shape functions on \(\utri\)
+\item<7> Conversion between \(\bm{n}_{i, j, k}\) and \(\bm{p}_{i, j, k}\)
+  has condition number exponential in \(n\)
+\end{itemize}
+}
+%%
+\begin{center}
+\includegraphics<4>[width=0.95\textwidth]
+                  {../images/preliminaries/main_figure01.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Valid Element}
+\begin{itemize}
+\item Element \(\mathcal{T}\) is \textbf{valid} if diffeomorphic to
+  \(\utri\)
+\pause
+\item \(b(s, t)\) bijective, i.e. Jacobian \(Db\) is everywhere invertible
+\pause
+\item \(\det(Db)\) positive, preserves orientation
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Inverted Element}
+Consider element given by map
+\begin{equation*}
+b(s, t) = \lambda_1^2 \left[ \begin{array}{c} 1 \\ 0 \end{array}\right] +
+\lambda_2^2 \left[ \begin{array}{c} 1 \\ 1 \end{array}\right] +
+\lambda_3^2 \left[ \begin{array}{c} 0 \\ 1 \end{array}\right]
+\end{equation*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Inverted Element}
+\begin{center}
+\includegraphics<1>[width=0.625\textwidth]{../images/slides/boundary_leak1.pdf}
+\includegraphics<2>[width=0.625\textwidth]{../images/slides/boundary_leak2.pdf}
+\includegraphics<3>[width=0.625\textwidth]{../images/slides/boundary_leak3.pdf}
+\includegraphics<4>[width=0.625\textwidth]{../images/slides/boundary_leak4.pdf}
+\includegraphics<5>[width=0.625\textwidth]{../images/slides/boundary_leak5.pdf}
+\includegraphics<6>[width=0.625\textwidth]{../images/slides/boundary_leak6.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Inverted Element}
+\begin{center}
+\includegraphics<1>[width=0.95\textwidth]
+                   {../images/slides/inverted_element1.pdf}
+\includegraphics<2>[width=0.95\textwidth]
+                   {../images/slides/inverted_element2.pdf}
+\includegraphics<3>[width=0.95\textwidth]
+                   {../images/slides/inverted_element3.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Shape Functions}
+\only<1-2,5-8>{
+\begin{itemize}
+\item<1-2,5-8> Based on \(\bm{u}_{\bm{\alpha}} \in \utri\) or
+  \(\bm{n}_{\bm{\alpha}} \in \mathbf{R}^2\)
+  (\(\bm{\alpha}\) is a multi-index)
+\item<2,5-8> \textbf{Pre-Image Basis}: \(\phi_{\bm{\alpha}}\left(
+  \bm{n}_{\bm{\beta}}\right) = \widehat{\phi}_{\bm{\alpha}}\left(
+  \bm{u}_{\bm{\beta}}\right) = \widehat{\phi}_{\bm{\alpha}}\left(b^{-1}\left(
+  \bm{n}_{\bm{\beta}}\right)\right)\)
+\item<6-8> \textbf{Global Coordinates Basis}: \(\phi_{\bm{\alpha}}\left(
+  \bm{n}_{\bm{\beta}}\right) = \delta_{\bm{\alpha} \bm{\beta}}\)
+\item<7-8> Element is \textbf{isoparametric} when numerical solution
+  expressed in span of shape functions
+\item<8> \(\operatorname{supp}(\phi) = \mathcal{T}\)
+\end{itemize}
+}
+%%
+\begin{center}
+\includegraphics<3>{tikz_shape_fns1.pdf}
+\includegraphics<4>{tikz_shape_fns2.pdf}
+\end{center}
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %%% SOLUTION TRANSFER %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -300,6 +399,69 @@ flow of the geometry will be lost.
 \centering
 {\Large \bf Solution Transfer}
 \rule{0.82\textwidth}{1pt}
+\end{frame}
+
+\begin{frame}
+\frametitle{Galerkin Projection}
+\begin{itemize}
+\item \textbf{Given}:
+\begin{itemize}
+\pause
+\item Donor mesh \(\mathcal{M}_D\) and target mesh \(\mathcal{M}_T\)
+\pause
+\item Shape function bases \(\phi_D^{(j)}\) and \(\phi_T^{(j)}\)
+\pause
+\item Known discrete field \(\bm{q}_D = \sum_j d_j \phi_D^{(j)}\)
+\end{itemize}
+\pause
+\item \textbf{Want}: \(L_2\)-optimal interpolant
+\(\bm{q}_T = \sum_j t_j \phi_T^{(j)}\):
+\begin{equation*}
+\left \lVert \bm{q}_T - \bm{q}_D \right \rVert_2 =
+\min_{\bm{q} \in \mathcal{V}_T}
+\left \lVert \bm{q} - \bm{q}_D \right \rVert_2
+\end{equation*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Galerkin Projection}
+Differentiating w.r.t. each \(t_j\) in
+\(\bm{q}_T = \sum_j t_j \phi_T^{(j)}\) gives \textbf{weak form}
+\begin{equation*}
+\int_{\Omega} \bm{q}_D \phi_T^{(j)} \, dV =
+  \int_{\Omega} \bm{q}_T \phi_T^{(j)} \, dV, \qquad \text{for all } j.
+\end{equation*}
+\pause
+If \(\left(\bm{x} \mapsto 1\right) \in \mathcal{V}_T\), then \(\bm{q}_T\)
+is globally \textbf{conservative}
+\begin{equation*}
+\int_{\Omega} \bm{q}_D \, dV =
+  \int_{\Omega} \bm{q}_T \, dV.
+\end{equation*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Linear System}
+Weak form gives rise to a linear system in coefficients
+\(\bm{d}\) and \(\bm{t}\):
+\pause
+\begin{equation*}
+M_T \bm{t} = M_{TD} \bm{d}.
+\end{equation*}
+\pause
+\(M_T\) is (symmetric) mass matrix for target mesh
+\begin{equation*}
+\left(M_T\right)_{ij} = \int_{\Omega} \phi_T^{(i)} \phi_T^{(j)} \, dV.
+\end{equation*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Linear System}
+Each shape function \(\phi\) has
+\(\operatorname{supp}(\phi) = \mathcal{T}\) for some (curved)
+element, hence \(M_T\) is block diagonal in DG,
+sparse but globally coupled in CG.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

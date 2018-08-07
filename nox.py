@@ -135,6 +135,20 @@ def build_tex(session):
 
     build_tex_file(
         session,
+        "tikz_shape_fns1",
+        "B5234F7B23999E2560401FE20167B7C8",
+        extensions=("aux", "log", "out"),
+    )
+
+    build_tex_file(
+        session,
+        "tikz_shape_fns2",
+        "8C88A92F10A23D28C060D88CF0CE94A0",
+        extensions=("aux", "log", "out"),
+    )
+
+    build_tex_file(
+        session,
         "thesis_talk",
         "6A945FD7D33437399D0EB8EC77533E6C",
         extensions=("aux", "log", "nav", "out", "snm", "toc"),
@@ -173,6 +187,7 @@ def make_images(session):
         ("slides", "curved_vs_straight.py"),
         ("slides", "distort.py"),
         ("slides", "element_distortion.py"),
+        ("slides", "inverted_element.py"),
         ("solution-transfer", "distort.py"),
         ("solution-transfer", "polygon_vs_curved.py"),
         ("solution-transfer", "simple_transport.py"),

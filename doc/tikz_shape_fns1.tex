@@ -1,0 +1,22 @@
+\documentclass[tikz]{standalone}
+
+\usepackage{hyperref}
+\hypersetup{
+  pdfinfo={
+    CreationDate={D:20180807092111},
+    ModDate={D:20180807092111},
+  },
+}
+
+\begin{document}
+\begin{tikzpicture}
+\draw (0, 0) node[anchor=north east]{\(\lambda_1\)}
+  -- (6, 0) node[anchor=north west]{\(\lambda_2\)}
+  -- (0, 6) node[anchor=south east]{\(\lambda_3\)}
+  -- cycle;
+\node[circle, draw=black, fill=black, inner sep=0pt, minimum size=5pt] at (0, 0) {};
+\node[circle, draw=black, fill=black, inner sep=0pt, minimum size=5pt] at (6, 0) {};
+\node[circle, draw=black, fill=black, inner sep=0pt, minimum size=5pt] at (0, 6) {};
+\node at (4.5, 4.5) {\(n = 1\)};
+\end{tikzpicture}
+\end{document}
