@@ -626,13 +626,13 @@ DG \(\bm{q}_D\) need not even be continuous
 \begin{frame}
 \frametitle{Integration over Curved Polygons}
 \begin{equation*}
-\int_{\mathcal{T}_0 \cap \mathcal{T}_1} F(x, y) \, dV, \qquad
-F = \phi_0 \, \phi_1
+\int_{\mathcal{P}} F(x, y) \, dV, \qquad \mathcal{P} = \mathcal{T}_0 \cap
+  \mathcal{T}_1, \qquad F = \phi_0 \, \phi_1
 \end{equation*}
 \end{frame}
 
 \begin{frame}
-\frametitle{Integration over Curved Polygons}
+\frametitle{Integrate via Polygonal Approximation}
 \begin{center}
 \includegraphics<1>[width=0.95\textwidth]
                    {../images/slides/polygon_vs_curved1.pdf}
@@ -650,11 +650,126 @@ F = \phi_0 \, \phi_1
 \end{frame}
 
 \begin{frame}
-\frametitle{Integration over Curved Polygons}
+\frametitle{Integrate via Polygonal Quadrature}
+\begin{itemize}
+\item Polygonal quadrature rules not in wide use
+\pause
+\item \(\mathcal{P}\) has curved edges
+\pause
+\item Transfinite interpolation or mean value coordinates
+\begin{itemize}
+\pause
+\item Maps from (straight sided) reference domain, but increase degree or
+  are not bijective
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Integrate via Tessellation}
+\begin{itemize}
+\item Triangular quadrature rules simple and well established
+\pause
+\item Tessellate \(\mathcal{P}\) into disjoint union of B\'{e}zier triangles
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Integrate via Tessellation}
 \begin{center}
 \includegraphics[width=0.95\textwidth]
-  {../images/solution-transfer/polygon_vs_curved_intersection.pdf}
+                {../images/solution-transfer/main_figure11.pdf}
 \end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Integrate via Tessellation}
+\begin{itemize}
+\item Not clear if an arbitrary curved polygon
+\textbf{can} be tessellated without introducing interior nodes
+\pause
+\item Need to check if diagonals cross edges; even worse if diagonals are
+  also curved
+\pause
+\item If diagonals are valid, high degree B\'{e}zier triangles
+  need interior control points introduced that don't cause triangle
+  to invert
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Integrate via Tessellation}
+\only<1,3-7>{
+\begin{itemize}
+\item<1,3-7> Tessellate with inverted B\'{e}zier triangles?
+\item<4-7> E.g. tessellation of \(\mathcal{P}\) contains inverted
+  \(\mathcal{T}_2 = b\left(\utri\right)\), then numerically
+  integrate
+\begin{equation*}
+\int_{\mathcal{T}_2} \phi_0 \phi_1 \, dx \, dy =
+  \int_{\utri} \left|\det(Db)\right| \left(\phi_0 \circ b\right)
+  \left(\phi_1 \circ b\right) \, ds \, dt
+\end{equation*}
+\item<5-7> \(\left|\det(Db)\right|\) non-smooth, bad for quadrature
+\item<6-7> If \(\phi_0\) from pre-image basis, then \(\phi_0 \circ b =
+  \widehat{\phi}_0 \circ b_0^{-1} \circ b\)
+\item<7> \(\mathcal{T}_2\) inverted, \(b(s, t) \not\in \mathcal{P}\) is
+  possible but \(b_0^{-1}\) need not need be defined outside of
+  \(\mathcal{T}_0\)
+\end{itemize}
+}
+%%
+\begin{center}
+\includegraphics<2>[height=0.8\textheight]
+                   {../images/solution-transfer/main_figure16.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Integrate via Green's Theorem}
+\begin{itemize}
+\item Horizontal antiderivative \(H\) and vertical antiderivative \(V\) s.t.
+  \(H_x = V_y = F\)
+\pause
+\item \(H(0, y) \equiv V(x, 0) \equiv 0\) for uniqueness (needed
+  to evaluate)
+\pause
+\item If \(\partial\mathcal{P} = C_1 \cup \cdots \cup C_n\),
+  since \(2F = H_x + V_y\) Green's gives
+\begin{equation*}
+\int_{\mathcal{P}} 2 F \, dV =
+\oint_{\partial \mathcal{P}} H \, dy - V \, dx =
+\sum_j \int_{C_j} H \, dy - V \, dx
+\end{equation*}
+\pause
+\vspace*{-0.6cm}
+\item Each \(C\) given by \(x(r), y(r)\),
+  1D quadrature on unit interval of
+\begin{equation*}
+G(r) = H(x(r), y(r)) y'(r) - V(x(r), y(r)) x'(r)
+\end{equation*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Integrate via Green's Theorem}
+\begin{itemize}
+\item How to evaluate \(H(x(r), y(r))\)?
+\pause
+\item Fundamental theorem of calculus
+\begin{equation*}
+H\left(\alpha, \beta\right) =
+  H\left(\alpha, \beta\right) - H\left(0, \beta\right) =
+  \int_0^{\alpha} F\left(x, \beta\right) \, dx
+\end{equation*}
+\pause
+\vspace*{-0.6cm}
+\item Quadrature points \(F\left(x_j, \beta\right)\) may fall outside
+  \(\mathcal{P}\), so pre-image basis cannot be used
+\pause
+\item Global coordinates basis means \(F\) is a polynomial on
+  \(\mathbf{R}^2\), so quadrature is exact
+\end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
