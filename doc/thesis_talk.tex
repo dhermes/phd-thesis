@@ -882,6 +882,30 @@ J_n^{-1} F_n
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+\frametitle{Modified Newton's Method}
+\begin{itemize}
+\item Sources of error:
+\begin{itemize}
+\pause
+\item Evaluation of \(F\)
+\pause
+\item Evaluation of \(J\)
+\pause
+\item Solution of \(J \bm{y} = F\)
+\end{itemize}
+\pause
+\item Can improve accuracy of Newton's method by using extended
+  precision for evaluation of \(F\), even in presence of
+  inaccurate \(J\) and unstable solve
+\begin{itemize}
+\pause
+\item Tisseur (2001) showed this generically and applied to iterative
+  refinement for generalized eigenvalue problem
+\end{itemize}
+\end{itemize}
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% COMPENSATED EVALUATION %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -892,6 +916,113 @@ J_n^{-1} F_n
 \rule{0.82\textwidth}{1pt}
 \end{frame}
 
+\begin{frame}
+\frametitle{Compensated Algorithms}
+\begin{itemize}
+\item Error-free transform (EFT):
+\begin{itemize}
+\pause
+\item Problem \(f(x)\), algorithm computes \(\widehat{f}\)
+\pause
+\item EFT modifies algorithm to also produce error \(\widehat{e}\)
+  so that \\ \(f(x) = \widehat{f} + \widehat{e}\)
+\pause
+\item Error is \textbf{exact}, hence ``error-free''
+\end{itemize}
+\pause
+\item \textbf{Compensated} algorithm uses \(\widehat{f} \oplus \widehat{e}\);
+  better approximation of \(f(x)\) than \(\widehat{f}\) (usually)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{EFT for Addition}
+\begin{itemize}
+\item \(\mathtt{TwoSum}(a, b) = \left[S, \sigma\right]\)
+\pause
+\item \(a + b = S + \sigma\)
+\pause
+\item Algorithm:
+\begin{itemize}
+\pause
+\item \(S = a \oplus b\)
+\pause
+\item \(\mathtt{almost\_b} = S \ominus a\)
+\pause
+\item \(\sigma = (a \ominus (S \ominus \mathtt{almost\_b}))
+  \oplus (b \ominus \mathtt{almost\_b})\)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{EFT for Multiplication}
+\begin{itemize}
+\item \(\mathtt{TwoProb}(a, b) = \left[P, \pi\right]\)
+\pause
+\item \(a \times b = P + \pi\)
+\pause
+\item Algorithm:
+\begin{itemize}
+\pause
+\item \(P = a \otimes b\)
+\pause
+\item \(\pi = \mathtt{FusedMultiplyAdd}(a, b, -P)\)
+\end{itemize}
+\pause
+\item \textbf{Not possible} to apply this to \(\oslash\)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{B\'{e}zier Curve Evaluation}
+\begin{itemize}
+\item \(p(s) = \binom{n}{0} (1 - s)^n \cdot b_0 +
+  \binom{n}{1} (1 - s)^{n - 1} s \cdot b_1 + \cdots\)
+\pause
+\item de Casteljau Algorithm:
+\begin{itemize}
+\pause
+\item \(\widehat{\bm{b}}^{(n)} = \bm{b}\), \(\widehat{r} = 1 \ominus s\)
+\pause
+\item \(\widehat{\bm{b}}^{(k)} = \left(\widehat{r} \otimes
+  \widehat{\bm{b}}^{(k + 1)}\right) \oplus \left(s \otimes
+  \widehat{\bm{b}}^{(k + 1)}\right)\)
+\pause
+\item \(\widehat{p} = \widehat{\bm{b}}_0^{(0)}\)
+\end{itemize}
+\pause
+\item Only uses \(\oplus\), \(\ominus\) and \(\otimes\)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Compensated de Castlejau}
+\begin{itemize}
+\item Only uses \(\oplus\), \(\ominus\) and \(\otimes\)
+\pause
+\item Track errors and combine them progressively
+\pause
+\item Test polynomial \(p(s) = (s - 1)\left(s - \frac{3}{4}\right)^7\);
+  evaluation at \(s = \frac{3}{4}\) has infinite condition, very
+  ill-conditioned nearby
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Compensated de Castlejau}
+\begin{center}
+\includegraphics<1>[height=0.8\textheight]
+                   {../images/slides/de_casteljau_rel_error1.pdf}
+\includegraphics<2>[height=0.8\textheight]
+                   {../images/slides/de_casteljau_rel_error2.pdf}
+\includegraphics<3>[height=0.8\textheight]
+                   {../images/slides/de_casteljau_rel_error3.pdf}
+\includegraphics<4>[height=0.8\textheight]
+                   {../images/slides/de_casteljau_rel_error4.pdf}
+\end{center}
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% MODIFIED NEWTON'S FOR INTERSECTION %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -899,6 +1030,16 @@ J_n^{-1} F_n
 \begin{frame}
 \centering
 {\Large \bf Modified Newton's for Intersection}
+\rule{0.82\textwidth}{1pt}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%
+%%% Conclusion %%%
+%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\centering
+{\Large \bf Conclusion}
 \rule{0.82\textwidth}{1pt}
 \end{frame}
 
