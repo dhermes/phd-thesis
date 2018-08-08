@@ -772,6 +772,36 @@ H\left(\alpha, \beta\right) =
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+\frametitle{Numerical Experiments}
+\only<1,3-9>{
+\begin{itemize}
+\item<1,3-9> Three meshes (\(p = 1, 2, 3\))
+\item<4-9> Three functions
+\begin{itemize}
+\item<5-9> \(\zeta_1(x, y) = 5 y^3 + x^2 + 2y + 3\)
+\item<6-9> \(\zeta_2(x, y) = \exp\left(x^2\right) + 2y\)
+\item<7-9> \(\zeta_3(x, y) = \sin(x) + \cos(y)\)
+\end{itemize}
+\item<8-9> Nodal interpolant
+\(\displaystyle \bm{q}_D = \sum_j \zeta\left(\bm{n}_j\right) \phi_D^{(j)}\)
+\item<9> Expect \(\bigO{h^{p + 1}}\) errors
+\end{itemize}
+}
+%%
+\begin{center}
+\includegraphics<2>{../images/solution-transfer/main_figure30.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Numerical Experiments}
+\begin{center}
+\includegraphics[height=0.8\textheight]
+                {../images/solution-transfer/main_figure25.pdf}
+\end{center}
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% COMPENSATED EVALUATION %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
