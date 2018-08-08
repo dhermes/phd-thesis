@@ -78,6 +78,7 @@
 \item Introduction and motivation
 \item Curved Elements
 \item Solution Transfer
+\item Ill-conditioned B\'{e}zier Curve Intersection
 \item Compensated Evaluation
 \item Modified Newton's for Intersection
 \end{enumerate}
@@ -349,12 +350,12 @@ b(s, t) = \lambda_1^2 \left[ \begin{array}{c} 1 \\ 0 \end{array}\right] +
 \begin{frame}
 \frametitle{Inverted Element}
 \begin{center}
-\includegraphics<1>[width=0.625\textwidth]{../images/slides/boundary_leak1.pdf}
-\includegraphics<2>[width=0.625\textwidth]{../images/slides/boundary_leak2.pdf}
-\includegraphics<3>[width=0.625\textwidth]{../images/slides/boundary_leak3.pdf}
-\includegraphics<4>[width=0.625\textwidth]{../images/slides/boundary_leak4.pdf}
-\includegraphics<5>[width=0.625\textwidth]{../images/slides/boundary_leak5.pdf}
-\includegraphics<6>[width=0.625\textwidth]{../images/slides/boundary_leak6.pdf}
+\includegraphics<1>[height=0.8\textheight]{../images/slides/boundary_leak1.pdf}
+\includegraphics<2>[height=0.8\textheight]{../images/slides/boundary_leak2.pdf}
+\includegraphics<3>[height=0.8\textheight]{../images/slides/boundary_leak3.pdf}
+\includegraphics<4>[height=0.8\textheight]{../images/slides/boundary_leak4.pdf}
+\includegraphics<5>[height=0.8\textheight]{../images/slides/boundary_leak5.pdf}
+\includegraphics<6>[height=0.8\textheight]{../images/slides/boundary_leak6.pdf}
 \end{center}
 \end{frame}
 
@@ -800,6 +801,85 @@ H\left(\alpha, \beta\right) =
 \includegraphics[height=0.8\textheight]
                 {../images/solution-transfer/main_figure25.pdf}
 \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% ILL-CONDITIONED B\'{E}ZIER CURVE INTERSECTION %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\centering
+{\Large \bf Ill-conditioned B\'{e}zier Curve Intersection}
+\rule{0.82\textwidth}{1pt}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ill-Conditioned Intersections}
+\includegraphics<1>[width=0.95\textwidth]
+                   {../images/bezier-intersection/main_figure22.pdf}
+\includegraphics<2>[width=0.95\textwidth]
+                   {../images/bezier-intersection/main_figure23.pdf}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ill-Conditioned Intersections}
+\begin{itemize}
+\item Edges are B\'{e}zier curves, e.g. \(b(r, 0) = \sum_{j = 0}^n
+  \binom{n}{j} (1 - r)^{n - j} r^j \; \bm{p}_{n - j, j, 0}\)
+\pause
+\item Tangent intersection equivalent to double root of polynomial,
+  i.e. condition number is infinite
+\pause
+\item Random pair of meshes, ``almost tangent'' intersections increasingly
+  frequent as \(h \longrightarrow 0^+\)
+\end{itemize}
+\end{frame}
+
+%% H/T: https://stackoverflow.com/a/3594456
+\begin{frame}
+\frametitle{Intersection Algorithm}
+\only<1,3-4,6-7,9-10,12-13>{
+\begin{itemize}
+\item<1,3-4,6-7,9-10,12-13> {\color<13>{fg!20} Bounding box check}
+\item<4,6-7,9-10,12-13> {\color<13>{fg!20} Curve subdivision}
+\item<7,9-10,12-13> {\color<13>{fg!20} Check subdivided pairs}
+\item<10,12-13> {\color<13>{fg!20} Subdivide until ``almost'' linear}
+\item<13> Use intersection of lines as seed for Newton's method
+\end{itemize}
+}
+%%
+\begin{center}
+\includegraphics<2>[width=0.95\textwidth]
+                   {../images/bezier-intersection/bbox_check.pdf}
+\includegraphics<5>[width=0.95\textwidth]
+                   {../images/bezier-intersection/subdivide_curve.pdf}
+\includegraphics<8>[width=0.95\textwidth]
+                   {../images/bezier-intersection/subdivision_process.pdf}
+\includegraphics<11>[width=0.95\textwidth]
+                    {../images/bezier-intersection/subdivision_linearized.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Newton's Method}
+\begin{itemize}
+\item B\'{e}zier curves \(b_0(s), b_1(t)\) map into \(\mathbf{R}^2\)
+\pause
+\item Residual \(F(s, t) = b_0(s) - b_1(t)\), Jacobian \(J =
+\left[ \begin{array}{c c} b_0'(s) & -b_1'(t) \end{array}\right]\)
+\pause
+\item Newton's:
+\begin{equation*}
+\left[ \begin{array}{c} s_{n + 1} \\ t_{n + 1} \end{array}\right] =
+\left[ \begin{array}{c} s_n \\ t_n \end{array}\right] -
+J_n^{-1} F_n
+\end{equation*}
+\pause
+\item At tangent intersections, \(J\) is exactly singular
+\pause
+\item At ill-conditioned intersections, \(J\) is almost singular and
+  evaluation of \(F\) is typically ill-conditioned as well
+\end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
