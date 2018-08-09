@@ -45,11 +45,12 @@ In some cases, even the order of magnitude of the computed value
 of \(p(s)\) can be incorrect.
 
 To address ill-conditioned problems, error-free transformations (EFT) can
-be applied in \textit{compensated algorithms} to account for round-off.
+be applied in \emph{compensated algorithms} to account for round-off.
 Error-free transformations were studied in great detail in \cite{Ogita2005}
 and open a large number of applications.
-In \cite{langlois_et_al:DSP:2006:442}, a compensated Horner's algorithm was
-described to evaluate a polynomial in the monomial basis. In \cite{Jiang2010},
+In \cite{langlois_et_al:DSP:2006:442}, a compensated version of Horner's
+algorithm described to evaluate a polynomial in the monomial basis.
+In \cite{Jiang2010},
 a similar method was described to perform a compensated version of the de
 Casteljau algorithm. In both cases, the \(\cond{p, s}\) factor is moved
 from \(\mach\) to \(\mach^2\) and the computed value is as accurate

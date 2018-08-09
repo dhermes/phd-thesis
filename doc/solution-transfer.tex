@@ -56,7 +56,7 @@ physical domain as a ``particle'' which moves along a characteristic curve
 over time and then monitor values associated with the particle (heat / energy,
 velocity, pressure, density, concentration, etc.). They are an effective way
 to solve PDEs, even with higher order or non-linear terms.
-For example, if a viscosity term is added to~\eqref{eq:simple-transport}
+For example, if a diffusion term is added to~\eqref{eq:simple-transport}
 \begin{equation}
 u_t + c u_x - \eps u_{xx} = 0
 \end{equation}
@@ -237,8 +237,8 @@ though the geometric kernels (see Chapter~\ref{chap:bezier-intersection})
 become significantly more challenging to describe and implement. In
 addition, the method will assume that every element in the
 target mesh is contained in the donor mesh. This ensures that the solution
-transfer is \textit{interpolation}. In the case where all target elements are
-partially covered, \textit{extrapolation} could be used to extend a solution
+transfer is \emph{interpolation}. In the case where all target elements are
+partially covered, \emph{extrapolation} could be used to extend a solution
 outside the domain, but for totally uncovered elements there is no clear
 correspondence to elements in the donor mesh.
 
@@ -259,6 +259,13 @@ Some attempts (\cite{Berger1987, Chesshire1994, Cai1999}) have been
 made to interpolate fluxes between overlapping meshes. These perform
 an interpolation on the region common to both meshes and then numerically
 solve the PDE to determine the values on the uncovered elements.
+
+When solving some PDEs with viscoelastic fields, additional nodes must be
+tracked at quadrature points. As the mesh travels, these quadrature points
+must be moved as well in a way that is consistent with the standard
+nodes that define the element. The solution transfer method described here
+does not provide a way either to determine quadrature points on a
+target mesh or to map the field onto known quadrature points.
 
 \section{Galerkin Projection}
 
@@ -645,7 +652,7 @@ more computation than just applying Green's theorem along
 \(\partial \mathcal{P}\). By applying the lemma, inverted elements may
 be used in a tessellation, for example by introducing artificial
 diagonals from a vertex as in Figure~\ref{fig:tessellated-curved-polygon}.
-In the global coordinates basis, \(F = \phi_0 \phi_1\) \textit{can}
+In the global coordinates basis, \(F = \phi_0 \phi_1\) \emph{can}
 be evaluated for points in an inverted element that leave
 \(\mathcal{T}_0\) or \(\mathcal{T}_1\).
 
@@ -661,9 +668,9 @@ be evaluated for points in an inverted element that leave
 Instead, we focus on a Green's theorem based approach.
 Define horizontal and vertical antiderivatives
 \(H, V\) of the integrand \(F\) such that \(H_x = V_y = F\).
-We make these \textit{unique} by imposing the
+We make these \emph{unique} by imposing the
 extra condition that \(H(0, y) \equiv V(x, 0) \equiv 0\).
-This distinction is arbitrary, but in order to \textit{evaluate}
+This distinction is arbitrary, but in order to \emph{evaluate}
 \(H\) and \(V\), the univariate functions \(H(0, y)\) and \(V(x, 0)\)
 must be specified.
 Green's theorem tells us that
@@ -711,7 +718,7 @@ assume it is on the boundary of \(\mathcal{T}_0\). Thus, for some elements
 \(\left[\begin{array}{c c} \nu & \beta \end{array}\right]^T\) may not be
 in \(\mathcal{T}_0\). Since \(\operatorname{supp}(\phi_0) = \mathcal{T}_0\),
 we could take \(\phi_0(\nu, \beta) = 0\), but this would make the integrand
-non-smooth and so the accuracy of the \textit{exact} quadrature would be
+non-smooth and so the accuracy of the \emph{exact} quadrature would be
 lost. But extending \(\phi_0 = \widehat{\phi}_0 \circ b_0^{-1}\) outside
 of \(\mathcal{T}_0\) may be impossible: even though \(b_0\) is bijective on
 \(\utri\) it may be many-to-one elsewhere hence \(b_0^{-1}\) can't be
