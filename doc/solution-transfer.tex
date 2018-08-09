@@ -5,16 +5,16 @@
 In this chapter, an algorithm for conservative solution transfer between curved
 meshes will be described. This has practical applications to many methods in
 computational physics. Solution transfer is needed when a solution
-(approximated by a discrete field) is known on a \textbf{donor} mesh and must
-be transferred to a \textbf{target} mesh. In many applications, the field
+(approximated by a discrete field) is known on a \emph{donor} mesh and must
+be transferred to a \emph{target} mesh. In many applications, the field
 must be conserved for physical reasons, e.g. mass or energy cannot leave or
-enter the system, hence the focus on \textbf{conservative} solution transfer.
+enter the system, hence the focus on \emph{conservative} solution transfer.
 A few scenarios where solution transfer is necessary will be considered below
 to motivate the ``black box'' solution transfer algorithm.
 
 Since solution transfer is so commonly needed in physical applications, this
 problem of conservative interpolation has been considered already for
-straight sided meshes. The \textbf{common refinement} approach in
+straight sided meshes. The \emph{common refinement} approach in
 \cite{Jiao2004} is used to compare several methods for solution transfer across
 two meshes. However, the problem of constructing a common refinement is
 not discussed there. The problem of constructing such a refinement is
@@ -51,7 +51,7 @@ can be transformed when restricting to the family of lines
 construction, and so the solution is ``transported'' from \(u(x_0, 0)\)
 along each characteristic line (Figure~\ref{fig:simple-transport}).
 
-Motivated by this, \textbf{Lagrangian methods} treat each point in the
+Motivated by this, \emph{Lagrangian methods} treat each point in the
 physical domain as a ``particle'' which moves along a characteristic curve
 over time and then monitor values associated with the particle (heat / energy,
 velocity, pressure, density, concentration, etc.). They are an effective way
@@ -400,7 +400,7 @@ Without partitioning \(\mathcal{T}\), the integrand is not a polynomial
 (in fact, possibly not smooth), so the quadrature cannot be exact.
 
 In order to compute \(M_{TD} \bm{d}\), we'll need to compute the
-\textbf{common refinement}, i.e. an intermediate mesh that contains
+\emph{common refinement}, i.e. an intermediate mesh that contains
 both the donor and target meshes. This will consist of all non-empty
 \(\mathcal{T} \cap \mathcal{T}'\) as \(\mathcal{T}\) varies over
 elements of the target mesh and \(\mathcal{T}'\) over elements of the
@@ -452,7 +452,7 @@ to find an intersecting element in the donor mesh
   \captionsetup{width=.75\linewidth}
   \caption{All donor elements \(\mathcal{T}'\) that cover a target element
     \(\mathcal{T}\), with an extra layer of neighbors in the donor mesh
-    that \textbf{do not} intersect \(\mathcal{T}\).}
+    that \emph{do not} intersect \(\mathcal{T}\).}
   \label{fig:target-elt-overlap-extra-layer}
 \end{figure}
 
@@ -464,8 +464,8 @@ This search takes \(\bigO{1}\) time. It's also worthwhile to keep the first
 layer of donor elements that don't intersect \(\mathcal{T}\) because they are
 more likely to intersect the neighbors of \(\mathcal{T}\)\footnote{In the
 very unlikely case that the boundary of \(\mathcal{T}\)
-\textbf{exactly matches} the boundaries of the donor elements that cover it,
-\textbf{none} of the overlapping donor elements can intersect the neighbors of
+\emph{exactly matches} the boundaries of the donor elements that cover it,
+\emph{none} of the overlapping donor elements can intersect the neighbors of
 \(\mathcal{T}\) so the first layer of non-intersected donor
 elements must be considered.}. Using the list of intersected elements, a
 neighbor of \(\mathcal{T}\) can find a donor element it intersects with in
@@ -553,7 +553,7 @@ each side of \(\mathcal{P}\) with \(N\) line segments, the relative error is
 \(\bigO{1/N^2}\). (For example, if \(N = 2\) an edge curve \(b(s, 0)\) would be
 replaced by segments connecting \(b(0, 0), b(1/2, 0)\) and \(b(1, 0)\), i.e.
 \(N + 1\) equally spaced parameters.) This means that in order to perform as
-well as an \textbf{exact} quadrature used in the curved case, we'd
+well as an \emph{exact} quadrature used in the curved case, we'd
 need \(N = \bigO{1/\sqrt{\mach}}\). Compute the area of \(\mathcal{P}\)
 in this way assumes that \(\mathcal{P}\) is already known.
 If instead only the B\'{e}zier triangles in the intersection are known, as
@@ -612,7 +612,7 @@ to tessellate a curved polygon into valid B\'{e}zier triangles
 (Figure~\ref{fig:tessellated-curved-polygon}) and then use substitution as
 in~\eqref{eq:mass-mat-subst}. However, tessellation is challenging for both
 theoretical and computational reasons.
-Theoretical: it's not even clear if an arbitrary curved polygon \textbf{can}
+Theoretical: it's not even clear if an arbitrary curved polygon \emph{can}
 be tessellated into B\'{e}zier triangles. Computational: the placement
 of diagonals and potential introduction of interior nodes is very
 complex in cases where the curved polygon is nonconvex. What's more,
@@ -704,7 +704,8 @@ we must be able to evaluate \(F\) for
 points on the line \(y = \beta\) for \(x\) between \(0\) and \(\alpha\). If
 the shape functions are from the pre-image basis, it may not even be possible
 to evaluate \(F\) for such points. Since \(\left[\begin{array}{c c} \alpha &
-\beta \end{array}\right]^T\) is on the boundary of \(\mathcal{P}\), WLOG
+\beta \end{array}\right]^T\) is on the boundary of \(\mathcal{P}\), without
+loss of generality
 assume it is on the boundary of \(\mathcal{T}_0\). Thus, for some elements
 (e.g. if the point is on the bottom of the element), points
 \(\left[\begin{array}{c c} \nu & \beta \end{array}\right]^T\) may not be
@@ -804,5 +805,5 @@ the error and no convergence will be observed.
 
 Convergence results are shown in Figure~\ref{fig:composite-errors}
 and confirm the expected orders. Since \(\zeta_1\) is a cubic polynomial,
-the solution transfer on the cubic mesh should be \textbf{exact}, so there
+the solution transfer on the cubic mesh should be \emph{exact}, so there
 is a certain minimum threshold that can be reached.

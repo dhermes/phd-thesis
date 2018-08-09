@@ -560,8 +560,7 @@ The local error bounds \(\widetilde{\ell}_{F, j}\) satisfy:
 \end{lemma}
 
 \begin{proof}
-See \hyperref[proof:ell-tilde]{proof} in
-Appendix~\ref{chap:appendix-proof-details}.
+See proof in Section~\ref{proof:ell-tilde}.
 \end{proof}
 
 As we'll see soon (Lemma~\ref{lemma:k-order}), putting a bound on
@@ -587,8 +586,7 @@ In particular, this means that
 \end{lemma}
 
 \begin{proof}
-See \hyperref[proof:L-and-D-bounds]{proof} in
-Appendix~\ref{chap:appendix-proof-details}.
+See proof in Section~\ref{proof:L-and-D-bounds}.
 \end{proof}
 
 \begin{lemma}\label{lemma:k-order}
@@ -602,8 +600,7 @@ The \(K\) order error \(\db{K}^{(0)}_0\) satisfies
 \end{lemma}
 
 \begin{proof}
-See \hyperref[proof:k-order]{proof} in
-Appendix~\ref{chap:appendix-proof-details}.
+See proof in Section~\ref{proof:k-order}.
 \end{proof}
 
 \begin{theorem}\label{thm:k-comp-result}
@@ -618,8 +615,7 @@ If no underflow occurs, \(n \geq 2\) and \(s \in \left[0, 1\right]\)
 \end{theorem}
 
 \begin{proof}
-See \hyperref[proof:k-comp-result]{proof} in
-Appendix~\ref{chap:appendix-proof-details}.
+See proof in Section~\ref{proof:k-comp-result}.
 \end{proof}
 
 For the first few values of \(K\) the coefficient of
@@ -640,7 +636,7 @@ For the first few values of \(K\) the coefficient of
       2475 \binom{n}{2} + 2250 \binom{n}{1}\right] \mach^4 \\[0.125cm]
   \end{tabular}
 \end{center}
-See the \hyperref[proof:L-and-D-bounds]{proof} of
+See the proof (Section~\ref{proof:L-and-D-bounds}) of
 Lemma~\ref{lemma:L-and-D-bounds} for more details on where these
 polynomials come from.
 
@@ -693,7 +689,7 @@ against the condition number. To compute relative errors, each input and
 coefficient is converted to a fraction (i.e. infinite precision) and
 \(p(s)\) is computed exactly as a fraction, then
 compared to the corresponding computed values. Similar tools are used to
-\textbf{exactly} compute the condition number, though here we can rely
+\emph{exactly} compute the condition number, though here we can rely
 on the fact that \(\widetilde{p}(s) = (s - 1)
 \left(s/2 - 3/4\right)^7\). Once the relative errors and
 condition numbers are computed as fractions, they are rounded to the

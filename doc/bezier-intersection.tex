@@ -96,7 +96,7 @@ singular.
 The chief difficulty in intersecting two surfaces is intersecting their edges,
 which are B\'{e}zier curves.
 Though this is just a part of the overall algorithm, it proved to be the
-\textbf{most difficult} to implement (\cite{Hermes2017}). So the first part
+\emph{most difficult} to implement (\cite{Hermes2017}). So the first part
 of the algorithm is to find all points
 where the edges intersect (Figure~\ref{fig:edge-intersections}).
 
@@ -112,7 +112,7 @@ To determine the curve segments that bound the curved polygon region(s)
 (see Section~\ref{subsec:curved-polygons} for more about curved polygons) of
 intersection, we not only need to keep track
 of the coordinates of intersection, we also need to keep note of
-\textbf{which} edges the intersection occurred on and the parameters along
+\emph{which} edges the intersection occurred on and the parameters along
 each curve.
 With this information, we can classify each point of intersection
 according to which of the two curves forms the boundary of the
@@ -168,7 +168,7 @@ b_1(s, t) =
   \label{fig:surface-surface-example}
 \end{figure}
 
-In the \textbf{first step} we find all intersections of the
+In the \emph{first step} we find all intersections of the
 edge curves
 \begin{multline}
 E_0(r) = \left[ \begin{array}{c} 8 r \\ 0 \end{array}\right],

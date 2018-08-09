@@ -19,7 +19,7 @@ of a numerical solution. Mesh adaptivity (see, for example,
 requires translating the numerical solution from the old mesh to the new,
 i.e. solution transfer. As another example, Lagrangian or particle-based
 methods treat each node in the mesh as a particle and so with each timestep the
-mesh travels \textbf{with} the fluid (see, for example, \cite{Hirt1974}).
+mesh travels \emph{with} the fluid (see, for example, \cite{Hirt1974}).
 However, over (typically limited) time the mesh
 becomes distorted and suffers a loss in element quality which causes
 catastrophic loss in the accuracy of computation. To overcome this, the
@@ -30,7 +30,7 @@ When pointwise interpolation is used to transfer a solution, quantities with
 physical meaning (e.g. mass, concentration, energy) may not be conserved.
 To address this, there have been many explorations (for example,
 \cite{Jiao2004, Farrell2009, Farrell2011}) of
-\textbf{conservative interpolation} (typically using Galerkin or
+\emph{conservative interpolation} (typically using Galerkin or
 \(L_2\)-minimizing methods). In this work, the author introduces a
 conservative interpolation method for solution transfer between high-order
 meshes. These high-order meshes are typically curved, but not necessarily
@@ -69,7 +69,7 @@ than are roots of higher multiplicity'' (\cite{Kahan1972}, page 6).
 Two approaches will be described that can help recover this lost accuracy
 in the presence of ill-conditioning. The first allows for greater
 accuracy when performing the de Casteljau algorithm to evaluate
-a function in Bernstein form. This \textbf{compensated algorithm}
+a function in Bernstein form. This \emph{compensated algorithm}
 (Chapter~\ref{chap:k-compensated}) produces results that are as accurate as if
 the computations were done in \(K\) times the working precision
 and then rounded back to the working precision. By just using a
@@ -80,7 +80,7 @@ explores the improvement in Newton's method applied both to
 root-finding and B\'{e}zier curve intersection
 (Chapter~\ref{chap:compensated-newton}).
 
-\section{Organization}
+\section{Overview}
 
 This work is organized as follows. Chapter~\ref{chap:preliminaries}
 establishes common notation and reviews basic results relevant to the

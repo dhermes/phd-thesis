@@ -184,7 +184,6 @@ def make_images(session):
         ("k-compensated", "horner_inferior.py"),
         ("k-compensated", "smooth_drawing.py"),
         ("preliminaries", "inverted_element.py"),
-        ("slides", "almost_tangent.py"),
         ("slides", "curved_vs_straight.py"),
         ("slides", "distort.py"),
         ("slides", "element_distortion.py"),

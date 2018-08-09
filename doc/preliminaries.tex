@@ -49,7 +49,7 @@ error analysis.
 
 \section{B\'{e}zier Curves}
 
-A \textbf{B\'{e}zier curve} is a mapping from the unit interval
+A \emph{B\'{e}zier curve} is a mapping from the unit interval
 that is determined by a set of control points
 \(\left\{\bm{p}_j\right\}_{j = 0}^n \subset \reals^d\).
 For a parameter \(s \in \left[0, 1\right]\), there is a corresponding
@@ -153,7 +153,7 @@ as the vector containing all of the values:
 
 \section{B\'{e}zier Triangles}
 
-A \textbf{B\'{e}zier triangle} (\cite[Chapter~17]{Farin2001}) is a
+A \emph{B\'{e}zier triangle} (\cite[Chapter~17]{Farin2001}) is a
 mapping from the unit triangle
 \(\utri\) and is determined by a control net
 \(\left\{\bm{p}_{i, j, k}\right\}_{i + j + k = n} \subset \reals^d\).
@@ -193,10 +193,10 @@ b(s, t) = \sum_{i + j + k = n} \binom{n}{i, j, k}
 \noindent Rather than defining a B\'{e}zier triangle by the control net, it can
 also be uniquely determined by the image of a standard lattice of
 points in \(\utri\): \(b\left(j/n, k/n\right) = \bm{n}_{i, j, k}\);
-we'll refer to these as \textbf{standard nodes}.
+we'll refer to these as \emph{standard nodes}.
 Figure~\ref{fig:cubic-bezier-example} shows these standard nodes for
 a cubic triangle in \(\reals^2\). To see the correspondence,
-when \(p = 1\) the standard nodes \textbf{are} the control net
+when \(p = 1\) the standard nodes \emph{are} the control net
 \begin{equation}
 b(s, t) = \lambda_1 \bm{n}_{1, 0, 0} +
 \lambda_2 \bm{n}_{0, 1, 0} + \lambda_3 \bm{n}_{0, 0, 1}
@@ -217,7 +217,7 @@ is related but does not directly show this).
 This may make working with
 higher degree triangles prohibitively unstable.
 
-A \textbf{valid} B\'{e}zier triangle is one which is
+A \emph{valid} B\'{e}zier triangle is one which is
 diffeomorphic to \(\utri\), i.e. \(b(s, t)\) is bijective and has
 an everywhere invertible Jacobian. We must also have the orientation
 preserved, i.e. the Jacobian must have positive determinant. For example, in
@@ -225,7 +225,7 @@ Figure~\ref{fig:inverted-element}, the image of \(\utri\) under
 the map \(b(s, t) = \left[\begin{array}{c c} (1 - s - t)^2 + s^2 & s^2 + t^2
 \end{array}\right]^T\) is not valid because the Jacobian is zero along
 the curve \(s^2 - st - t^2 - s + t = 0\) (the dashed line). Elements that
-are not valid are called \textbf{inverted} because they have regions with
+are not valid are called \emph{inverted} because they have regions with
 ``negative area''. For the example, the image \(b\left(\utri\right)\)
 leaves the boundary determined by the edge curves: \(b(r, 0)\),
 \(b(1 - r, r)\) and \(b(0, 1 - r)\) when \(r \in \left[0, 1\right]\).
@@ -278,7 +278,7 @@ When defining shape functions (i.e. a basis with geometric meaning) on a
 curved element there are (at least) two choices. When the degree of the
 shape functions is the same as the degree of the function being
 represented on the B\'{e}zier triangle,
-we say the element \(\mathcal{T}\) is \textbf{isoparametric}.
+we say the element \(\mathcal{T}\) is \emph{isoparametric}.
 For the multi-index
 \(\bm{i} = (i, j , k)\), we define \(\bm{u}_{\bm{i}} =
 \left(j/n, k/n\right)\) and the corresponding standard node
@@ -287,7 +287,7 @@ Given these points, two choices for shape functions present
 themselves:
 \begin{itemize}
   \itemsep 0em
-  \item \textbf{Pre-Image Basis}:
+  \item \emph{Pre-Image Basis}:
     \(\phi_{\bm{j}}\left(\bm{n}_{\bm{i}}\right) =
       \widehat{\phi}_{\bm{j}}\left(\bm{u}_{\bm{i}}\right) =
       \widehat{\phi}_{\bm{j}}\left(b^{-1}\left(
@@ -297,7 +297,7 @@ themselves:
     \(\widehat{\phi}_{\bm{j}}\) a degree \(p\) bivariate polynomial and
     \(\widehat{\phi}_{\bm{j}}\left(\bm{u}_{\bm{i}}\right) =
     \delta_{\bm{i} \bm{j}}\)
-  \item \textbf{Global Coordinates Basis}:
+  \item \emph{Global Coordinates Basis}:
     \(\phi_{\bm{j}}\left(\bm{n}_{\bm{i}}\right) =
     \delta_{\bm{i} \bm{j}}\), i.e. a canonical basis function
     on the standard nodes \(\left\{\bm{n}_{\bm{i}}\right\}\).
@@ -321,11 +321,11 @@ b(s, t) = \left[ \begin{array}{c c}
     4 & 4 & 4 & 6 & 7 & 8
   \end{array}\right].
 \end{gather}
-In the \textbf{Global Coordinates Basis}, we have
+In the \emph{Global Coordinates Basis}, we have
 \begin{equation}
 \phi^{G}_{0, 1, 1}(x, y) = \frac{(y - 4) (x - y + 4)}{6}.
 \end{equation}
-For the \textbf{Pre-Image Basis}, we need the inverse
+For the \emph{Pre-Image Basis}, we need the inverse
 and the canonical basis
 \begin{equation}
 b^{-1}(x, y) = \left[ \begin{array}{c c}
@@ -358,7 +358,7 @@ For example, in Figure~\ref{fig:bezier-triangle-intersect}, a
 ``curved quadrilateral'' is formed when two B\'{e}zier triangles
 \(\mathcal{T}_0\) and \(\mathcal{T}_1\) are intersected.
 
-A \textbf{curved polygon} is defined by a collection of B\'{e}zier curves
+A \emph{curved polygon} is defined by a collection of B\'{e}zier curves
 in \(\reals^2\) that determine the boundary. In order to be
 a valid polygon, none of the boundary curves may cross, the
 ends of consecutive edge curves must meet and the curves must be right-hand

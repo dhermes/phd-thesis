@@ -50,10 +50,10 @@ def main():
     s0 = 1.0
     t0 = 1.0
 
-    cond_nums = np.empty((49,))
-    rel_errors1 = np.empty((49,))
-    rel_errors2 = np.empty((49,))
-    for n in range(2, 50 + 1):
+    cond_nums = np.empty((24,))
+    rel_errors1 = np.empty((24,))
+    rel_errors2 = np.empty((24,))
+    for n in range(3, 49 + 2, 2):
         r = 0.5 ** n
         r_inv = 1.0 / r
         cond_num = kappa(r, ctx)
@@ -83,15 +83,15 @@ def main():
         rel_error1 = ctx.norm([alpha - s1, beta - t1], p=2) / size
         rel_error2 = ctx.norm([alpha - s2, beta - t2], p=2) / size
         # Convert the errors to floats and store.
-        cond_nums[n - 2] = plot_utils.to_float(cond_num)
-        rel_errors1[n - 2] = plot_utils.to_float(rel_error1)
-        rel_errors2[n - 2] = plot_utils.to_float(rel_error2)
+        cond_nums[(n - 3) // 2] = plot_utils.to_float(cond_num)
+        rel_errors1[(n - 3) // 2] = plot_utils.to_float(rel_error1)
+        rel_errors2[(n - 3) // 2] = plot_utils.to_float(rel_error2)
 
     # Make sure all of the non-compensated errors are non-zero and
     # at least one of the compensated errors is zero.
     if rel_errors1.min() <= 0.0:
         raise ValueError("Unexpected minimum error (non-compensated).")
-    if rel_errors2.min() != 0.0:
+    if rel_errors2.min() <= 0.0:
         raise ValueError("Unexpected minimum error (compensated).")
 
     figure = plt.figure()
@@ -105,27 +105,14 @@ def main():
         color=plot_utils.BLUE,
         label="Standard",
     )
-    # Add the nonzero compensated errors.
-    nz_inds = np.where(rel_errors2 > 0.0)
+    # Add all of the compensated errors.
     ax.loglog(
-        cond_nums[nz_inds],
-        rel_errors2[nz_inds],
+        cond_nums,
+        rel_errors2,
         marker="d",
         linestyle="none",
         color=plot_utils.GREEN,
         label="Compensated",
-    )
-    # Add the zero compensated errors at a "fake"
-    # value below all other.
-    min_nz = min(rel_errors1.min(), rel_errors2[nz_inds].min())
-    below_min = min_nz / 1024.0
-    zero_inds = np.where(rel_errors2 == 0.0)
-    ax.loglog(
-        cond_nums[zero_inds],
-        np.full_like(rel_errors2[zero_inds], below_min),
-        marker="d",
-        linestyle="none",
-        color=plot_utils.GREEN,
     )
 
     # Plot the lines of the a priori error bounds.
@@ -134,9 +121,6 @@ def main():
     for coeff in (U, U ** 2):
         start_x = min_x
         start_y = coeff * start_x
-        if start_y < 128.0 * below_min:
-            start_y = 128.0 * below_min
-            start_x = start_y / coeff
         ax.loglog(
             [start_x, max_x],
             [start_y, coeff * max_x],
@@ -145,7 +129,7 @@ def main():
             zorder=1,
         )
     # Add the ``x = 1/U`` and ``x = 1/U^2`` vertical lines.
-    min_y = 1.5e-21
+    min_y = 1e-18
     max_y = 5.0
     for x_val in (1.0 / U, 1.0 / U ** 2):
         ax.loglog(
@@ -156,8 +140,8 @@ def main():
             alpha=ALPHA,
             zorder=1,
         )
-    # Add the ``y = 0``, ``y = u`` and ``y = 1`` horizontal lines.
-    for y_val in (below_min, U, 1.0):
+    # Add the ``y = u`` and ``y = 1`` horizontal lines.
+    for y_val in (U, 1.0):
         ax.loglog(
             [min_x, max_x],
             [y_val, y_val],
@@ -182,9 +166,9 @@ def main():
         labelbottom=0,
         labeltop=1,
     )
-    # Set special ``yticks`` for ``0``, ``u`` and ``1``.
-    ax.set_yticks([below_min, U, 1.0], minor=True)
-    ax.set_yticklabels(["$0$", r"$\mathbf{u}$", "$1$"], minor=True)
+    # Set special ``yticks`` for ``u`` and ``1``.
+    ax.set_yticks([U, 1.0], minor=True)
+    ax.set_yticklabels([r"$\mathbf{u}$", "$1$"], minor=True)
     ax.tick_params(
         axis="y",
         which="minor",
@@ -193,14 +177,6 @@ def main():
         right=1,
         labelleft=0,
         labelright=1,
-    )
-    # Add a mark to show the "broken" axis in the y-scale.
-    ax.plot(
-        [-1.0 / 64, 1.0 / 64],
-        [0.125 - 1.0 / 64, 0.125 + 1.0 / 64],
-        transform=ax.transAxes,
-        color="black",
-        clip_on=False,
     )
     # Label the axes.
     ax.set_xlabel("Condition Number", fontsize=plot_utils.TEXT_SIZE)

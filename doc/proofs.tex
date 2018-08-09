@@ -1,6 +1,89 @@
-\chapter{Proof Details}\label{chap:appendix-proof-details}
+\chapter{Supplemental Proofs}
 
-\begin{proof}[Proof of Lemma~\ref{lemma:ell-tilde}]\label{proof:ell-tilde}
+\section{For Chapter~\ref{chap:solution-transfer}}
+
+\subsection{Allowing Tessellation with Inverted Triangles}
+
+\begin{lemma}\label{lemma:bad-triangle}
+Consider three smooth curves
+\(b_0, b_1, b_2\) that form a closed loop: \(b_0(1) = b_1(0)\),
+\(b_1(1) = b_2(0)\) and \(b_2(1) = b_0(0)\).
+Take \emph{any} smooth map \(\varphi(s, t)\) on \(\utri\) that
+sends the edges to the three curves:
+\begin{equation}
+\varphi(r, 0) = b_0(r), \quad \varphi(1 - r, r) = b_1(r),
+  \quad \varphi(0, 1 - r) = b_2(r) \quad \text{for } r \in \left[0, 1\right].
+\end{equation}
+Then we must have
+\begin{equation}
+2 \int_{\utri} \det(D\varphi) \left[F \circ \varphi\right] \, dt \, ds =
+\oint_{b_0 \cup b_1 \cup b_2} H \, dy - V \, dx
+\end{equation}
+for antiderivatives that satisfy \(H_x = V_y = F\).
+
+When \(\det(D\varphi) > 0\), this is just the change of variables
+formula combined with Green's theorem.
+\end{lemma}
+
+\begin{proof}
+Let \(x(s, t)\) and \(y(s, t)\) be the components of \(\varphi\). Define
+\begin{equation}
+\Delta S = H(x, y) y_s - V(x, y) x_s \quad \text{and} \quad
+\Delta T = H(x, y) y_t - V(x, y) x_t.
+\end{equation}
+On the unit triangle \(\utri\), Green's theorem gives
+\begin{equation}\label{eq:basic-greens}
+\int_{\mathcal{U}} \left[\partial_s \Delta T -
+  \partial_t \Delta S\right] \, dV =
+\oint_{\partial \mathcal{U}} \Delta S \, ds + \Delta T \, dt.
+\end{equation}
+The boundary \(\partial \utri\) splits into the bottom edge \(E_0\),
+hypotenuse \(E_1\) and left edge \(E_2\).
+
+Since
+\begin{equation}
+E_0 = \left\{ \left[ \begin{array}{c} r \\ 0 \end{array}\right] \mid
+  r \in \left[0, 1\right] \right\}
+\end{equation}
+we take \(\varphi(r, 0) = b_0(r)\) hence
+\begin{equation}
+dx = x_s \, dr, dy = y_s \, dr \Longrightarrow
+H dx - V dy = \Delta S \, dr.
+\end{equation}
+We also have \(ds = dr\) and \(dt = 0\) due to the
+parameterization, thus
+\begin{equation}
+\int_{E_0} \Delta S \, ds + \Delta T \, dt =
+  \int_{r = 0}^{r = 1} \Delta S \, dr = \int_{b_0} H \, dx - V \, dy.
+\end{equation}
+We can similarly verify that
+\(\int_{E_j} \Delta S \, ds + \Delta T \, dt = \int_{b_j} H \, dx - V \, dy\)
+for the other two edges. Combining this with~\eqref{eq:basic-greens}
+we have
+\begin{equation}
+\int_{\mathcal{U}} \left[\partial_s \Delta T -
+  \partial_t \Delta S\right] \, dV =
+\oint_{b_0 \cup b_1 \cup b_2} H \, dx - V \, dy.
+\end{equation}
+To complete the proof, we need
+\begin{equation}
+\int_{\mathcal{U}} \left[\partial_s \Delta T -
+  \partial_t \Delta S\right] \, dV =
+2 \int_{\mathcal{U}} \det(D\varphi) \left[F \circ \varphi\right] \, dV
+\end{equation}
+but one can show directly that
+\begin{equation}
+\partial_s \Delta T - \partial_t \Delta S =
+  2 \left(x_s y_t - x_t y_s\right) F(x, y) =
+  2 \det(D\varphi) \left[F \circ \varphi\right]. \tag*{\qedhere}
+\end{equation}
+\end{proof}
+
+\section{For Chapter~\ref{chap:k-compensated}}
+
+\subsection{Proof of Lemma~\ref{lemma:ell-tilde}}\label{proof:ell-tilde}
+
+\begin{proof}
 We'll start with the \(F = 1\) case. Recall where the terms originate:
 \begin{align}
 \left[P_1, e_1\right] &= \mathtt{TwoProd}\left(\widehat{r},
@@ -85,9 +168,11 @@ and build each bound recursively based on the previous, e.g.
 as desired.
 \end{proof}
 
-\begin{proof}[Proof of Lemma~\ref{lemma:L-and-D-bounds}]
+\subsection{Proof of Lemma~\ref{lemma:L-and-D-bounds}}
 \label{proof:L-and-D-bounds}
-First, note that for \textbf{any} sequence \(v_0, \ldots, v_{k + 1}\) we
+
+\begin{proof}
+First, note that for \emph{any} sequence \(v_0, \ldots, v_{k + 1}\) we
 must have
 \begin{equation}
 \sum_{j = 0}^k \left[(1 - s) v_j + s v_{j + 1}\right] B_{j, k}(s) =
@@ -219,7 +304,9 @@ Swapping the order of summation and grouping like terms, we have our
 result.
 \end{proof}
 
-\begin{proof}[Proof of Lemma~\ref{lemma:k-order}]\label{proof:k-order}
+\subsection{Proof of Lemma~\ref{lemma:k-order}}\label{proof:k-order}
+
+\begin{proof}
 As in \eqref{eq:matrix-de-casteljau}, we can express the compensated
 de Casteljau algorithm as
 \begin{equation}
@@ -283,8 +370,10 @@ Applying \eqref{eq:L-sum-bound} directly gives
 Letting \(K = F + 1\) we have our result.
 \end{proof}
 
-\begin{proof}[Proof of Theorem~\ref{thm:k-comp-result}]
+\subsection{Proof of Theorem~\ref{thm:k-comp-result}}
 \label{proof:k-comp-result}
+
+\begin{proof}
 Since
 \begin{equation}
 \mathtt{CompDeCasteljau}(p, s, K) = \mathtt{SumK}\left(\left[
@@ -346,79 +435,4 @@ see
 \widetilde{p}(s).
 \end{align}
 Dividing this by \(\left|p(s)\right|\), we have our result.
-\end{proof}
-
-\begin{lemma}\label{lemma:bad-triangle}
-Consider three smooth curves
-\(b_0, b_1, b_2\) that form a closed loop: \(b_0(1) = b_1(0)\),
-\(b_1(1) = b_2(0)\) and \(b_2(1) = b_0(0)\).
-Take \textbf{any} smooth map \(\varphi(s, t)\) on \(\utri\) that
-sends the edges to the three curves:
-\begin{equation}
-\varphi(r, 0) = b_0(r), \quad \varphi(1 - r, r) = b_1(r),
-  \quad \varphi(0, 1 - r) = b_2(r) \quad \text{for } r \in \left[0, 1\right].
-\end{equation}
-Then we must have
-\begin{equation}
-2 \int_{\utri} \det(D\varphi) \left[F \circ \varphi\right] \, dt \, ds =
-\oint_{b_0 \cup b_1 \cup b_2} H \, dy - V \, dx
-\end{equation}
-for antiderivatives that satisfy \(H_x = V_y = F\).
-
-When \(\det(D\varphi) > 0\), this is just the change of variables
-formula combined with Green's theorem.
-\end{lemma}
-
-\begin{proof}
-Let \(x(s, t)\) and \(y(s, t)\) be the components of \(\varphi\). Define
-\begin{equation}
-\Delta S = H(x, y) y_s - V(x, y) x_s \quad \text{and} \quad
-\Delta T = H(x, y) y_t - V(x, y) x_t.
-\end{equation}
-On the unit triangle \(\utri\), Green's theorem gives
-\begin{equation}\label{eq:basic-greens}
-\int_{\mathcal{U}} \left[\partial_s \Delta T -
-  \partial_t \Delta S\right] \, dV =
-\oint_{\partial \mathcal{U}} \Delta S \, ds + \Delta T \, dt.
-\end{equation}
-The boundary \(\partial \utri\) splits into the bottom edge \(E_0\),
-hypotenuse \(E_1\) and left edge \(E_2\).
-
-Since
-\begin{equation}
-E_0 = \left\{ \left[ \begin{array}{c} r \\ 0 \end{array}\right] \mid
-  r \in \left[0, 1\right] \right\}
-\end{equation}
-we take \(\varphi(r, 0) = b_0(r)\) hence
-\begin{equation}
-dx = x_s \, dr, dy = y_s \, dr \Longrightarrow
-H dx - V dy = \Delta S \, dr.
-\end{equation}
-We also have \(ds = dr\) and \(dt = 0\) due to the
-parameterization, thus
-\begin{equation}
-\int_{E_0} \Delta S \, ds + \Delta T \, dt =
-  \int_{r = 0}^{r = 1} \Delta S \, dr = \int_{b_0} H \, dx - V \, dy.
-\end{equation}
-We can similarly verify that
-\(\int_{E_j} \Delta S \, ds + \Delta T \, dt = \int_{b_j} H \, dx - V \, dy\)
-for the other two edges. Combining this with~\eqref{eq:basic-greens}
-we have
-\begin{equation}
-\int_{\mathcal{U}} \left[\partial_s \Delta T -
-  \partial_t \Delta S\right] \, dV =
-\oint_{b_0 \cup b_1 \cup b_2} H \, dx - V \, dy.
-\end{equation}
-To complete the proof, we need
-\begin{equation}
-\int_{\mathcal{U}} \left[\partial_s \Delta T -
-  \partial_t \Delta S\right] \, dV =
-2 \int_{\mathcal{U}} \det(D\varphi) \left[F \circ \varphi\right] \, dV
-\end{equation}
-but one can show directly that
-\begin{equation}
-\partial_s \Delta T - \partial_t \Delta S =
-  2 \left(x_s y_t - x_t y_s\right) F(x, y) =
-  2 \det(D\varphi) \left[F \circ \varphi\right]. \tag*{\qedhere}
-\end{equation}
 \end{proof}
