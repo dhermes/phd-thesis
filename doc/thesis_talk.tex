@@ -130,7 +130,8 @@ PDE becomes a (trivial) ODE
 \pause
 \item Each point in physical domain is a \textbf{particle}
 \pause
-\item Carry value (e.g. heat, pressure, density) along characteristic curve
+\item Carry value (e.g. heat, pressure, density) along characteristic curve;
+  mesh travels
 \pause
 \item Transform PDE to family of ODEs
 \end{itemize}
@@ -960,7 +961,7 @@ J_n^{-1} F_n
 \begin{frame}
 \frametitle{EFT for Multiplication}
 \begin{itemize}
-\item \(\mathtt{TwoProb}(a, b) = \left[P, \pi\right]\)
+\item \(\mathtt{TwoProd}(a, b) = \left[P, \pi\right]\)
 \pause
 \item \(a \times b = P + \pi\)
 \pause
@@ -988,8 +989,8 @@ J_n^{-1} F_n
 \item \(\widehat{\bm{b}}^{(n)} = \bm{b}\), \(\widehat{r} = 1 \ominus s\)
 \pause
 \item \(\widehat{\bm{b}}^{(k)} = \left(\widehat{r} \otimes
-  \widehat{\bm{b}}^{(k + 1)}\right) \oplus \left(s \otimes
-  \widehat{\bm{b}}^{(k + 1)}\right)\)
+  \widehat{\bm{b}}_{0:k}^{(k + 1)}\right) \oplus \left(s \otimes
+  \widehat{\bm{b}}_{1:k + 1}^{(k + 1)}\right)\)
 \pause
 \item \(\widehat{p} = \widehat{\bm{b}}_0^{(0)}\)
 \end{itemize}
@@ -1001,7 +1002,7 @@ J_n^{-1} F_n
 \begin{frame}
 \frametitle{Compensated de Castlejau}
 \begin{itemize}
-\item Only uses \(\oplus\), \(\ominus\) and \(\otimes\)
+\item Use EFT for \(\oplus\), \(\ominus\) and \(\otimes\)
 \pause
 \item Track errors and combine them progressively
 \pause
