@@ -109,12 +109,13 @@ def build_tex(session):
         "algorithms",
         "bezier-intersection",
         "compensated-newton",
-        "solution-transfer",
+        "conclusion",
         "introduction",
         "k-compensated",
         "metadata",
         "preliminaries",
         "proofs",
+        "solution-transfer",
     )
     for extra in extras:
         session.run(Remove(extra, ("aux",)))

@@ -1,0 +1,66 @@
+\chapter{Conclusion}
+
+\section{Solution Transfer}
+
+This work has described a method for conservative interpolation
+between curved meshes. The transfer process conserves globally
+to machine precision since we can use exact quadratures for all
+integrals. The primary source of error comes from solving the linear
+system with the mass matrix for the target mesh. This allows
+less restrictive usage of mesh adaptivity, which can make computations
+more efficient. Additionally, having a global transfer algorithm
+allows for remeshing to be done less frequently.
+
+The algorithm breaks down into three core subproblems: B\'{e}zier triangle
+intersection, an advancing front for intersecting elements and
+integration on curved polygons. The inherently local nature of the
+advancing front allows the algorithm to be parallelized via domain
+decomposition with little data shared between processes. By
+restricting integration to the intersection of elements from the
+target and donor meshes, the algorithm can accurately transfer
+both continuous and discontinuous fields.
+
+\subsection{Future Work}
+
+As mentioned in the preceding chapters, there are several research
+directions possible to build upon the solution transfer algorithm.
+The usage of Green's theorem nicely extends to \(\reals^3\) via
+Stoke's theorem, but the B\'{e}zier triangle intersection algorithm
+is specific to \(\reals^2\). The equivalent B\'{e}zier tetrahedron
+intersection algorithm is significantly more challenging.
+
+The restriction to shape functions from the global coordinates basis
+is a symptom of the method and not of the inherent problem. The
+pre-image basis has several appealing properties, for example
+this basis can be precomputed on \(\utri\). The problem of a
+valid tessellation of a curved polygon warrants more exploration.
+Such a tessellation algorithm would enable usage of the pre-image
+basis.
+
+The usage of the global coordinates basis does have some benefits.
+In particular, the product of shape functions from different meshes
+is still a polynomial in \(\reals^2\). This means that we could
+compute the coefficients of \(F = \phi_0 \phi_1\) directly and
+use them to evaluate the antiderivatives \(H\) and \(V\) rather
+than using the fundamental theorem of calculus. Even if this
+did not save any computation, it may still be preferred over
+the FTC approach because it would remove the usage of quadrature
+points outside of the domain \(\mathcal{P}\).
+
+\section{Ill-conditioned B\'{e}zier Curve Intersection}
+
+The B\'{e}zier triangle intersection subproblem can be solved
+partially by intersecting B\'{e}zier curves (i.e. the edges).
+However, the probability of ``almost tangent'' or ill-conditioned
+B\'{e}zier curve intersections increases to unity as the mesh
+size \(h\) goes to \(0\).
+
+Turning our focus to ill-conditioned B\'{e}zier curve intersections,
+we designed a modified Newton's method that computed the residual
+as if in extended precision. Building on existing work, we describe
+a compensated de Casteljau algorithm that allows the evaluation of
+a polynomial in Bernstein form as accurate as if the computations
+were done in \(K\)-times the working precision. The residual
+\(F(s, t) = b_0(s) - b_1(t)\) depends on four evaluations of
+a polynomial in Bernstein form, so \(F\) can be computed more precisely
+by using the compensated evaluation algorithm.
