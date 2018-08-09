@@ -1195,4 +1195,50 @@ Approaches triple root as \(r \longrightarrow 0^+\),
 \rule{0.82\textwidth}{1pt}
 \end{frame}
 
+\begin{frame}
+\frametitle{Conclusion}
+\begin{itemize}
+\pause
+\item \textbf{Solution Transfer on Curved Meshes}
+\begin{itemize}
+\pause
+\item Conservative \(L_2\)-optimal interpolation; split
+  \(\displaystyle \int_{\Omega}\) into \(\displaystyle \sum \int_{\mathcal{T}
+  \cap \mathcal{T}'}\) where integrand is smooth
+\pause
+\item Intersecting Curved Elements: \(\mathcal{T} \cap \mathcal{T}'\)
+\pause
+\item Advancing Front: \(\left(\mathcal{T}, \mathcal{T}'\right) \in
+  \mathcal{M}_T \times \mathcal{M}_D\)
+\pause
+\item Integration over Curved Polygons:
+  \(\displaystyle \int_{\mathcal{T} \cap \mathcal{T}'} F \, dV\)
+\end{itemize}
+\pause
+\item \textbf{Ill-conditioned B\'{e}zier Curve Intersection}
+\begin{itemize}
+\pause
+\item Compensated de Castaljau for evaluation of B\'{e}zier curves
+\pause
+\item Modified Newton's method; computes residual \(F(s, t)\) as
+  if in extended precision
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Future Work}
+\begin{itemize}
+\pause
+\item Valid tessellation of curved polygons
+\pause
+\item Integrand \(F = \phi_0 \phi_1\) is polynomial in \(x, y\), could
+  compute coefficients and use them to compute \(H, V\) without
+  FTC, without points outside \(\mathcal{P}\)
+\pause
+\item Solution transfer in \(\mathbf{R}^3\); integrate via Stoke's theorem,
+  geometry is greatest challenge
+\end{itemize}
+\end{frame}
+
 \end{document}
