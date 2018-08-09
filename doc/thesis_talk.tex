@@ -48,6 +48,8 @@
 \newcommand{\eps}{\varepsilon}
 \newcommand{\utri}{\mathcal{U}}
 \newcommand{\bigO}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\mach}{\mathbf{u}}
+\newcommand{\cond}[1]{\operatorname{cond}\left(#1\right)}
 
 \title[Lagrange and B\'{e}zier]
   {High-order Solution Transfer between Curved Meshes and
@@ -1011,14 +1013,35 @@ J_n^{-1} F_n
 
 \begin{frame}
 \frametitle{Compensated de Castlejau}
+\only<1>{
+\begin{equation*}
+\frac{\left|p(s) - \mathtt{DeCasteljau}\left(p, s\right)\right|}{
+  \left|p(s)\right|} \leq \cond{p, s} \cdot \bigO{\mach}
+\end{equation*}
+}
+%%
+\only<3>{
+\begin{equation*}
+\frac{\left|p(s) - \mathtt{CompDeCasteljau}\left(p, s\right)\right|}{
+  \left|p(s)\right|} \leq \bigO{\mach} + \cond{p, s} \cdot \bigO{\mach^2}
+\end{equation*}
+}
+%%
+\only<5>{
+\begin{equation*}
+\frac{\left|p(s) - \mathtt{CompDeCasteljauK}\left(p, s\right)\right|}{
+  \left|p(s)\right|} \leq \bigO{\mach} + \cond{p, s} \cdot \bigO{\mach^K}
+\end{equation*}
+}
+%%
 \begin{center}
-\includegraphics<1>[height=0.8\textheight]
-                   {../images/slides/de_casteljau_rel_error1.pdf}
 \includegraphics<2>[height=0.8\textheight]
-                   {../images/slides/de_casteljau_rel_error2.pdf}
-\includegraphics<3>[height=0.8\textheight]
-                   {../images/slides/de_casteljau_rel_error3.pdf}
+                   {../images/slides/de_casteljau_rel_error1.pdf}
 \includegraphics<4>[height=0.8\textheight]
+                   {../images/slides/de_casteljau_rel_error2.pdf}
+\includegraphics<6>[height=0.8\textheight]
+                   {../images/slides/de_casteljau_rel_error3.pdf}
+\includegraphics<7>[height=0.8\textheight]
                    {../images/slides/de_casteljau_rel_error4.pdf}
 \end{center}
 \end{frame}
@@ -1031,6 +1054,135 @@ J_n^{-1} F_n
 \centering
 {\Large \bf Modified Newton's for Intersection}
 \rule{0.82\textwidth}{1pt}
+\end{frame}
+
+\begin{frame}
+\frametitle{Polynomial Roots}
+\begin{itemize}
+\item \(p(s)\) written in Bernstein-B\'{e}zier form
+\pause
+\item Newton: \(s_{n + 1} = s_n - \frac{p(s_n)}{p'(s_n)}\)
+\pause
+\item Three algorithms
+\begin{itemize}
+\pause
+\item \texttt{DNewtonBasic}: \texttt{DeCasteljau} for residual \(p(s)\)
+  and Jacobian \(p'(s)\)
+\pause
+\item \texttt{DNewtonAccurate}: \texttt{CompDeCasteljau} for residual,
+  \texttt{DeCasteljau} for Jacobian
+\pause
+\item \texttt{DNewtonFull}: \texttt{CompDeCasteljau} for residual and Jacobian
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Polynomial Roots}
+\begin{itemize}
+\item Test problem; need coefficients that can be exactly represented
+\pause
+\item \(p(s) = (1 - 5s)^n + 2^{30} (1 - 3s)^n\), \(n\) odd
+\pause
+\item Root \(\displaystyle \alpha = \frac{1 + 2^{30/n}}{5 + 3 \cdot 2^{30/n}}
+  \in \left[\frac{1}{4}, \frac{1}{3}\right]\)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Polynomial Roots}
+\begin{center}
+\includegraphics<1>[height=0.8\textheight]
+                   {../images/slides/newton_de_casteljau1.pdf}
+\includegraphics<2>[height=0.8\textheight]
+                   {../images/slides/newton_de_casteljau2.pdf}
+\includegraphics<3>[height=0.8\textheight]
+                   {../images/slides/newton_de_casteljau3.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{B\'{e}zier Curve Intersection}
+\begin{itemize}
+\item \(F(s, t) = b_0(s) - b_1(t)\)
+\pause
+\item Evaluate \(x_0(s), y_0(s), x_1(t), y_1(t)\) via de Casteljau
+\pause
+\item Modify Newton's method by using ``extended precision'' (i.e.
+  compensated method) for \(\widehat{F}\)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Compensated Residual}
+\begin{itemize}
+\item \(\widehat{F} = \left[ \begin{array}{c} \widehat{x} \\
+    \widehat{y} \end{array}\right]\)
+\pause
+\item \(\widehat{x} = \mathtt{CompDeCasteljau}\left(x_0, s\right) \ominus
+  \mathtt{CompDeCasteljau}\left(x_1, t\right)\)
+\pause
+\item Fails; \(x_0(s), x_1(t)\) may not be near zero, e.g.
+  \(\widehat{x}_0 \oplus \widehat{e}_0 = \widehat{x}_0\)
+\pause
+\item Instead use EFT \(x_j = \widehat{x}_j + \widehat{e}_j\), then
+  combine big with big and small with small
+\pause
+\item Compensated addition (via \texttt{TwoSum})
+  \(\widehat{x}_0 - \widehat{x}_1 = D + \widehat{e}_2\)
+\pause
+\item Compensation term \(\tau = \left(\widehat{e}_0 \ominus
+  \widehat{e}_1\right) \oplus \widehat{e}_2\)
+\pause
+\item Computed residual \(D \oplus \tau\)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Modified Newton's in Practice}
+\begin{equation*}
+F(s, t) = \left[ \begin{array}{c} 2(4s^2 - 1) \\ (2s - 1)^2 + 1
+\end{array}\right] - \left[ \begin{array}{c} 4(4t^2 - 1) \\ 4(2t - 1)^2 + 1
+\end{array}\right]
+\end{equation*}
+\pause
+\begin{center}
+Triple root at \(F\left(\frac{1}{2}, \frac{1}{2}\right)\)
+\end{center}
+\pause
+\begin{center}
+\includegraphics[width=0.95\textwidth]
+                {../images/slides/tangent_intersection.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Modified Newton's in Practice}
+\begin{center}
+\includegraphics[width=0.95\textwidth]
+                {../images/compensated-newton/newton_linear_converge.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Modified Newton's in Practice}
+\begin{equation*}
+G(s, t) = \left[ \begin{array}{c} x_0(s) - r \\ y_0(s) + \frac{1}{r}
+\end{array}\right] - \left[ \begin{array}{c} x_1(t) \\ y_1(t) + \frac{1}{r}
+\end{array}\right]
+\end{equation*}
+\pause
+\begin{center}
+Approaches triple root as \(r \longrightarrow 0^+\),
+  \(F\left(\frac{1 + \sqrt{r}}{2}, \frac{2 + \sqrt{r}}{4}\right)\)
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Modified Newton's in Practice}
+\begin{center}
+\includegraphics[height=0.8\textheight]{../images/slides/almost_tangent.pdf}
+\end{center}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%
