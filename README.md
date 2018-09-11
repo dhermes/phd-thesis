@@ -17,6 +17,10 @@ and uploaded to the arXiv and / or submitted to journals:
 - High-order Solution Transfer between Curved Meshes (GitHub [repo][10]);
   yet to be released / submitted
 
+In addition, this repository has slides for:
+
+- Thesis [talk][11]
+
 ## Installation
 
 The code used to build the manuscript, generate images and verify
@@ -51,3 +55,4 @@ Beamer theme should be installed, as well as the Fira font family.
 [8]: https://github.com/dhermes/curious-case-curbed-condition
 [9]: https://www.journals.elsevier.com/applied-mathematics-and-computation
 [10]: https://github.com/dhermes/solution-transfer-curved-meshes
+[11]: doc/thesis_talk.pdf
