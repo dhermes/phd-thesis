@@ -167,7 +167,7 @@ def plot_distorted():
 
 
 def distort_cubic_tri():
-    node1 = np.array([-0.75, 0.0])
+    node1 = np.array([-0.75, 0.75])
     node2 = np.array([2.25, -1.5])
     node3 = np.array([1.5, 1.5])
     control_points = np.array(
@@ -204,10 +204,6 @@ def distort_cubic_tri():
         t = 0.5 * index
         xt, yt = point_on_characteristic(control_x, control_y, t)
 
-        corner_x = xt[(0, 2, 5, 0),]
-        corner_y = yt[(0, 2, 5, 0),]
-        ax_top.plot(corner_x, corner_y)
-
         title = get_title(t)
         ax_top.set_title(title, fontsize=plot_utils.TEXT_SIZE)
 
@@ -230,6 +226,8 @@ def distort_cubic_tri():
         )
         bezier_nodes[:, 5] = xt[5], yt[5]
         surface = bezier.Surface.from_nodes(bezier_nodes)
+        if not surface.is_valid:
+            raise ValueError("Valid surface required", surface)
         surface.plot(256, ax=ax_below)
 
         # Add "nodes" to both plots.
