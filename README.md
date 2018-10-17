@@ -10,12 +10,12 @@ The content itself has been broken into a few standalone papers
 and uploaded to the arXiv and / or submitted to journals:
 
 - [``K``-Compensated de Casteljau][3] paper (GitHub [repo][4],
-  submitted to [AMC][9])
+  submitted to [AMC][9] in May 2018)
 - [2-Norm Condition Number for B&#xe9;zier Curve Intersection][5]
   (GitHub [repo][6])
 - [A Curious Case of Curbed Condition][7] (GitHub [repo][8])
-- High-order Solution Transfer between Curved Meshes (GitHub [repo][10]);
-  yet to be released / submitted
+- [High-order Solution Transfer between Curved Triangular Meshes][12] (GitHub
+  [repo][10], submitted to [CAMCoS][13] in October 2018)
 
 In addition, this repository has slides for:
 
@@ -56,3 +56,5 @@ Beamer theme should be installed, as well as the Fira font family.
 [9]: https://www.journals.elsevier.com/applied-mathematics-and-computation
 [10]: https://github.com/dhermes/solution-transfer-curved-meshes
 [11]: doc/thesis_talk.pdf
+[12]: https://arxiv.org/abs/1810.06806
+[13]: https://msp.org/camcos/about/journal/about.html
