@@ -1,7 +1,9 @@
 # UC Berkeley PhD Thesis
 
 This is the repository for my thesis. If you'd just like to read the
-[paper][1], feel free.
+[paper][1], feel free. Virtually all UC Berkeley dissertations are made
+available online via ProQuest; mine can be found in the
+[UCB Library Catalog][14] ([PDF][15]).
 
 This repository is laid out in a manner described in
 [Good Enough Practices in Scientific Computing][2].
@@ -58,3 +60,5 @@ Beamer theme should be installed, as well as the Fira font family.
 [11]: doc/thesis_talk.pdf
 [12]: https://arxiv.org/abs/1810.06806
 [13]: https://msp.org/camcos/about/journal/about.html
+[14]: http://oskicat.berkeley.edu/record=b24741695~S53
+[15]: http://digitalassets.lib.berkeley.edu/etd/ucb/text/Hermes_berkeley_0028E_18094.pdf
