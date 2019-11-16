@@ -12,9 +12,9 @@ The content itself has been broken into a few standalone papers
 and uploaded to the arXiv and / or submitted to journals:
 
 - [``K``-Compensated de Casteljau][3] paper (GitHub [repo][4],
-  submitted to [AMC][9] in May 2018)
+  [published][16] in [AMC][9] on April 5, 2019)
 - [2-Norm Condition Number for B&#xe9;zier Curve Intersection][5]
-  (GitHub [repo][6])
+  (GitHub [repo][6], [published][17] in [CAGD][18] on November 8, 2019)
 - [A Curious Case of Curbed Condition][7] (GitHub [repo][8])
 - [High-order Solution Transfer between Curved Triangular Meshes][12] (GitHub
   [repo][10], submitted to [CAMCoS][13] in October 2018)
@@ -62,3 +62,6 @@ Beamer theme should be installed, as well as the Fira font family.
 [13]: https://msp.org/camcos/about/journal/about.html
 [14]: http://oskicat.berkeley.edu/record=b24741695~S53
 [15]: http://digitalassets.lib.berkeley.edu/etd/ucb/text/Hermes_berkeley_0028E_18094.pdf
+[16]: https://doi.org/10.1016/j.amc.2019.03.047
+[17]: https://doi.org/10.1016/j.cagd.2019.101791
+[18]: https://www.journals.elsevier.com/computer-aided-geometric-design
