@@ -11,13 +11,13 @@ This repository is laid out in a manner described in
 The content itself has been broken into a few standalone papers
 and uploaded to the arXiv and / or submitted to journals:
 
-- [``K``-Compensated de Casteljau][3] paper (GitHub [repo][4],
+- [`K`-Compensated de Casteljau][3] paper (GitHub [repo][4],
   [published][16] in [AMC][9] on April 5, 2019)
 - [2-Norm Condition Number for B&#xe9;zier Curve Intersection][5]
   (GitHub [repo][6], [published][17] in [CAGD][18] on November 8, 2019)
 - [A Curious Case of Curbed Condition][7] (GitHub [repo][8])
 - [High-order Solution Transfer between Curved Triangular Meshes][12] (GitHub
-  [repo][10], submitted to [CAMCoS][13] in October 2018)
+  [repo][10], [published][19] in [CAMCoS][13] on January 8, 2025)
 
 In addition, this repository has slides for:
 
@@ -27,7 +27,7 @@ In addition, this repository has slides for:
 
 The code used to build the manuscript, generate images and verify
 computations is written in Python. To run the code, Python 3.6
-should be installed, along with ``nox-automation``:
+should be installed, along with `nox-automation`:
 
 ```
 python -m pip install --upgrade nox-automation
@@ -43,8 +43,8 @@ Available sessions:
 * update_requirements
 ```
 
-To run ``nox -s build_tex`` (i.e. to build the PDFs), ``pdflatex``,
-``xelatex`` and ``bibtex`` are required. In addition the ``metropolis``
+To run `nox -s build_tex` (i.e. to build the PDFs), `pdflatex`,
+`xelatex` and `bibtex` are required. In addition the `metropolis`
 Beamer theme should be installed, as well as the Fira font family.
 
 [1]: doc/thesis.pdf
@@ -65,3 +65,4 @@ Beamer theme should be installed, as well as the Fira font family.
 [16]: https://doi.org/10.1016/j.amc.2019.03.047
 [17]: https://doi.org/10.1016/j.cagd.2019.101791
 [18]: https://www.journals.elsevier.com/computer-aided-geometric-design
+[19]: https://doi.org/10.2140/camcos.2025.20.1
